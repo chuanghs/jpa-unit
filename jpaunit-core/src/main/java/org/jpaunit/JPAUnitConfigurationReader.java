@@ -39,9 +39,9 @@ public class JPAUnitConfigurationReader {
             if ("jpaunit".equals(firstChild.getNodeName())) {
                 NodeList childNodes = firstChild.getChildNodes();
                 for (int i = 0; i < childNodes.getLength(); i++) {
-                    Node statementNode = childNodes.item(i);
-                    if ("statement".equals(statementNode.getNodeName())) {
-                        NodeList statementChildren = statementNode.getChildNodes();
+                    Node jpaUnitElement = childNodes.item(i);
+                    if ("statement".equals(jpaUnitElement.getNodeName())) {
+                        NodeList statementChildren = jpaUnitElement.getChildNodes();
                         if (statementChildren.getLength() > 1) {
                             throw new JPAUnitFileSyntaxException("statement element (" + i + ") is allowed only to have 1 child: CDATA");
                         }
@@ -52,7 +52,7 @@ public class JPAUnitConfigurationReader {
                             statement = statementCDATA.getNodeValue();
                         }
                         if (statement == null) {
-                            NamedNodeMap attributes = statementNode.getAttributes();
+                            NamedNodeMap attributes = jpaUnitElement.getAttributes();
                             Node codeNode = attributes.getNamedItem("code");
                             if (codeNode != null)
                                 statement = codeNode.getNodeValue();
@@ -60,7 +60,23 @@ public class JPAUnitConfigurationReader {
                         }
                         if (statement != null)
                             result.addStatement(statement);
+                    } else if ("import".equals(jpaUnitElement.getNodeName())){
+                        NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
+                        Node classNode = importAttributes.getNamedItem("class");
+                        Node aliasNode = importAttributes.getNamedItem("alias");
+
+                        if (classNode==null) {
+                            throw new JPAUnitFileSyntaxException("import element (" + i + ") is must have \"class\" attribute. It must be fully qualified class name");
+                        }
+                        String className = classNode.getNodeValue();
+                        int dotIndex = className.lastIndexOf(".");
+                        String alias = className.substring(dotIndex>-1?dotIndex+1:0);
+                        if (aliasNode != null){
+                            alias = aliasNode.getNodeValue();
+                        }
+                        result.addImport(className, alias);
                     }
+
                 }
             }
         } catch (ParserConfigurationException e) {
