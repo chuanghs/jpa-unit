@@ -82,4 +82,35 @@ public class EntityNodeProcessorTest {
         verifyNoMoreInteractions(result);
     }
 
+
+    @Test
+    public void testComplexType() throws JPAUnitFileReadException, ParseException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(("<jpaunit> " +
+                "   <import class=\"org.jpaunit.node.SimplePOJO\" alias=\"pojo\" /> " +
+                "   <pojo integerValue=\"2\"> " +
+                "       <booleanValue></booleanValue> " +
+                "       <doubleValue>1.23</doubleValue> " +
+                "       <complexType intValue=\"1\"> " +
+                "           <stringValue>1</stringValue> "+
+                "       </complexType>"+
+                "   </pojo>"+
+                "</jpaunit>").getBytes());
+
+        JPAUnitConfiguration result = spy(new JPAUnitConfiguration());
+        new JPAUnitConfigurationReader().read(bais, result);
+
+        SimplePOJO simplePOJO = new SimplePOJO();
+        simplePOJO.setIntegerValue(2);
+        simplePOJO.setDoubleValue(1.23);
+
+        SimplePOJO2 complexType = new SimplePOJO2();
+        complexType.setIntValue(1);
+        complexType.setStringValue("1");
+        simplePOJO.setComplexType(complexType);
+
+        verify(result, times(1)).addImport(anyString(), anyString());
+        verify(result, times(1)).addEntity(eq(simplePOJO));
+        verifyNoMoreInteractions(result);
+    }
+
 }

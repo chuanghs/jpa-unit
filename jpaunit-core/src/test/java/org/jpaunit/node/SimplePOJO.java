@@ -19,6 +19,8 @@ public class SimplePOJO {
     private Timestamp timestampValue;
     private Date dateValue;
 
+    private SimplePOJO2 complexType;
+
     public void setIntegerValue(int i) {
         integerValue = i;
     }
@@ -46,7 +48,16 @@ public class SimplePOJO {
         dateValue = date;
     }
 
-     @Override
+
+    public SimplePOJO2 getComplexType() {
+        return complexType;
+    }
+
+    public void setComplexType(SimplePOJO2 complexType) {
+        this.complexType = complexType;
+    }
+
+    @Override
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
@@ -56,6 +67,7 @@ public class SimplePOJO {
         if (booleanValue != that.booleanValue) return false;
         if (Double.compare(that.doubleValue, doubleValue) != 0) return false;
         if (integerValue != that.integerValue) return false;
+        if (complexType != null ? !complexType.equals(that.complexType) : that.complexType != null) return false;
         if (dateValue != null ? !dateValue.equals(that.dateValue) : that.dateValue != null) return false;
         if (stringValue != null ? !stringValue.equals(that.stringValue) : that.stringValue != null) return false;
         if (timestampValue != null ? !timestampValue.equals(that.timestampValue) : that.timestampValue != null)
@@ -75,6 +87,7 @@ public class SimplePOJO {
         result = 31 * result + (stringValue != null ? stringValue.hashCode() : 0);
         result = 31 * result + (timestampValue != null ? timestampValue.hashCode() : 0);
         result = 31 * result + (dateValue != null ? dateValue.hashCode() : 0);
+        result = 31 * result + (complexType != null ? complexType.hashCode() : 0);
         return result;
     }
 
@@ -87,6 +100,7 @@ public class SimplePOJO {
                 ", stringValue='" + stringValue + '\'' +
                 ", timestampValue=" + timestampValue +
                 ", dateValue=" + dateValue +
+                ", complexType=" + complexType +
                 '}';
     }
 }
