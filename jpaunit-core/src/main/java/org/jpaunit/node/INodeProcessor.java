@@ -1,6 +1,7 @@
 package org.jpaunit.node;
 
 import org.jpaunit.JPAUnitConfiguration;
+import org.jpaunit.JPAUnitConfigurationReader;
 import org.jpaunit.exception.JPAUnitFileSyntaxException;
 import org.jpaunit.exception.JPAUnitNodeProcessingException;
 import org.w3c.dom.Node;
@@ -13,6 +14,6 @@ import org.w3c.dom.Node;
  */
 public interface INodeProcessor {
 
-    void process(Node jpaUnitElement, JPAUnitConfiguration result) throws JPAUnitNodeProcessingException;
+    void process(Node jpaUnitElement, JPAUnitConfiguration result, JPAUnitConfigurationReader reader) throws JPAUnitNodeProcessingException;
 
 }

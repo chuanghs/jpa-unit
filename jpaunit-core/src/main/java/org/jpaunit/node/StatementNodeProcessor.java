@@ -1,7 +1,7 @@
 package org.jpaunit.node;
 
 import org.jpaunit.JPAUnitConfiguration;
-import org.jpaunit.exception.JPAUnitFileSyntaxException;
+import org.jpaunit.JPAUnitConfigurationReader;
 import org.jpaunit.exception.JPAUnitNodeProcessingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -15,10 +15,10 @@ import org.w3c.dom.NodeList;
  */
 public class StatementNodeProcessor implements INodeProcessor {
 
-    public void process(Node jpaUnitElement, JPAUnitConfiguration result) throws JPAUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, JPAUnitConfiguration result, JPAUnitConfigurationReader reader) throws JPAUnitNodeProcessingException {
         NodeList statementChildren = jpaUnitElement.getChildNodes();
         if (statementChildren.getLength() > 1) {
-            throw new JPAUnitNodeProcessingException("statement element is allowed only to have 1 child: CDATA");
+            throw new JPAUnitNodeProcessingException("statement element is allowed only to have 1 child: CDATA or text");
         }
         String statement = null;
 

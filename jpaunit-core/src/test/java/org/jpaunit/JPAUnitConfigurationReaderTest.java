@@ -27,14 +27,16 @@ import static org.mockito.Mockito.*;
 public class JPAUnitConfigurationReaderTest {
 
 
+
     @Test
     public void testReadStatements() throws JPAUnitFileReadException, IOException {
 
-        byte[] value = "<jpaunit><statement code=\"this code shouldnt be added\">code0</statement><statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement><statement code=\"code2\" /><statement code=\"code3\" /></jpaunit>".getBytes();
+        byte[] value = "<jpaunit> <statement code=\"this code shouldnt be added\">code0</statement><statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement><statement code=\"code2\" /><statement code=\"code3\" /></jpaunit>".getBytes();
         JPAUnitConfiguration mock = spy(new JPAUnitConfiguration());
-        new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), mock);
+        JPAUnitConfigurationReader reader = spy(new JPAUnitConfigurationReader());
+        reader.read(new ByteArrayInputStream(value), mock);
 
-        verify(mock, times(4)).getNodeProcessor(eq("statement"));
+        verify(reader, times(4)).getNodeProcessor(eq("statement"));
 
         verify(mock, times(1)).addStatement(Matchers.eq("code0"));
         verify(mock, times(1)).addStatement(Matchers.eq("code1"));
@@ -48,11 +50,12 @@ public class JPAUnitConfigurationReaderTest {
     @Test(expected = JPAUnitFileSyntaxException.class)
     public void testStatementWith2Children() throws JPAUnitFileReadException, IOException {
 
-        byte[] value = "<jpaunit><statement code=\"this code shouldnt be added\"><![CDATA[code1]]><somesubelem /></statement></jpaunit>".getBytes();
+        byte[] value = "<jpaunit> <statement code=\"this code shouldnt be added\"><![CDATA[code1]]><somesubelem /></statement></jpaunit>".getBytes();
         JPAUnitConfiguration mock = spy(new JPAUnitConfiguration());
-        new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), mock);
+        JPAUnitConfigurationReader reader = spy(new JPAUnitConfigurationReader());
+        reader.read(new ByteArrayInputStream(value), mock);
 
-        verify(mock, times(2)).getNodeProcessor(eq("statements"));
+        verify(reader, times(2)).getNodeProcessor(eq("statements"));
 
         verifyNoMoreInteractions(mock);
 
@@ -61,15 +64,17 @@ public class JPAUnitConfigurationReaderTest {
 
     @Test
     public void testImports() throws JPAUnitFileReadException, IOException {
-        byte[] value = "<jpaunit><import class=\"com.example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\"/></jpaunit>".getBytes();
+        byte[] value = ("<jpaunit> " +
+                "<import class=\"com.example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\"/></jpaunit>").getBytes();
 
         JPAUnitConfiguration mock = spy(new JPAUnitConfiguration());
-        new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), mock);
+        JPAUnitConfigurationReader reader = spy(new JPAUnitConfigurationReader());
+        reader.read(new ByteArrayInputStream(value), mock);
 
-        verify(mock, times(2)).getNodeProcessor(eq("import"));
+        verify(reader, times(2)).getNodeProcessor(eq("import"));
 
-        verify(mock, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
-        verify(mock, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
+        verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
+        verify(reader, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
 
         verify(mock).addImport(eq("com.example.SomeClass1"), eq("sc1"));
         verify(mock).addImport(eq("com.example.SomeClass"), eq("SomeClass"));
@@ -79,7 +84,10 @@ public class JPAUnitConfigurationReaderTest {
 
     @Test(expected = JPAUnitConfigurationException.class)
     public void testAmbiguousAlias() throws JPAUnitFileReadException, IOException {
-        byte[] value = "<jpaunit><import class=\"com.example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\" alias=\"sc1\"/></jpaunit>".getBytes();
+        byte[] value = ("<jpaunit>" +
+                "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
+                "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
+                "</jpaunit>").getBytes();
         new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), new JPAUnitConfiguration());
     }
 
@@ -108,10 +116,11 @@ public class JPAUnitConfigurationReaderTest {
         byte[] value = "<jpaunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\" alias=\"sc2\"/></jpaunit>".getBytes();
 
         JPAUnitConfiguration conf = spy(new JPAUnitConfiguration());
-        new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), conf);
+        JPAUnitConfigurationReader reader = spy(new JPAUnitConfigurationReader());
+        reader.read(new ByteArrayInputStream(value), conf);
 
-        verify(conf, times(1)).registerNodeProcessor(eq("sc1"), any(INodeProcessor.class));
-        verify(conf, times(1)).registerNodeProcessor(eq("sc2"), any(INodeProcessor.class));
+        verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(INodeProcessor.class));
+        verify(reader, times(1)).registerNodeProcessor(eq("sc2"), any(INodeProcessor.class));
     }
 
 

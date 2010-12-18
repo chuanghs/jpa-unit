@@ -12,4 +12,7 @@ public class JPAUnitConfigurationException extends RuntimeException {
         super(s);
     }
 
+    public JPAUnitConfigurationException(Throwable cause) {
+        super(cause);
+    }
 }

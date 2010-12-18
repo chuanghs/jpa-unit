@@ -1,7 +1,7 @@
 package org.jpaunit.node;
 
 import org.jpaunit.JPAUnitConfiguration;
-import org.jpaunit.exception.JPAUnitFileSyntaxException;
+import org.jpaunit.JPAUnitConfigurationReader;
 import org.jpaunit.exception.JPAUnitNodeProcessingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -15,7 +15,7 @@ import org.w3c.dom.Node;
 public class ImportNodeProcessor implements INodeProcessor {
 
 
-    public void process(Node jpaUnitElement, JPAUnitConfiguration result) throws JPAUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, JPAUnitConfiguration result, JPAUnitConfigurationReader reader) throws JPAUnitNodeProcessingException {
         NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
         Node classNode = importAttributes.getNamedItem("class");
         Node aliasNode = importAttributes.getNamedItem("alias");
@@ -30,5 +30,6 @@ public class ImportNodeProcessor implements INodeProcessor {
             alias = aliasNode.getNodeValue();
         }
         result.addImport(className, alias);
+        reader.registerNodeProcessor(alias, new EntityNodeProcessor(className));
     }
 }

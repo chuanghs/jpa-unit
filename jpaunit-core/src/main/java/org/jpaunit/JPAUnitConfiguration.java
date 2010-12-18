@@ -9,10 +9,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -23,18 +22,12 @@ import java.util.Map;
 public class JPAUnitConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(JPAUnitConfiguration.class);
+
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";
 
     private Map<String, String> imports = new HashMap<String, String>();
+
     private List<String> statements = new LinkedList<String>();
-
-    private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
-
-    public JPAUnitConfiguration(){
-        nodeProcessors.put("statement", new StatementNodeProcessor());
-        nodeProcessors.put("import", new ImportNodeProcessor());
-    }
-
 
     public void addStatement(String nodeValue) {
         statements.add(nodeValue);
@@ -64,15 +57,11 @@ public class JPAUnitConfiguration {
             throw new JPAUnitConfigurationException("className: " + className + " is invalid class name");
 
         imports.put(alias, className);
-        registerNodeProcessor(alias, new EntityNodeProcessor(className));
+
     }
 
 
-    public void registerNodeProcessor(String nodeName, INodeProcessor nodeProcessor) {
-        nodeProcessors.put(nodeName, nodeProcessor);
-    }
+    public void addEntity(Object entity) {
 
-    public INodeProcessor getNodeProcessor(String nodeName) {
-        return nodeProcessors.get(nodeName);
     }
 }
