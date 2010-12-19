@@ -25,4 +25,7 @@ public class JPAUnitCommandVisitor {
         this.entityManager.createNativeQuery(statement).executeUpdate();
     }
 
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
 }

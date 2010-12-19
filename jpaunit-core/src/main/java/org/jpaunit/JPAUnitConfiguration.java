@@ -26,9 +26,7 @@ public class JPAUnitConfiguration {
 
     private List<JPAUnitCommand> commands = new LinkedList<JPAUnitCommand>();
 
-    public void addStatement(String nodeValue) {
-        commands.add(new StatementCommand(nodeValue));
-    }
+
 
     public void addImport(String className, String alias) {
         if (imports.containsKey(alias)) {
@@ -48,8 +46,8 @@ public class JPAUnitConfiguration {
     }
 
 
-    public void addEntity(Object entity) {
-        commands.add(new EntityCommand(entity));
+    public void addCommand(JPAUnitCommand command) {
+        commands.add(command);
     }
 
     public void visit(JPAUnitCommandVisitor visitor) {

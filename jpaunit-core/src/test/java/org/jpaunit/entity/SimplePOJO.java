@@ -1,4 +1,4 @@
-package org.jpaunit.node;
+package org.jpaunit.entity;
 
 import java.sql.Timestamp;
 import java.util.Date;
@@ -9,10 +9,8 @@ import java.util.Date;
  * Date: 18.12.10
  * Time: 18:13
  */
-public class SimplePOJO {
+public class SimplePOJO extends BasePOJO {
 
-
-    private int integerValue;
     private double doubleValue;
     private boolean booleanValue;
     private String stringValue;
@@ -23,8 +21,33 @@ public class SimplePOJO {
 
     private SimplePOJO2 complexType;
 
-    public void setIntegerValue(int i) {
-        integerValue = i;
+
+    public double getDoubleValue() {
+        return doubleValue;
+    }
+
+    public boolean isBooleanValue() {
+        return booleanValue;
+    }
+
+    public String getStringValue() {
+        return stringValue;
+    }
+
+    public Timestamp getTimestampValue() {
+        return timestampValue;
+    }
+
+    public Date getDateValue() {
+        return dateValue;
+    }
+
+    public Long getLongValue() {
+        return longValue;
+    }
+
+    public Float getFloatValue() {
+        return floatValue;
     }
 
 
@@ -76,7 +99,7 @@ public class SimplePOJO {
 
         if (booleanValue != that.booleanValue) return false;
         if (Double.compare(that.doubleValue, doubleValue) != 0) return false;
-        if (integerValue != that.integerValue) return false;
+        if (getIntegerValue() != that.getIntegerValue()) return false;
         if (complexType != null ? !complexType.equals(that.complexType) : that.complexType != null) return false;
         if (dateValue != null ? !dateValue.equals(that.dateValue) : that.dateValue != null) return false;
         if (floatValue != null ? !floatValue.equals(that.floatValue) : that.floatValue != null) return false;
@@ -92,7 +115,7 @@ public class SimplePOJO {
     public int hashCode() {
         int result;
         long temp;
-        result = integerValue;
+        result = getIntegerValue();
         temp = doubleValue != +0.0d ? Double.doubleToLongBits(doubleValue) : 0L;
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (booleanValue ? 1 : 0);
@@ -108,7 +131,7 @@ public class SimplePOJO {
     @Override
     public String toString() {
         return "SimplePOJO{" +
-                "integerValue=" + integerValue +
+                "integerValue=" + getIntegerValue() +
                 ", doubleValue=" + doubleValue +
                 ", booleanValue=" + booleanValue +
                 ", stringValue='" + stringValue + '\'' +

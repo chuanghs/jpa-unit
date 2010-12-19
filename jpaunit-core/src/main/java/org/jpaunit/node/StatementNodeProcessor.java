@@ -2,6 +2,7 @@ package org.jpaunit.node;
 
 import org.jpaunit.JPAUnitConfiguration;
 import org.jpaunit.JPAUnitConfigurationReader;
+import org.jpaunit.command.StatementCommand;
 import org.jpaunit.exception.JPAUnitNodeProcessingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -34,6 +35,6 @@ public class StatementNodeProcessor implements INodeProcessor {
 
         }
         if (statement != null)
-            result.addStatement(statement);
+            result.addCommand(new StatementCommand(statement));
     }
 }

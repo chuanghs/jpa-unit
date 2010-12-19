@@ -1,11 +1,12 @@
 package org.jpaunit;
 
+import org.jpaunit.command.EntityCommand;
 import org.jpaunit.command.JPAUnitCommandVisitor;
-import org.jpaunit.node.SimplePOJO;
+import org.jpaunit.command.StatementCommand;
+import org.jpaunit.entity.SimplePOJO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InOrder;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import javax.persistence.EntityManager;
@@ -31,10 +32,10 @@ public class JPAUnitConfigurationTest {
         SimplePOJO simplePOJO1 = new SimplePOJO();
         SimplePOJO simplePOJO2 = new SimplePOJO();
 
-        jpaUnitConfiguration.addStatement("statement1");
-        jpaUnitConfiguration.addEntity(simplePOJO1);
-        jpaUnitConfiguration.addStatement("statement2");
-        jpaUnitConfiguration.addEntity(simplePOJO2);
+        jpaUnitConfiguration.addCommand(new StatementCommand("statement1"));
+        jpaUnitConfiguration.addCommand(new EntityCommand(simplePOJO1));
+        jpaUnitConfiguration.addCommand(new StatementCommand("statement2"));
+        jpaUnitConfiguration.addCommand(new EntityCommand(simplePOJO2));
 
         EntityManager entityManager = mock(EntityManager.class);
 

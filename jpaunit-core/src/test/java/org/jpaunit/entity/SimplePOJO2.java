@@ -1,4 +1,6 @@
-package org.jpaunit.node;
+package org.jpaunit.entity;
+
+import javax.persistence.Id;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,6 +12,7 @@ public class SimplePOJO2 {
 
     private String stringValue;
 
+
     private int intValue;
 
     public String getStringValue() {
@@ -20,6 +23,7 @@ public class SimplePOJO2 {
         this.stringValue = stringValue;
     }
 
+    @Id
     public int getIntValue() {
         return intValue;
     }

@@ -1,5 +1,6 @@
 package org.jpaunit;
 
+import org.jpaunit.command.StatementCommand;
 import org.jpaunit.exception.JPAUnitConfigurationException;
 import org.jpaunit.exception.JPAUnitFileReadException;
 import org.jpaunit.exception.JPAUnitFileSyntaxException;
@@ -37,10 +38,10 @@ public class JPAUnitConfigurationReaderTest {
 
         verify(reader, times(4)).getNodeProcessor(eq("statement"));
 
-        verify(mock, times(1)).addStatement(Matchers.eq("code0"));
-        verify(mock, times(1)).addStatement(Matchers.eq("code1"));
-        verify(mock, times(1)).addStatement(Matchers.eq("code2"));
-        verify(mock, times(1)).addStatement(Matchers.eq("code3"));
+        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code0")));
+        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code1")));
+        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code2")));
+        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code3")));
 
         verifyNoMoreInteractions(mock);
 

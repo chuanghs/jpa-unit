@@ -2,6 +2,9 @@ package org.jpaunit.node;
 
 import org.jpaunit.JPAUnitConfiguration;
 import org.jpaunit.JPAUnitConfigurationReader;
+import org.jpaunit.JPAUnitHelper;
+import org.jpaunit.command.EntityCommand;
+import org.jpaunit.command.EntityReference;
 import org.jpaunit.exception.JPAUnitNodeProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +18,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 /**
@@ -29,30 +30,22 @@ import java.util.*;
 public class EntityNodeProcessor implements INodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(EntityNodeProcessor.class);
-
-    private String className;
-
-    private Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
-            Integer.class,
-            int.class,
-            Double.class,
-            double.class,
-            Boolean.class,
-            boolean.class,
-            Long.class,
-            long.class,
-            Float.class,
-            float.class,
+    private static Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
+            Integer.class, int.class,
+            Double.class, double.class,
+            Boolean.class, boolean.class,
+            Long.class, long.class,
+            Float.class, float.class,
             Date.class,
             Timestamp.class,
             String.class));
 
+    public static final String ReferencePattern = "ref\\(.+\\)";
+
+
     private Map<Class, Map<String, PropertyDescriptor>> classDescriptors = new HashMap<Class, Map<String, PropertyDescriptor>>();
 
-    private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-
-    private DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
+    private String className;
 
     public EntityNodeProcessor(String className) {
         this.className = className;
@@ -66,9 +59,10 @@ public class EntityNodeProcessor implements INodeProcessor {
             Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(entityClass);
 
 
-            processEntity(entityElement, entity);
+            Set<EntityReference> references = new HashSet<EntityReference>();
+            processEntity(entityElement, entity, references);
 
-            result.addEntity(entity);
+            result.addCommand(new EntityCommand(entity, references));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -93,13 +87,13 @@ public class EntityNodeProcessor implements INodeProcessor {
         return descriptors;
     }
 
-    private Object processEntity(Node entityElement, Object entity) throws IntrospectionException, InvocationTargetException, ParseException, IllegalAccessException, JPAUnitNodeProcessingException, InstantiationException {
+    private Object processEntity(Node entityElement, Object entity, Set<EntityReference> references) throws IntrospectionException, InvocationTargetException, ParseException, IllegalAccessException, JPAUnitNodeProcessingException, InstantiationException {
         Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(entity.getClass());
 
         NamedNodeMap attributes = entityElement.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
-            set(entity, descriptors.get(attribute.getNodeName()), attribute.getNodeValue());
+            set(entity, descriptors.get(attribute.getNodeName()), attribute.getNodeValue(), references);
         }
 
         NodeList children = entityElement.getChildNodes();
@@ -115,21 +109,31 @@ public class EntityNodeProcessor implements INodeProcessor {
                 continue;
 
             if (isSimpleType(pd.getPropertyType())) {
-                String value = null;
+                String propertyValue = null;
                 NodeList childValues = child.getChildNodes();
                 if (childValues.getLength() > 1)
                     throw new JPAUnitNodeProcessingException("property is allowed to have only one child: CDATA or  text");
 
                 if (childValues.getLength() > 0) {
-                    Node childValue = childValues.item(0);
+                    Node propertyValueNode = childValues.item(0);
 
-                    if (childValue != null && (childValue.getNodeType() == Node.CDATA_SECTION_NODE || childValue.getNodeType() == Node.TEXT_NODE)) {
-                        value = childValue.getNodeValue();
+                    if (propertyValueNode != null && (propertyValueNode.getNodeType() == Node.CDATA_SECTION_NODE || propertyValueNode.getNodeType() == Node.TEXT_NODE)) {
+                        propertyValue = propertyValueNode.getNodeValue();
                     }
                 }
-                set(entity, pd, value);
+                set(entity, pd, propertyValue, references);
             } else {
-                Object entity1 = processEntity(child, pd.getPropertyType().newInstance());
+
+                if (child.getChildNodes().getLength() == 1){
+                    Node propertyValueNode = child.getChildNodes().item(0);
+                    String propertyValue;
+                    if (propertyValueNode != null && (propertyValueNode.getNodeType() == Node.CDATA_SECTION_NODE || propertyValueNode.getNodeType() == Node.TEXT_NODE)) {
+                        propertyValue = propertyValueNode.getNodeValue().trim();
+                        set(entity, pd, propertyValue, references);
+                        continue;
+                    }
+                }
+                Object entity1 = processEntity(child, pd.getPropertyType().newInstance(), references);
                 set(entity, pd, entity1);
             }
         }
@@ -155,7 +159,14 @@ public class EntityNodeProcessor implements INodeProcessor {
         setter.invoke(entity, value);
     }
 
-    private void set(Object entity, PropertyDescriptor pd, String value) throws IllegalAccessException, InvocationTargetException, ParseException {
+    private void set(Object entity, PropertyDescriptor pd, String value, Set<EntityReference> references) throws IllegalAccessException, InvocationTargetException, ParseException {
+
+        if (value != null && value.matches(ReferencePattern)) {
+            value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
+            references.add(new EntityReference(entity, pd, JPAUnitHelper.convert(JPAUnitHelper.getIdType(pd.getPropertyType()), value)));
+            return;
+        }
+
         if (pd == null) {
             log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + className);
             return;
@@ -166,24 +177,8 @@ public class EntityNodeProcessor implements INodeProcessor {
             return;
         }
 
+        setter.invoke(entity, JPAUnitHelper.convert(pd.getPropertyType(), value));
 
-        Class<?> propertyType = pd.getPropertyType();
-        if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
-            setter.invoke(entity, Integer.parseInt(value));
-        } else if (propertyType.equals(Double.class) || propertyType.equals(double.class)) {
-            setter.invoke(entity, Double.parseDouble(value));
-        } else if (propertyType.equals(Boolean.class) || propertyType.equals(boolean.class)) {
-            setter.invoke(entity, Boolean.parseBoolean(value));
-        } else if (propertyType.equals(Long.class) || propertyType.equals(long.class)) {
-            setter.invoke(entity, Long.parseLong(value));
-        } else if (propertyType.equals(Float.class) || propertyType.equals(float.class)) {
-            setter.invoke(entity, Float.parseFloat(value));
-        } else if (propertyType.equals(Date.class)) {
-            setter.invoke(entity, df.parse(value));
-        } else if (propertyType.equals(Timestamp.class)) {
-            setter.invoke(entity, new Timestamp(tf.parse(value).getTime()));
-        } else if (propertyType.equals(String.class)) {
-            setter.invoke(entity, value);
-        }
     }
+
 }
