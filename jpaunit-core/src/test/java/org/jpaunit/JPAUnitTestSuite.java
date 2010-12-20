@@ -1,6 +1,7 @@
 package org.jpaunit;
 
 import org.jpaunit.node.EntityNodeProcessorTest;
+import org.jpaunit.node.SimplePOJOTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -11,7 +12,9 @@ import org.junit.runners.Suite;
  * Time: 18:11
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({JPAUnitPropertiesTest.class,
+@Suite.SuiteClasses({
+        SimplePOJOTest.class,
+        JPAUnitPropertiesTest.class,
         JPAUnitConfigurationReaderTest.class,
         EntityNodeProcessorTest.class,
         JPAUnitConfigurationTest.class})

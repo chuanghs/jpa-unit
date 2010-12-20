@@ -32,23 +32,20 @@ public class JPAUnitConfigurationReader {
 
     private static final Logger log = LoggerFactory.getLogger(JPAUnitConfigurationReader.class);
 
-    public  static final String Properties_NodeProcessor_Prefix = "jpaunit.nodeprocessor.";
-    public  static final String JPAUnitPropertiesFileName       = "jpaunit.properties";
+    public static final String Properties_NodeProcessor_Prefix = "jpaunit.nodeprocessor.";
+    public static final String JPAUnitPropertiesFileName = "jpaunit.properties";
 
     private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
 
-    public JPAUnitConfigurationReader(){
-        this(readProperties("/"+JPAUnitPropertiesFileName));
-
-        //nodeProcessors.put("statement", new StatementNodeProcessor());
-        //nodeProcessors.put("import", new ImportNodeProcessor());
+    public JPAUnitConfigurationReader() {
+        this(readProperties("/" + JPAUnitPropertiesFileName));
     }
 
     public JPAUnitConfigurationReader(Properties properties) {
         Enumeration<?> enumeration = properties.propertyNames();
-        while (enumeration.hasMoreElements()){
+        while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
-            if (name.startsWith(Properties_NodeProcessor_Prefix)){
+            if (name.startsWith(Properties_NodeProcessor_Prefix)) {
                 String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
                 try {
                     Class<?> clazz = Class.forName(properties.getProperty(name));
@@ -62,13 +59,13 @@ public class JPAUnitConfigurationReader {
     }
 
 
-     public static Properties readProperties(String fileName) {
+    public static Properties readProperties(String fileName) {
         InputStream resourceAsStream = JPAUnitConfiguration.class.getResourceAsStream(fileName);
         Properties properties = new Properties();
         try {
             properties.load(resourceAsStream);
         } catch (IOException e) {
-            new JPAUnitConfigurationException(e);
+            throw new JPAUnitConfigurationException(e);
         } finally {
             if (resourceAsStream != null)
                 try {
@@ -80,7 +77,7 @@ public class JPAUnitConfigurationReader {
         return properties;
     }
 
-     public void registerNodeProcessor(String nodeName, INodeProcessor nodeProcessor) {
+    public void registerNodeProcessor(String nodeName, INodeProcessor nodeProcessor) {
         nodeProcessors.put(nodeName, nodeProcessor);
     }
 
@@ -91,8 +88,6 @@ public class JPAUnitConfigurationReader {
     public JPAUnitConfiguration read(InputStream stream) throws JPAUnitFileReadException {
         return this.read(stream, new JPAUnitConfiguration());
     }
-
-
 
 
     public JPAUnitConfiguration read(InputStream stream, JPAUnitConfiguration result) throws JPAUnitFileReadException {
@@ -108,19 +103,19 @@ public class JPAUnitConfigurationReader {
                 for (int i = 0; i < childNodes.getLength(); i++) {
                     Node jpaUnitElement = childNodes.item(i);
                     if (jpaUnitElement.getNodeType() != Node.ELEMENT_NODE)
-                            continue;
+                        continue;
 
                     // take nodeprocessor responsible for processing this type of node
                     INodeProcessor nodeProcessor = getNodeProcessor(jpaUnitElement.getNodeName());
-                    if (nodeProcessor!=null){
+                    if (nodeProcessor != null) {
                         // process node
 
                         try {
                             nodeProcessor.process(jpaUnitElement, result, this);
                         } catch (JPAUnitNodeProcessingException e) {
-                            throw new JPAUnitFileSyntaxException("error at node: "+i, e);
+                            throw new JPAUnitFileSyntaxException("error at node: " + i, e);
                         }
-                    }  else {
+                    } else {
                         // if no such processor exists output warning
                         // TODO: consider throwing an exception
                         String s = jpaUnitElement.getNodeName() + " element (" + i + ") does not have associated " + INodeProcessor.class.getCanonicalName();

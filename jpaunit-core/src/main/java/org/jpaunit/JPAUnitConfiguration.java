@@ -26,8 +26,6 @@ public class JPAUnitConfiguration {
 
     private List<JPAUnitCommand> commands = new LinkedList<JPAUnitCommand>();
 
-
-
     public void addImport(String className, String alias) {
         if (imports.containsKey(alias)) {
             if (!className.equals(imports.get(alias)))
