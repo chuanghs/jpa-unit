@@ -1,8 +1,6 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
-import org.ormunit.ORMUnitHelper;
+import org.ormunit.*;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
@@ -13,13 +11,10 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.sql.Timestamp;
 import java.text.ParseException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,23 +25,10 @@ import java.util.*;
 public class EntityNodeProcessor implements INodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(EntityNodeProcessor.class);
-    private static Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
-            Integer.class, int.class,
-            Double.class, double.class,
-            Boolean.class, boolean.class,
-            Long.class, long.class,
-            Float.class, float.class,
-            Date.class,
-            Timestamp.class,
-            String.class));
-
     public static final String ReferencePattern = "ref\\(.+\\)";
 
-
-    private Map<Class, Map<String, PropertyDescriptor>> classDescriptors = new HashMap<Class, Map<String, PropertyDescriptor>>();
-
-    private String className;
-    private ORMUnitConfigurationReader reader;
+    private final String className;
+    private final ORMUnitConfigurationReader reader;
 
     public EntityNodeProcessor(String className, ORMUnitConfigurationReader reader) {
         this.className = className;
@@ -58,11 +40,8 @@ public class EntityNodeProcessor implements INodeProcessor {
         try {
             entityClass = Class.forName(className);
             Object entity = entityClass.newInstance();
-            Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(entityClass);
-
-
             Set<EntityReference> references = new HashSet<EntityReference>();
-            processEntity(entityElement, entity, references);
+            processEntity(result.getProvider(), entityElement, entity, references);
 
             result.addCommand(new EntityCommand(entity, references));
         } catch (Exception e) {
@@ -72,30 +51,15 @@ public class EntityNodeProcessor implements INodeProcessor {
 
     }
 
-    private Map<String, PropertyDescriptor> getPropertyDescriptors(Class entityClass) throws IntrospectionException {
 
+    private Object processEntity(ORMProvider provider, Node entityElement, Object entity, Set<EntityReference> references) throws IntrospectionException, InvocationTargetException, ParseException, IllegalAccessException, ORMUnitNodeProcessingException, InstantiationException {
 
-        Map<String, PropertyDescriptor> descriptors = classDescriptors.get(entityClass);
-
-        if (descriptors == null) {
-            classDescriptors.put(entityClass, descriptors = new HashMap<String, PropertyDescriptor>());
-
-            PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(entityClass).getPropertyDescriptors();
-            for (PropertyDescriptor pd : propertyDescriptors) {
-                descriptors.put(pd.getName(), pd);
-            }
-        }
-
-        return descriptors;
-    }
-
-    private Object processEntity(Node entityElement, Object entity, Set<EntityReference> references) throws IntrospectionException, InvocationTargetException, ParseException, IllegalAccessException, ORMUnitNodeProcessingException, InstantiationException {
-        Map<String, PropertyDescriptor> descriptors = getPropertyDescriptors(entity.getClass());
+        ORMUnitIntrospector introspector = ORMUnitIntrospector.getInspector(entity.getClass());
 
         NamedNodeMap attributes = entityElement.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
-            set(entity, descriptors.get(attribute.getNodeName()), attribute.getNodeValue(), references);
+            set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
         }
 
         NodeList children = entityElement.getChildNodes();
@@ -103,14 +67,9 @@ public class EntityNodeProcessor implements INodeProcessor {
             Node child = children.item(childIndex);
             if (child.getNodeType() != Node.ELEMENT_NODE)
                 continue;
+            String propertyName = child.getNodeName();
 
-            String name = child.getNodeName();
-
-            PropertyDescriptor pd = descriptors.get(name);
-            if (pd == null)
-                continue;
-
-            if (isSimpleType(pd.getPropertyType())) {
+            if (introspector.isSimpleType(propertyName)) {
                 String propertyValue = null;
                 NodeList childValues = child.getChildNodes();
                 if (childValues.getLength() > 1)
@@ -123,64 +82,40 @@ public class EntityNodeProcessor implements INodeProcessor {
                         propertyValue = propertyValueNode.getNodeValue();
                     }
                 }
-                set(entity, pd, propertyValue, references);
+                set(provider, entity, propertyName, propertyValue, references);
             } else {
 
-                if (child.getChildNodes().getLength() == 1){
+                if (child.getChildNodes().getLength() == 1) {
                     Node propertyValueNode = child.getChildNodes().item(0);
                     String propertyValue;
                     if (propertyValueNode != null && (propertyValueNode.getNodeType() == Node.CDATA_SECTION_NODE || propertyValueNode.getNodeType() == Node.TEXT_NODE)) {
                         propertyValue = propertyValueNode.getNodeValue().trim();
-                        set(entity, pd, propertyValue, references);
+                        set(provider, entity, propertyName, propertyValue, references);
                         continue;
                     }
                 }
-                Object entity1 = processEntity(child, pd.getPropertyType().newInstance(), references);
-                set(entity, pd, entity1);
+                Object entity1 = processEntity(provider, child, introspector.newInstance(propertyName), references);
+                introspector.set(entity, propertyName, entity1);
             }
         }
         return entity;
     }
 
-
-    private boolean isSimpleType(Class<?> propertyType) {
-        return simpleTypes.contains(propertyType);
-    }
-
-    private void set(Object entity, PropertyDescriptor pd, Object value) throws InvocationTargetException, IllegalAccessException {
-        if (pd == null) {
-            log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + className);
-            return;
-        }
-        Method setter = pd.getWriteMethod();
-        if (setter == null) {
-            log.warn("there is no setter for property: " + pd.getName() + " of class: " + className);
-            return;
-        }
-
-        setter.invoke(entity, value);
-    }
-
-    private void set(Object entity, PropertyDescriptor pd, String value, Set<EntityReference> references) throws IllegalAccessException, InvocationTargetException, ParseException {
-
+    private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) throws IllegalAccessException, InvocationTargetException, ParseException, IntrospectionException {
+        ORMUnitIntrospector introspector = ORMUnitIntrospector.getInspector(entity.getClass());
         if (value != null && value.matches(ReferencePattern)) {
             value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
-            references.add(new EntityReference(entity, pd, ORMUnitHelper.convert(reader.getOrmProvider().getIdType(pd.getPropertyType()), value)));
+            references.add(new EntityReference(
+                    introspector,
+                    propertyName,
+                    ORMUnitHelper.convert(
+                            provider.getIdType(
+                                    introspector.getPropertyType(propertyName)),
+                            value)));
             return;
         }
 
-        if (pd == null) {
-            log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + className);
-            return;
-        }
-        Method setter = pd.getWriteMethod();
-        if (setter == null) {
-            log.warn("there is no setter for property: " + pd.getName() + " of class: " + className);
-            return;
-        }
-
-        setter.invoke(entity, ORMUnitHelper.convert(pd.getPropertyType(), value));
-
+        introspector.set(entity, propertyName, ORMUnitHelper.convert(introspector.getPropertyType(propertyName), value));
     }
 
 }

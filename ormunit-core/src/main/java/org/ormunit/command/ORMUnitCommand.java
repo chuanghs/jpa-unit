@@ -1,5 +1,7 @@
 package org.ormunit.command;
 
+import org.ormunit.ORMProvider;
+
 /**
  * Created by IntelliJ IDEA.
  * User: krzyzak
@@ -9,6 +11,6 @@ package org.ormunit.command;
  */
 public abstract class ORMUnitCommand {
 
-    public abstract void visit(ORMCommandVisitor visitor);
+    public abstract void visit(ORMProvider visitor);
 
 }

@@ -4,10 +4,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMUnitConfiguration;
 import org.ormunit.ORMUnitConfigurationReader;
-import org.ormunit.ORMUnitHelper;
+import org.ormunit.ORMUnitIntrospector;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.command.JPAORMProvider;
@@ -17,14 +16,9 @@ import org.ormunit.exception.ORMUnitFileReadException;
 
 import java.beans.IntrospectionException;
 import java.io.ByteArrayInputStream;
-import java.sql.Timestamp;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
@@ -65,7 +59,7 @@ public class EntityNodeProcessorTest {
 
         AttributeAccessEntity entity = new AttributeAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(entity, "complexType", 1));
+        references.add(new EntityReference(ORMUnitIntrospector.getInspector(entity.getClass()), "complexType", 1));
         verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
     }
 
@@ -83,7 +77,7 @@ public class EntityNodeProcessorTest {
 
         AttributeAccessEntity entity = new AttributeAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(entity, "complexType", 1));
+        references.add(new EntityReference(ORMUnitIntrospector.getInspector(entity.getClass()), "complexType", 1));
         verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
     }
 

@@ -1,10 +1,10 @@
 package org.ormunit.node;
 
 import junit.framework.Assert;
-import org.ormunit.entity.SimplePOJO;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ormunit.entity.SimplePOJO;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,7 +16,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 public class SimplePOJOTest {
 
     @Test
-    public void testEquals(){
+    public void testEquals() {
 
         Assert.assertEquals(new SimplePOJO(), new SimplePOJO());
         Assert.assertEquals(new SimplePOJO(), new SimplePOJO());

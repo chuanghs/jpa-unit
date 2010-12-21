@@ -1,11 +1,12 @@
 package org.ormunit.command;
 
+import org.ormunit.ORMProvider;
+
 /**
  * Created by IntelliJ IDEA.
  * User: krzyzak
  * Date: 28.12.10
  * Time: 16:05
- * To change this template use File | Settings | File Templates.
  */
 public class StatementCommand extends ORMUnitCommand {
 
@@ -17,7 +18,7 @@ public class StatementCommand extends ORMUnitCommand {
     }
 
     @Override
-    public void visit(ORMCommandVisitor visitor) {
+    public void visit(ORMProvider visitor) {
         visitor.statement(statement);
     }
 

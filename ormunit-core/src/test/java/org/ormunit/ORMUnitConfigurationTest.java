@@ -5,7 +5,6 @@ import org.junit.runner.RunWith;
 import org.mockito.InOrder;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.command.EntityCommand;
-import org.ormunit.command.ORMCommandVisitor;
 import org.ormunit.command.StatementCommand;
 import org.ormunit.entity.SimplePOJO;
 
@@ -23,7 +22,8 @@ public class ORMUnitConfigurationTest {
 
     @Test
     public void testExecutionOrder() {
-        ORMUnitConfiguration jpaUnitConfiguration = new ORMUnitConfiguration();
+        ORMProvider visitor = mock(ORMProvider.class);
+        ORMUnitConfiguration jpaUnitConfiguration = new ORMUnitConfiguration(visitor);
 
         SimplePOJO simplePOJO1 = new SimplePOJO();
         SimplePOJO simplePOJO2 = new SimplePOJO();
@@ -33,8 +33,8 @@ public class ORMUnitConfigurationTest {
         jpaUnitConfiguration.addCommand(new StatementCommand("statement2"));
         jpaUnitConfiguration.addCommand(new EntityCommand(simplePOJO2));
 
-        ORMCommandVisitor visitor = mock(ORMCommandVisitor.class);
-        jpaUnitConfiguration.visit(visitor);
+
+        jpaUnitConfiguration.execute();
 
         InOrder inOrder = inOrder(visitor);
 

@@ -1,8 +1,8 @@
 package org.ormunit.command;
 
+import org.ormunit.ORMUnitIntrospector;
+
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,36 +12,18 @@ import java.beans.PropertyDescriptor;
  */
 public class EntityReference {
 
-    private final PropertyDescriptor propertyDescriptor;
-
+    private ORMUnitIntrospector introspector;
+    private String propertyName;
     private final Object id;
-    private final Object entity;
 
-    public EntityReference(Object entity, String propertyName, Object id) throws IntrospectionException {
-        this.entity = entity;
-        PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(entity.getClass()).getPropertyDescriptors();
-        PropertyDescriptor propertyDescriptor = null;
-        for (PropertyDescriptor pd : propertyDescriptors){
-            if (pd.getName().equals(propertyName)){
-                propertyDescriptor = pd;
-                break;
-            }
-        }
-        if (propertyDescriptor == null)
-            throw new RuntimeException("non existing property: "+propertyName+" of class: "+entity.getClass().getCanonicalName());
-
-        this.propertyDescriptor = propertyDescriptor;
-        this.id = id;
-    }
-
-    public EntityReference(Object entity, PropertyDescriptor propertyDescriptor, Object id) {
-        this.entity = entity;
-        this.propertyDescriptor = propertyDescriptor;
+    public EntityReference(ORMUnitIntrospector introspector, String propertyName, Object id) throws IntrospectionException {
+        this.introspector = introspector;
+        this.propertyName = propertyName;
         this.id = id;
     }
 
     public Class getPropertyClass() {
-        return propertyDescriptor.getPropertyType();
+        return introspector.getPropertyType(propertyName);
     }
 
     public Object getId() {
@@ -49,14 +31,17 @@ public class EntityReference {
     }
 
     public void setReference(Object entity, Object reference) {
-        //To change body of created methods use File | Settings | File Templates.
+        try {
+            introspector.set(entity, propertyName, reference);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Override
     public String toString() {
         return "EntityReference{" +
-                ", entity=" + entity.hashCode() +
-                ", property=" + propertyDescriptor.getName() +
+                ", property=" + propertyName +
                 ", id=" + id +
                 '}';
     }
@@ -68,19 +53,18 @@ public class EntityReference {
 
         EntityReference that = (EntityReference) o;
 
-        if (entity != null ? !entity.equals(that.entity) : that.entity != null) return false;
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (propertyDescriptor != null ? !propertyDescriptor.getName().equals(that.propertyDescriptor!=null?that.propertyDescriptor.getName():null) : that.propertyDescriptor != null)
-            return false;
+        if (introspector != null ? !introspector.equals(that.introspector) : that.introspector != null) return false;
+        if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null) return false;
 
         return true;
     }
 
     @Override
     public int hashCode() {
-        int result = propertyDescriptor != null ? propertyDescriptor.getName().hashCode() : 0;
+        int result = introspector != null ? introspector.hashCode() : 0;
+        result = 31 * result + (propertyName != null ? propertyName.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
-        result = 31 * result + (entity != null ? entity.hashCode() : 0);
         return result;
     }
 }

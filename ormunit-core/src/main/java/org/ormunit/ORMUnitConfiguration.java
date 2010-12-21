@@ -1,12 +1,14 @@
 package org.ormunit;
 
-import org.ormunit.command.ORMCommandVisitor;
 import org.ormunit.command.ORMUnitCommand;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,9 +22,15 @@ public class ORMUnitConfiguration {
 
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";
 
-    private Map<String, String> imports = new HashMap<String, String>();
+    private final Map<String, String> imports = new HashMap<String, String>();
 
-    private List<ORMUnitCommand> commands = new LinkedList<ORMUnitCommand>();
+    private final List<ORMUnitCommand> commands = new LinkedList<ORMUnitCommand>();
+
+    private final ORMProvider provider;
+
+    public ORMUnitConfiguration(ORMProvider provider) {
+        this.provider = provider;
+    }
 
     public void addImport(String className, String alias) {
         if (imports.containsKey(alias)) {
@@ -46,9 +54,14 @@ public class ORMUnitConfiguration {
         commands.add(command);
     }
 
-    public void visit(ORMCommandVisitor visitor) {
-        for (ORMUnitCommand command : commands){
-            command.visit(visitor);
+
+    public void execute() {
+        for (ORMUnitCommand command : commands) {
+            command.visit(provider);
         }
+    }
+
+    public ORMProvider getProvider() {
+        return provider;
     }
 }

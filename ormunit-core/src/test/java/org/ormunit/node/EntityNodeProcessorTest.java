@@ -1,27 +1,21 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
-import org.ormunit.ORMUnitHelper;
-import org.ormunit.command.EntityCommand;
-import org.ormunit.command.EntityReference;
-import org.ormunit.entity.SimplePOJO;
-import org.ormunit.entity.SimplePOJO2;
-import org.ormunit.exception.ORMUnitFileReadException;
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ormunit.ORMProvider;
+import org.ormunit.ORMUnitConfiguration;
+import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.command.EntityCommand;
+import org.ormunit.entity.SimplePOJO;
+import org.ormunit.entity.SimplePOJO2;
+import org.ormunit.exception.ORMUnitFileReadException;
 
-import java.beans.IntrospectionException;
 import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -43,8 +37,8 @@ public class EntityNodeProcessorTest {
                 "   <pojo integerValue=\"1\" doubleValue=\"1.23\" booleanValue=\"true\" stringValue=\"string\" timestampValue=\"2010-12-18 18:22:00\" dateValue=\"2010-12-18\" />" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader(mock(ORMProvider.class)).read(bais, result);
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(mock(ORMProvider.class)));
+        new ORMUnitConfigurationReader().read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -57,6 +51,8 @@ public class EntityNodeProcessorTest {
         simplePOJO.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2010-12-18"));
         verify(result, times(1)).addImport(anyString(), anyString());
         verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
+        verify(result, times(1)).getProvider();
+
         verifyNoMoreInteractions(result);
     }
 
@@ -75,8 +71,8 @@ public class EntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader(mock(ORMProvider.class)).read(bais, result);
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(mock(ORMProvider.class)));
+        new ORMUnitConfigurationReader().read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -91,6 +87,7 @@ public class EntityNodeProcessorTest {
         simplePOJO.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2010-12-18"));
         verify(result, times(1)).addImport(anyString(), anyString());
         verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
+        verify(result, times(1)).getProvider();
         verifyNoMoreInteractions(result);
     }
 
@@ -108,8 +105,8 @@ public class EntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader(mock(ORMProvider.class)).read(bais, result);
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(mock(ORMProvider.class)));
+        new ORMUnitConfigurationReader().read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(2);
@@ -122,6 +119,8 @@ public class EntityNodeProcessorTest {
 
         verify(result, times(1)).addImport(anyString(), anyString());
         verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
+        verify(result, times(1)).getProvider();
+
         verifyNoMoreInteractions(result);
     }
 

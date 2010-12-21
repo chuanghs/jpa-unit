@@ -1,9 +1,9 @@
 package org.ormunit;
 
-import org.ormunit.node.EntityNodeProcessorTest;
-import org.ormunit.node.SimplePOJOTest;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.ormunit.node.EntityNodeProcessorTest;
+import org.ormunit.node.SimplePOJOTest;
 
 /**
  * Created by IntelliJ IDEA.

@@ -5,10 +5,15 @@ package org.ormunit;
  * User: krzyzak
  * Date: 30.12.10
  * Time: 10:33
- * To change this template use File | Settings | File Templates.
  */
 public interface ORMProvider {
 
     Class<?> getIdType(Class<?> propertyType);
+
+    void entity(Object entity);
+
+    void statement(String statement);
+
+    <T> T getReference(Class<T> propertyClass, Object id);
 
 }

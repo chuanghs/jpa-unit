@@ -1,5 +1,7 @@
 package org.ormunit.command;
 
+import org.ormunit.ORMProvider;
+
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,7 +27,7 @@ public class EntityCommand extends ORMUnitCommand {
     }
 
     @Override
-    public void visit(ORMCommandVisitor visitor) {
+    public void visit(ORMProvider visitor) {
 
         for (EntityReference ref : references) {
             Object reference = visitor.getReference(ref.getPropertyClass(), ref.getId());

@@ -38,14 +38,11 @@ public class ORMUnitConfigurationReader {
 
     private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
 
-    private final ORMProvider ormProvider;
-
-    public ORMUnitConfigurationReader(ORMProvider ormProvider) {
-        this(ormProvider, ORMUnitHelper.readOrmUnitProperties(ORMUnitConfigurationReader.class));
+    public ORMUnitConfigurationReader() {
+        this(ORMUnitHelper.readOrmUnitProperties(ORMUnitConfigurationReader.class));
     }
 
-    public ORMUnitConfigurationReader(ORMProvider ormProvider, Properties properties) {
-        this.ormProvider = ormProvider;
+    public ORMUnitConfigurationReader(Properties properties) {
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
@@ -71,8 +68,8 @@ public class ORMUnitConfigurationReader {
         return nodeProcessors.get(nodeName);
     }
 
-    public ORMUnitConfiguration read(InputStream stream) throws ORMUnitFileReadException {
-        return this.read(stream, new ORMUnitConfiguration());
+    public ORMUnitConfiguration read(ORMProvider provider, InputStream stream) throws ORMUnitFileReadException {
+        return this.read(stream, new ORMUnitConfiguration(provider));
     }
 
 
@@ -122,7 +119,4 @@ public class ORMUnitConfigurationReader {
         return result;
     }
 
-public ORMProvider getOrmProvider() {
-        return ormProvider;
-    }
 }

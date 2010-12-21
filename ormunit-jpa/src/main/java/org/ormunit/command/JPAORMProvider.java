@@ -1,10 +1,11 @@
 package org.ormunit.command;
 
 import org.ormunit.ORMProvider;
+import org.ormunit.ORMUnitIntrospector;
 
+import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
@@ -16,6 +17,30 @@ import java.lang.reflect.Field;
  * To change this template use File | Settings | File Templates.
  */
 public class JPAORMProvider implements ORMProvider {
+
+
+    private EntityManager entityManager;
+
+    public JPAORMProvider(EntityManager entityManager) {
+        this.entityManager = entityManager;
+    }
+
+    public void entity(Object entity) {
+        getEntityManager().persist(entity);
+    }
+
+    public void statement(String statement) {
+        getEntityManager().createNativeQuery(statement).executeUpdate();
+    }
+
+    public <T> T getReference(Class<T> propertyClass, Object id) {
+        return getEntityManager().getReference(propertyClass, id);  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
     public Class<?> getIdType(Class<?> propertyType) {
         Class type = propertyType;
         do {
@@ -27,7 +52,7 @@ public class JPAORMProvider implements ORMProvider {
 
 
         try {
-            for (PropertyDescriptor pd : Introspector.getBeanInfo(propertyType).getPropertyDescriptors()) {
+            for (PropertyDescriptor pd : ORMUnitIntrospector.getInspector(propertyType).getPDS()) {
                 if (pd.getReadMethod() != null) {
                     if (pd.getReadMethod().getAnnotation(Id.class) != null) {
                         return pd.getPropertyType();

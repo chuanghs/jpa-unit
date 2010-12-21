@@ -3,7 +3,6 @@ package org.ormunit.junit;
 import junit.framework.TestCase;
 import org.ormunit.ORMUnitConfigurationReader;
 import org.ormunit.command.JPAORMProvider;
-import org.ormunit.command.JPAUnitCommandVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +19,6 @@ import java.util.Properties;
  * User: krzyzak
  * Date: 30.12.10
  * Time: 11:25
- * To change this template use File | Settings | File Templates.
  */
 public abstract class JPAUnitTestCase extends TestCase {
 
@@ -67,9 +65,9 @@ public abstract class JPAUnitTestCase extends TestCase {
             em.getTransaction().begin();
 
             if (this.ormUnitFileName != null)
-                new ORMUnitConfigurationReader(new JPAORMProvider())
+                new ORMUnitConfigurationReader(new JPAORMProvider(getEm()))
                         .read(getClass().getResourceAsStream(this.ormUnitFileName))
-                        .visit(new JPAUnitCommandVisitor(getEm()));
+                        .execute();
         }
     }
 
