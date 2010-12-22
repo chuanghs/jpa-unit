@@ -8,7 +8,7 @@ package org.ormunit;
  */
 public interface ORMProvider {
 
-    Class<?> getIdType(Class<?> propertyType);
+    Class getIdType(Class<?> entityClass);
 
     void entity(Object entity);
 

@@ -1,9 +1,9 @@
 package org.ormunit.node;
 
-import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMUnitConfiguration;
 import org.ormunit.ORMUnitConfigurationReader;
 import org.ormunit.ORMUnitIntrospector;
@@ -14,6 +14,7 @@ import org.ormunit.entity.AttributeAccessEntity;
 import org.ormunit.entity.PropertyAccessEntity;
 import org.ormunit.exception.ORMUnitFileReadException;
 
+import javax.persistence.EntityManager;
 import java.beans.IntrospectionException;
 import java.io.ByteArrayInputStream;
 import java.util.HashSet;
@@ -28,22 +29,17 @@ import static org.mockito.Mockito.*;
  * Date: 18.12.10
  * Time: 17:56
  */
-@RunWith(JUnit4.class)
-public class EntityNodeProcessorTest {
+@RunWith(MockitoJUnitRunner.class)
+public class JPAEntityNodeProcessorTest {
 
-    @Test
-    public void testReferencePattern() {
-        Assert.assertFalse("ref()".matches(EntityNodeProcessor.ReferencePattern));
+    @Mock
+    private EntityManager em;
 
-        Assert.assertTrue("ref( )".matches(EntityNodeProcessor.ReferencePattern));
-        Assert.assertTrue("ref(1)".matches(EntityNodeProcessor.ReferencePattern));
-        Assert.assertTrue("ref(someStringReference)".matches(EntityNodeProcessor.ReferencePattern));
-    }
 
     @Test
     public void testExtractIdType() {
-        junit.framework.Assert.assertEquals(int.class, new JPAORMProvider().getIdType(AttributeAccessEntity.class));
-        junit.framework.Assert.assertEquals(Integer.class, new JPAORMProvider().getIdType(PropertyAccessEntity.class));
+        junit.framework.Assert.assertEquals(int.class, new JPAORMProvider(em).getIdType(AttributeAccessEntity.class));
+        junit.framework.Assert.assertEquals(Integer.class, new JPAORMProvider(em).getIdType(PropertyAccessEntity.class));
     }
 
     @Test
@@ -54,8 +50,8 @@ public class EntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader(new JPAORMProvider()).read(bais, result);
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
+        new ORMUnitConfigurationReader().read(bais, result);
 
         AttributeAccessEntity entity = new AttributeAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
@@ -72,8 +68,8 @@ public class EntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader(new JPAORMProvider()).read(bais, result);
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
+        new ORMUnitConfigurationReader().read(bais, result);
 
         AttributeAccessEntity entity = new AttributeAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();

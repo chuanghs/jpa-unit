@@ -65,8 +65,8 @@ public abstract class JPAUnitTestCase extends TestCase {
             em.getTransaction().begin();
 
             if (this.ormUnitFileName != null)
-                new ORMUnitConfigurationReader(new JPAORMProvider(getEm()))
-                        .read(getClass().getResourceAsStream(this.ormUnitFileName))
+                new ORMUnitConfigurationReader()
+                        .read(getClass().getResourceAsStream(this.ormUnitFileName), new JPAORMProvider(getEm()))
                         .execute();
         }
     }

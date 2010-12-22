@@ -2,7 +2,9 @@ package org.ormunit;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
-import org.ormunit.node.EntityNodeProcessorTest;
+import org.ormunit.node.CoreEntityNodeProcessorTest;
+import org.ormunit.node.ImportNodeProcessorTest;
+import org.ormunit.node.IncludeNodeProcessorTest;
 import org.ormunit.node.SimplePOJOTest;
 
 /**
@@ -15,9 +17,15 @@ import org.ormunit.node.SimplePOJOTest;
 @Suite.SuiteClasses({
         SimplePOJOTest.class,
         ORMUnitPropertiesTest.class,
+        ORMUnitHelperTest.class,
+        ORMUnitIntrospectorTest.class,
+
+        IncludeNodeProcessorTest.class,
+        ImportNodeProcessorTest.class,
+        CoreEntityNodeProcessorTest.class,
+
         ORMUnitConfigurationReaderTest.class,
-        EntityNodeProcessorTest.class,
-        ORMUnitConfigurationTest.class,
-        ORMUnitHelperTest.class})
+        ORMUnitConfigurationTest.class
+})
 public class ORMUnitTestSuite {
 }

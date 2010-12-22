@@ -68,7 +68,7 @@ public class ORMUnitConfigurationReader {
         return nodeProcessors.get(nodeName);
     }
 
-    public ORMUnitConfiguration read(ORMProvider provider, InputStream stream) throws ORMUnitFileReadException {
+    public ORMUnitConfiguration read(InputStream stream, ORMProvider provider) throws ORMUnitFileReadException {
         return this.read(stream, new ORMUnitConfiguration(provider));
     }
 

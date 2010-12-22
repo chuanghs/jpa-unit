@@ -9,8 +9,8 @@ import org.ormunit.command.StatementCommand;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
-import org.ormunit.node.EntityNodeProcessor;
 import org.ormunit.node.INodeProcessor;
+import org.ormunit.node.ImportNodeProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -69,44 +69,13 @@ public class ORMUnitConfigurationReaderTest {
 
 
     @Test
-    public void testImports() throws ORMUnitFileReadException, IOException {
-        byte[] value = ("<ormunit> " +
-                "<import class=\"com.example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
-
-
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
-        reader.read(new ByteArrayInputStream(value), configuration);
-
-        verify(reader, times(2)).getNodeProcessor(eq("import"));
-
-        verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
-        verify(reader, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
-
-        verify(configuration).addImport(eq("com.example.SomeClass1"), eq("sc1"));
-        verify(configuration).addImport(eq("com.example.SomeClass"), eq("SomeClass"));
-
-        verifyNoMoreInteractions(configuration);
-    }
-
-    @Test(expected = ORMUnitConfigurationException.class)
-    public void testAmbiguousAlias() throws ORMUnitFileReadException, IOException {
-        byte[] value = ("<ormunit>" +
-                "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
-                "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
-                "</ormunit>").getBytes();
-        new ORMUnitConfigurationReader()
-                .read(new ByteArrayInputStream(value), configuration);
-    }
-
-
-    @Test
     public void testInvalidClassNames1() throws ORMUnitFileReadException, IOException {
 
-        assertFalse("1com".matches(ORMUnitConfiguration.ClassNamePattern));
-        assertTrue("com".matches(ORMUnitConfiguration.ClassNamePattern));
-        assertTrue("com.example.Class".matches(ORMUnitConfiguration.ClassNamePattern));
-        assertTrue("$com._example.Class".matches(ORMUnitConfiguration.ClassNamePattern));
-        assertFalse("$com._example.1Class".matches(ORMUnitConfiguration.ClassNamePattern));
+        assertFalse("1com".matches(ImportNodeProcessor.ClassNamePattern));
+        assertTrue("com".matches(ImportNodeProcessor.ClassNamePattern));
+        assertTrue("com.example.Class".matches(ImportNodeProcessor.ClassNamePattern));
+        assertTrue("$com._example.Class".matches(ImportNodeProcessor.ClassNamePattern));
+        assertFalse("$com._example.1Class".matches(ImportNodeProcessor.ClassNamePattern));
 
     }
 

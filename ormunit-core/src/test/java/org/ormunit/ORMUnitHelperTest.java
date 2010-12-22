@@ -4,7 +4,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.ormunit.node.EntityNodeProcessorTest;
+import org.ormunit.node.CoreEntityNodeProcessorTest;
 
 import java.io.IOException;
 import java.util.Properties;
@@ -21,7 +21,7 @@ public class ORMUnitHelperTest {
 
     @Test
     public void testReadProperties() throws IOException {
-        Properties properties = ORMUnitHelper.readOrmUnitProperties(EntityNodeProcessorTest.class);
+        Properties properties = ORMUnitHelper.readOrmUnitProperties(CoreEntityNodeProcessorTest.class);
 
         Assert.assertEquals("toplevelvalue", properties.getProperty("toplevelproperty"));
         Assert.assertEquals("middlelevelvalue_replaced", properties.getProperty("middlelevelproperty"));

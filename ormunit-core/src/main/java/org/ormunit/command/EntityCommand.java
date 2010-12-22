@@ -49,6 +49,17 @@ public class EntityCommand extends ORMUnitCommand {
         return entity;
     }
 
+    private boolean sameReferences(EntityCommand that) {
+        if (that.references.size() != this.references.size())
+            return false;
+
+        for (EntityReference er : that.references) {
+            if (!this.references.contains(er))
+                return false;
+        }
+        return true;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -59,17 +70,6 @@ public class EntityCommand extends ORMUnitCommand {
         if (entity != null ? !entity.equals(that.entity) : that.entity != null) return false;
         if (references != null ? !sameReferences(that) : that.references != null) return false;
 
-        return true;
-    }
-
-    private boolean sameReferences(EntityCommand that) {
-        if (that.references.size() != this.references.size())
-            return false;
-
-        for (EntityReference er : that.references) {
-            if (!this.references.contains(er))
-                return false;
-        }
         return true;
     }
 
