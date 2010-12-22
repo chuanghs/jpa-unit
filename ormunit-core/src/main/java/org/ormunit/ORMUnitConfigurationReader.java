@@ -37,12 +37,23 @@ public class ORMUnitConfigurationReader {
     public static final String JPAUnitDefaultPropertiesFileName = "ormunit.default.properties";
 
     private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
+    private String currentDir;
+    private Class<?> workClass;
 
     public ORMUnitConfigurationReader() {
-        this(ORMUnitHelper.readOrmUnitProperties(ORMUnitConfigurationReader.class));
+        this(ORMUnitConfigurationReader.class);
+    }
+
+    public ORMUnitConfigurationReader(Class<?> workClass) {
+        this(workClass, ORMUnitHelper.readOrmUnitProperties(ORMUnitConfigurationReader.class));
     }
 
     public ORMUnitConfigurationReader(Properties properties) {
+        this(ORMUnitConfigurationReader.class, properties);
+    }
+
+    public ORMUnitConfigurationReader(Class<?> workClass, Properties properties) {
+        this.workClass = workClass;
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
@@ -56,6 +67,7 @@ public class ORMUnitConfigurationReader {
                 }
             }
         }
+        currentDir = "/" + workClass.getPackage().getName().replace(".", "/");
 
     }
 
@@ -119,4 +131,52 @@ public class ORMUnitConfigurationReader {
         return result;
     }
 
+    public ORMUnitConfiguration read(String filePath, ORMUnitConfiguration result) throws ORMUnitFileReadException {
+        filePath = filePath.replace("\\", "/").trim();
+
+
+        String workDir = this.currentDir;
+        try {
+            String fileName = null;
+            int lastSlash = filePath.lastIndexOf("/");
+
+            if (lastSlash > 0) {
+                fileName = filePath.substring(lastSlash + 1);
+                this.currentDir = this.currentDir + "/" + filePath.substring(0, lastSlash);
+            } else if (lastSlash == 1) {
+                fileName = filePath.substring(lastSlash + 1);
+                this.currentDir = filePath.substring(0, lastSlash);
+            } else {
+                fileName = filePath;
+            }
+
+            InputStream stream = null;
+
+            try {
+                stream = getResourceAsStream(currentDir + "/" + fileName);
+
+                read(stream, result);
+            } catch (Exception e) {
+                throw new ORMUnitFileReadException("file does not exist: " + fileName + "(workdir: " + this.currentDir + ")", e);
+            } finally {
+                if (stream != null)
+                    try {
+                        stream.close();
+                    } catch (IOException e) {
+                        log.warn("", e);
+                    }
+            }
+        } finally {
+            this.currentDir = workDir;
+        }
+        return result;
+    }
+
+    public InputStream getResourceAsStream(String s) {
+        return this.workClass.getResourceAsStream(s);
+    }
+
+    public String getCurrentDir() {
+        return currentDir;
+    }
 }

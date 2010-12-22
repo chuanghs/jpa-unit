@@ -1,6 +1,7 @@
 package org.ormunit.node;
 
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -8,9 +9,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnitConfiguration;
 import org.ormunit.ORMUnitConfigurationReader;
-import org.ormunit.ORMUnitIntrospector;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
+import org.ormunit.entity.PropertyAccessor;
 import org.ormunit.entity.SimplePOJO;
 import org.ormunit.entity.SimplePOJO2;
 import org.ormunit.exception.ORMUnitFileReadException;
@@ -40,6 +41,12 @@ public class CoreEntityNodeProcessorTest {
     @Mock
     ORMProvider ormProvider;
 
+    @Before
+    public void setUp() throws IntrospectionException {
+        when(ormProvider.getAccessor(eq(SimplePOJO.class))).thenReturn(new PropertyAccessor(SimplePOJO.class));
+        when(ormProvider.getAccessor(eq(SimplePOJO2.class))).thenReturn(new PropertyAccessor(SimplePOJO2.class));
+    }
+
     @Test
     public void testReferencePattern() {
         Assert.assertFalse("ref()".matches(EntityNodeProcessor.ReferencePattern));
@@ -56,7 +63,7 @@ public class CoreEntityNodeProcessorTest {
                 "   <pojo integerValue=\"1\" doubleValue=\"1.23\" booleanValue=\"true\" stringValue=\"string\" timestampValue=\"2010-12-18 18:22:00\" dateValue=\"2010-12-18\" />" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(mock(ORMProvider.class)));
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
         new ORMUnitConfigurationReader().read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
@@ -90,7 +97,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(mock(ORMProvider.class)));
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
         new ORMUnitConfigurationReader().read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
@@ -124,7 +131,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(mock(ORMProvider.class)));
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
         new ORMUnitConfigurationReader().read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
@@ -159,7 +166,7 @@ public class CoreEntityNodeProcessorTest {
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(ORMUnitIntrospector.getInspector(SimplePOJO.class), "complexType", 1));
+        references.add(new EntityReference(new PropertyAccessor(SimplePOJO.class), "complexType", 1));
         verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
 
 

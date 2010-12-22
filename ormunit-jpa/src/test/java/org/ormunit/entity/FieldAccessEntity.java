@@ -8,7 +8,7 @@ import javax.persistence.Id;
  * Date: 19.12.10
  * Time: 22:05
  */
-public class AttributeAccessEntity {
+public class FieldAccessEntity {
 
     @Id
     private int integerValue;
@@ -37,7 +37,7 @@ public class AttributeAccessEntity {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        AttributeAccessEntity that = (AttributeAccessEntity) o;
+        FieldAccessEntity that = (FieldAccessEntity) o;
 
         if (integerValue != that.integerValue) return false;
         if (complexType != null ? !complexType.equals(that.complexType) : that.complexType != null) return false;
@@ -54,7 +54,7 @@ public class AttributeAccessEntity {
 
     @Override
     public String toString() {
-        return "AttributeAccessEntity{" +
+        return "FieldAccessEntity{" +
                 "integerValue=" + integerValue +
                 ", complexType=" + complexType +
                 '}';

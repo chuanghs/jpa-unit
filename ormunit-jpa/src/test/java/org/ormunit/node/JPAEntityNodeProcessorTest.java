@@ -1,16 +1,17 @@
 package org.ormunit.node;
 
+import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ormunit.JPAORMProvider;
 import org.ormunit.ORMUnitConfiguration;
 import org.ormunit.ORMUnitConfigurationReader;
-import org.ormunit.ORMUnitIntrospector;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
-import org.ormunit.command.JPAORMProvider;
-import org.ormunit.entity.AttributeAccessEntity;
+import org.ormunit.entity.FieldAccessEntity;
+import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessEntity;
 import org.ormunit.exception.ORMUnitFileReadException;
 
@@ -38,14 +39,17 @@ public class JPAEntityNodeProcessorTest {
 
     @Test
     public void testExtractIdType() {
-        junit.framework.Assert.assertEquals(int.class, new JPAORMProvider(em).getIdType(AttributeAccessEntity.class));
+        junit.framework.Assert.assertEquals(int.class, new JPAORMProvider(em).getIdType(FieldAccessEntity.class));
         junit.framework.Assert.assertEquals(Integer.class, new JPAORMProvider(em).getIdType(PropertyAccessEntity.class));
     }
 
     @Test
     public void testComplexTypeWithReference() throws ORMUnitFileReadException, IntrospectionException {
+
+        Assert.assertEquals(new FieldAccessEntity(), new FieldAccessEntity());
+
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
-                "   <import class=\"org.ormunit.entity.AttributeAccessEntity\" alias=\"pojo\" /> " +
+                "   <import class=\"org.ormunit.entity.FieldAccessEntity\" alias=\"pojo\" /> " +
                 "   <pojo complexType=\"ref(1)\"> " +
                 "   </pojo>" +
                 "</ormunit>").getBytes());
@@ -53,16 +57,16 @@ public class JPAEntityNodeProcessorTest {
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
         new ORMUnitConfigurationReader().read(bais, result);
 
-        AttributeAccessEntity entity = new AttributeAccessEntity();
+        FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(ORMUnitIntrospector.getInspector(entity.getClass()), "complexType", 1));
+        references.add(new EntityReference(new FieldAccessor(entity.getClass()), "complexType", 1));
         verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
     }
 
     @Test
     public void testComplexTypeWithReferenceSubElement() throws ORMUnitFileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
-                "   <import class=\"org.ormunit.entity.AttributeAccessEntity\" alias=\"pojo\" /> " +
+                "   <import class=\"org.ormunit.entity.FieldAccessEntity\" alias=\"pojo\" /> " +
                 "   <pojo> " +
                 "       <complexType> ref(1) </complexType> " +
                 "   </pojo>" +
@@ -71,9 +75,9 @@ public class JPAEntityNodeProcessorTest {
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
         new ORMUnitConfigurationReader().read(bais, result);
 
-        AttributeAccessEntity entity = new AttributeAccessEntity();
+        FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(ORMUnitIntrospector.getInspector(entity.getClass()), "complexType", 1));
+        references.add(new EntityReference(new FieldAccessor(entity.getClass()), "complexType", 1));
         verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
     }
 

@@ -2,9 +2,10 @@ package org.ormunit.command;
 
 import org.hibernate.Session;
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnitIntrospector;
+import org.ormunit.entity.EntityAccessor;
 
 import java.beans.IntrospectionException;
+import java.io.Serializable;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,24 +21,23 @@ public class HibernateORMProvider implements ORMProvider {
         this.session = session;
     }
 
-    public Class<?> getIdType(Class<?> propertyType) {
-        try {
-            return ORMUnitIntrospector.getInspector(propertyType).getPropertyType(
-                    session.getSessionFactory().getClassMetadata(propertyType).getIdentifierPropertyName());
-        } catch (IntrospectionException e) {
-            throw new RuntimeException(e);
-        }
+    public Class<?> getIdType(Class<?> entityType) {
+        return session.getSessionFactory().getClassMetadata(entityType).getIdentifierType().getReturnedClass();
     }
 
     public void entity(Object entity) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        session.persist(entity);
     }
 
     public void statement(String statement) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        session.createSQLQuery(statement).executeUpdate();
     }
 
     public <T> T getReference(Class<T> propertyClass, Object id) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return (T) session.get(propertyClass, (Serializable) id);
+    }
+
+    public EntityAccessor getAccessor(Class<?> aClass) throws IntrospectionException {
+        return null;
     }
 }

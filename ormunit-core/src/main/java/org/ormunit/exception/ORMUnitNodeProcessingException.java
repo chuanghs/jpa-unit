@@ -14,4 +14,7 @@ public class ORMUnitNodeProcessingException extends Exception {
     }
 
 
+    public ORMUnitNodeProcessingException(Throwable e) {
+        super(e);
+    }
 }

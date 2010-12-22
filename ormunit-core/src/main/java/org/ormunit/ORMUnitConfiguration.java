@@ -39,4 +39,5 @@ public class ORMUnitConfiguration {
     public ORMProvider getProvider() {
         return provider;
     }
+
 }

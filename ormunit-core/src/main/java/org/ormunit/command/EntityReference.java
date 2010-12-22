@@ -1,6 +1,6 @@
 package org.ormunit.command;
 
-import org.ormunit.ORMUnitIntrospector;
+import org.ormunit.entity.EntityAccessor;
 
 import java.beans.IntrospectionException;
 
@@ -12,27 +12,27 @@ import java.beans.IntrospectionException;
  */
 public class EntityReference {
 
-    private ORMUnitIntrospector introspector;
+    private EntityAccessor entityAccessor;
     private String propertyName;
     private final Object id;
 
-    public EntityReference(ORMUnitIntrospector introspector, String propertyName, Object id) throws IntrospectionException {
-        this.introspector = introspector;
+    public EntityReference(EntityAccessor entityAccessor, String propertyName, Object id) throws IntrospectionException {
+        this.entityAccessor = entityAccessor;
         this.propertyName = propertyName;
         this.id = id;
     }
 
     public Class getPropertyClass() {
-        return introspector.getPropertyType(propertyName);
+        return entityAccessor.getPropertyType(propertyName);
     }
 
     public Object getId() {
         return id;
     }
 
-    public void setReference(Object entity, Object reference) {
+    public void set(Object entity, Object value) {
         try {
-            introspector.set(entity, propertyName, reference);
+            entityAccessor.set(entity, propertyName, value);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -54,7 +54,8 @@ public class EntityReference {
         EntityReference that = (EntityReference) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (introspector != null ? !introspector.equals(that.introspector) : that.introspector != null) return false;
+        if (entityAccessor != null ? !entityAccessor.equals(that.entityAccessor) : that.entityAccessor != null)
+            return false;
         if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null) return false;
 
         return true;
@@ -62,7 +63,7 @@ public class EntityReference {
 
     @Override
     public int hashCode() {
-        int result = introspector != null ? introspector.hashCode() : 0;
+        int result = entityAccessor != null ? entityAccessor.hashCode() : 0;
         result = 31 * result + (propertyName != null ? propertyName.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;

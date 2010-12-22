@@ -1,8 +1,12 @@
 package org.ormunit.node;
 
-import org.ormunit.*;
+import org.ormunit.ORMProvider;
+import org.ormunit.ORMUnitConfiguration;
+import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.ORMUnitHelper;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
+import org.ormunit.entity.EntityAccessor;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,7 +58,7 @@ public class EntityNodeProcessor implements INodeProcessor {
 
     private Object processEntity(ORMProvider provider, Node entityElement, Object entity, Set<EntityReference> references) throws IntrospectionException, InvocationTargetException, ParseException, IllegalAccessException, ORMUnitNodeProcessingException, InstantiationException {
 
-        ORMUnitIntrospector introspector = ORMUnitIntrospector.getInspector(entity.getClass());
+        EntityAccessor introspector = provider.getAccessor(entity.getClass());
 
         NamedNodeMap attributes = entityElement.getAttributes();
         for (int i = 0; i < attributes.getLength(); i++) {
@@ -102,7 +106,7 @@ public class EntityNodeProcessor implements INodeProcessor {
     }
 
     private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) throws IllegalAccessException, InvocationTargetException, ParseException, IntrospectionException {
-        ORMUnitIntrospector introspector = ORMUnitIntrospector.getInspector(entity.getClass());
+        EntityAccessor introspector = provider.getAccessor(entity.getClass());
         if (value != null && value.matches(ReferencePattern)) {
             value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
             references.add(new EntityReference(

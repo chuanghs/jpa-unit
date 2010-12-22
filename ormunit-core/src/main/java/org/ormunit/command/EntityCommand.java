@@ -31,7 +31,7 @@ public class EntityCommand extends ORMUnitCommand {
 
         for (EntityReference ref : references) {
             Object reference = visitor.getReference(ref.getPropertyClass(), ref.getId());
-            ref.setReference(getEntity(), reference);
+            ref.set(getEntity(), reference);
         }
         visitor.entity(this.entity);
 

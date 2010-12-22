@@ -11,12 +11,13 @@ import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
 import org.ormunit.node.INodeProcessor;
 import org.ormunit.node.ImportNodeProcessor;
+import org.ormunit.node.IncludeNodeProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
 
 /**
@@ -115,5 +116,62 @@ public class ORMUnitConfigurationReaderTest {
         byte[] value = "some non xml content".getBytes();
         new ORMUnitConfigurationReader()
                 .read(new ByteArrayInputStream(value), configuration);
+    }
+
+    @Test
+    public void testInclude() throws ORMUnitFileReadException {
+        String workDir = "/" + ORMUnitConfigurationReader.class.getPackage().getName().replace(".", "/");
+
+        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader());
+        IncludeNodeProcessor includeNodeProcessor = new IncludeNodeProcessor();
+
+        doReturn(new ByteArrayInputStream("<ormunit></ormunit>".getBytes())).when(configurationReader).getResourceAsStream(eq(workDir + "/someOtherFile.xml"));
+
+        includeNodeProcessor.include("someOtherFile.xml", configurationReader, configuration);
+
+
+        verify(configurationReader, times(1)).read(eq("someOtherFile.xml"), same(configuration));
+    }
+
+    @Test
+    public void testIncludeChangeWorkDir1() throws ORMUnitFileReadException {
+        //byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
+
+        String workDir = "/" + ORMUnitConfigurationReader.class.getPackage().getName().replace(".", "/");
+
+        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader());
+        IncludeNodeProcessor includeNodeProcessor = new IncludeNodeProcessor();
+
+        doReturn(configuration).when(configurationReader).read(any(InputStream.class), same(configuration));
+
+        includeNodeProcessor.include("../someOtherFile.xml", configurationReader, configuration);
+
+        verify(configurationReader, times(1)).read(eq("../someOtherFile.xml"), same(configuration));
+        verify(configurationReader, times(1)).getResourceAsStream(eq(workDir + "/../someOtherFile.xml"));
+
+        assertEquals(workDir, configurationReader.getCurrentDir());
+    }
+
+
+    @Test
+    public void testIncludeChangeWorkDirRecurrent() throws ORMUnitFileReadException {
+        byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
+
+        String workDir = "/" + ORMUnitConfigurationReader.class.getPackage().getName().replace(".", "/");
+
+        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader());
+
+
+//        doReturn(configuration).when(configurationReader).read(any(InputStream.class), same(configuration));
+        doReturn(new ByteArrayInputStream("<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes())).when(configurationReader).getResourceAsStream(workDir + "/../someOtherFile.xml");
+        doReturn(new ByteArrayInputStream("<ormunit></ormunit>".getBytes())).when(configurationReader).getResourceAsStream(workDir + "/../../someOtherFile.xml");
+
+        configurationReader.read(new ByteArrayInputStream(value), configuration);
+
+        verify(configurationReader, times(2)).read(eq("../someOtherFile.xml"), same(configuration));
+        verify(configurationReader, times(1)).getResourceAsStream(eq(workDir + "/../someOtherFile.xml"));
+        verify(configurationReader, times(1)).getResourceAsStream(eq(workDir + "/../../someOtherFile.xml"));
+
+        assertEquals(workDir, configurationReader.getCurrentDir());
     }
 }
