@@ -28,7 +28,7 @@ public interface EntityAccessor {
 
     boolean isSimpleType(String propertyName);
 
-    Class<Object> getPropertyType(String propertyName);
+    Class getPropertyType(String propertyName);
 
     void set(Object entity, String propertyName, Object value);
 }

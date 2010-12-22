@@ -17,7 +17,7 @@ import java.util.Map;
  * Date: 21.12.10
  * Time: 21:15
  */
-public class PropertyAccessor implements EntityAccessor {
+public class PropertyAccessor extends AEntityAccessor {
 
     private static final Logger log = LoggerFactory.getLogger(PropertyAccessor.class);
 
@@ -59,9 +59,6 @@ public class PropertyAccessor implements EntityAccessor {
         return isSimpleType(descriptors.get(propertyName).getPropertyType());
     }
 
-    public boolean isSimpleType(Class<?> propertyType) {
-        return simpleTypes.contains(propertyType);
-    }
 
     public Object newInstance(String nodeName) {
         try {

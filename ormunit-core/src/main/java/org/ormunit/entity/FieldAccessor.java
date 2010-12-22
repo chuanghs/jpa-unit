@@ -14,7 +14,7 @@ import java.util.Map;
  * Date: 21.12.10
  * Time: 21:15
  */
-public class FieldAccessor implements EntityAccessor {
+public class FieldAccessor extends AEntityAccessor {
 
     private static final Logger log = LoggerFactory.getLogger(FieldAccessor.class);
 
@@ -47,16 +47,28 @@ public class FieldAccessor implements EntityAccessor {
         return isSimpleType(descriptors.get(propertyName).getType());
     }
 
-    public boolean isSimpleType(Class<?> propertyType) {
-        return simpleTypes.contains(propertyType);
-    }
 
     public Object newInstance(String nodeName) {
         try {
-            return descriptors.get(nodeName).getType().newInstance();
+            Class<?> type = descriptors.get(nodeName).getType();
+            if (!isSimpleType(type))
+                return type.newInstance();
+            else {
+                if (type == Integer.class || type == int.class)
+                    return 0;
+                if (type == Long.class || type == long.class)
+                    return 0l;
+                if (type == Double.class || type == double.class)
+                    return 0d;
+                if (type == Float.class || type == float.class)
+                    return 0f;
+                if (type == Boolean.class || type == boolean.class)
+                    return false;
+            }
         } catch (Exception e) {
             throw new ORMEntityAccessException(e);
         }
+        return null;
     }
 
     public void set(Object entity, String propertyName, Object value) {

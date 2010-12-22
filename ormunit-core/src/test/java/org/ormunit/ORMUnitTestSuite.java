@@ -2,6 +2,7 @@ package org.ormunit;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.ormunit.entity.EntityAccessorTest;
 import org.ormunit.node.CoreEntityNodeProcessorTest;
 import org.ormunit.node.ImportNodeProcessorTest;
 import org.ormunit.node.IncludeNodeProcessorTest;
@@ -19,6 +20,8 @@ import org.ormunit.node.SimplePOJOTest;
         ORMUnitPropertiesTest.class,
         ORMUnitHelperTest.class,
         ORMUnitIntrospectorTest.class,
+
+        EntityAccessorTest.class,
 
         IncludeNodeProcessorTest.class,
         ImportNodeProcessorTest.class,
