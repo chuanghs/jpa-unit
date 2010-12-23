@@ -2,8 +2,6 @@ package org.ormunit.command;
 
 import org.ormunit.entity.EntityAccessor;
 
-import java.beans.IntrospectionException;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Tomasz Krzyzak
@@ -16,7 +14,7 @@ public class EntityReference {
     private String propertyName;
     private final Object id;
 
-    public EntityReference(EntityAccessor entityAccessor, String propertyName, Object id) throws IntrospectionException {
+    public EntityReference(EntityAccessor entityAccessor, String propertyName, Object id) {
         this.entityAccessor = entityAccessor;
         this.propertyName = propertyName;
         this.id = id;

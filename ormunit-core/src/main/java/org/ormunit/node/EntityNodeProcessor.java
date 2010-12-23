@@ -7,6 +7,9 @@ import org.ormunit.ORMUnitHelper;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.EntityAccessor;
+import org.ormunit.exception.ConvertionException;
+import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.ORMUnitFileSyntaxException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,9 +17,6 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-import java.text.ParseException;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -56,7 +56,7 @@ public class EntityNodeProcessor implements INodeProcessor {
     }
 
 
-    private Object processEntity(ORMProvider provider, Node entityElement, Object entity, Set<EntityReference> references) throws IntrospectionException, InvocationTargetException, ParseException, IllegalAccessException, ORMUnitNodeProcessingException, InstantiationException {
+    private Object processEntity(ORMProvider provider, Node entityElement, Object entity, Set<EntityReference> references) throws ORMUnitFileReadException {
 
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
 
@@ -77,13 +77,13 @@ public class EntityNodeProcessor implements INodeProcessor {
                 String propertyValue = null;
                 NodeList childValues = child.getChildNodes();
                 if (childValues.getLength() > 1)
-                    throw new ORMUnitNodeProcessingException("property is allowed to have only one child: CDATA or  text");
+                    throw new ORMUnitFileSyntaxException("property is allowed to have only one child: CDATA or  text");
 
                 if (childValues.getLength() > 0) {
                     Node propertyValueNode = childValues.item(0);
 
                     if (propertyValueNode != null && (propertyValueNode.getNodeType() == Node.CDATA_SECTION_NODE || propertyValueNode.getNodeType() == Node.TEXT_NODE)) {
-                        propertyValue = propertyValueNode.getNodeValue();
+                        propertyValue = propertyValueNode.getNodeValue().trim();
                     }
                 }
                 set(provider, entity, propertyName, propertyValue, references);
@@ -105,21 +105,26 @@ public class EntityNodeProcessor implements INodeProcessor {
         return entity;
     }
 
-    private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) throws IllegalAccessException, InvocationTargetException, ParseException, IntrospectionException {
+    private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) {
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
-        if (value != null && value.matches(ReferencePattern)) {
-            value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
-            references.add(new EntityReference(
-                    introspector,
-                    propertyName,
-                    ORMUnitHelper.convert(
-                            provider.getIdType(
-                                    introspector.getType(propertyName)),
-                            value)));
-            return;
-        }
+        try {
+            if (value != null && value.matches(ReferencePattern)) {
+                value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
+                references.add(new EntityReference(
+                        introspector,
+                        propertyName,
+                        ORMUnitHelper.convert(
+                                provider.getIdType(introspector.getType(propertyName)),
+                                value)));
 
-        introspector.set(entity, propertyName, ORMUnitHelper.convert(introspector.getType(propertyName), value));
+            } else {
+                introspector.set(entity, propertyName, ORMUnitHelper.convert(
+                        introspector.getType(propertyName),
+                        value));
+            }
+        } catch (ConvertionException e) {
+            throw new ORMUnitNodeProcessingException(e);
+        }
     }
 
 }

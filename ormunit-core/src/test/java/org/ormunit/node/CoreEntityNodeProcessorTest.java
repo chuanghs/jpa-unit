@@ -123,7 +123,6 @@ public class CoreEntityNodeProcessorTest {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo integerValue=\"2\"> " +
-                "       <booleanValue></booleanValue> " +
                 "       <doubleValue>1.23</doubleValue> " +
                 "       <complexType intValue=\"1\"> " +
                 "           <stringValue>1</stringValue> " +

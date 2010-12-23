@@ -5,9 +5,8 @@ package org.ormunit.exception;
  * User: krzyzak
  * Date: 23.12.10
  * Time: 17:11
- * To change this template use File | Settings | File Templates.
  */
-public class ORMUnitNodeProcessingException extends Exception {
+public class ORMUnitNodeProcessingException extends RuntimeException {
 
     public ORMUnitNodeProcessingException(String message) {
         super(message);

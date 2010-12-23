@@ -1,12 +1,12 @@
 package org.ormunit;
 
+import org.ormunit.exception.ConvertionException;
 import org.ormunit.exception.ORMUnitConfigurationException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -23,25 +23,38 @@ public class ORMUnitHelper {
     public static DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 
-    public static Object convert(Class<?> propertyType, String value) throws ParseException {
-        if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
-            return Integer.parseInt(value);
-        } else if (propertyType.equals(Double.class) || propertyType.equals(double.class)) {
-            return Double.parseDouble(value);
-        } else if (propertyType.equals(Boolean.class) || propertyType.equals(boolean.class)) {
-            return Boolean.parseBoolean(value);
-        } else if (propertyType.equals(Long.class) || propertyType.equals(long.class)) {
-            return Long.parseLong(value);
-        } else if (propertyType.equals(Float.class) || propertyType.equals(float.class)) {
-            return Float.parseFloat(value);
-        } else if (propertyType.equals(Date.class)) {
-            return df.parse(value);
-        } else if (propertyType.equals(Timestamp.class)) {
-            return new Timestamp(tf.parse(value).getTime());
-        } else if (propertyType.equals(String.class)) {
-            return value;
+    public static Object convert(Class<?> propertyType, String value) throws ConvertionException {
+        try {
+            if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
+                return Integer.parseInt(value);
+            } else if (propertyType.equals(Double.class) || propertyType.equals(double.class)) {
+                return Double.parseDouble(value);
+            } else if (propertyType.equals(Boolean.class) || propertyType.equals(boolean.class)) {
+                if ("true".equalsIgnoreCase(value))
+                    return true;
+                if ("false".equalsIgnoreCase(value))
+                    return false;
+                throw new IllegalArgumentException(value + " is neither true nor false");
+            } else if (propertyType.equals(Long.class) || propertyType.equals(long.class)) {
+                return Long.parseLong(value);
+            } else if (propertyType.equals(Float.class) || propertyType.equals(float.class)) {
+                return Float.parseFloat(value);
+            } else if (propertyType.equals(Character.class) || propertyType.equals(char.class)) {
+                return value.charAt(0);
+            } else if (propertyType.equals(Byte.class) || propertyType.equals(byte.class)) {
+                return Byte.parseByte(value);
+            } else if (propertyType.equals(Date.class)) {
+                return df.parse(value);
+            } else if (propertyType.equals(Timestamp.class)) {
+                return new Timestamp(tf.parse(value).getTime());
+            } else if (propertyType.equals(String.class)) {
+                return value;
+            }
+        } catch (Exception pe) {
+            throw new ConvertionException(pe);
         }
-        throw new RuntimeException("unsupported propertyType: " + propertyType.getCanonicalName());
+        throw new ConvertionException("unsupported propertyType: " + propertyType.getCanonicalName());
+
     }
 
     public static Properties readOrmUnitProperties(Class<?> start) {
@@ -70,7 +83,7 @@ public class ORMUnitHelper {
     }
 
     public static Properties readDefaults() {
-        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream("/"+ORMUnitConfigurationReader.JPAUnitDefaultPropertiesFileName);
+        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream("/" + ORMUnitConfigurationReader.JPAUnitDefaultPropertiesFileName);
         Properties properties = new Properties();
         try {
             properties.load(resourceAsStream);

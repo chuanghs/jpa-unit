@@ -2,8 +2,6 @@ package org.ormunit;
 
 import org.ormunit.entity.EntityAccessor;
 
-import java.beans.IntrospectionException;
-
 /**
  * Created by IntelliJ IDEA.
  * User: krzyzak
@@ -20,5 +18,5 @@ public interface ORMProvider {
 
     <T> T getReference(Class<T> propertyClass, Object id);
 
-    EntityAccessor getAccessor(Class<?> aClass) throws IntrospectionException;
+    EntityAccessor getAccessor(Class<?> aClass);
 }
