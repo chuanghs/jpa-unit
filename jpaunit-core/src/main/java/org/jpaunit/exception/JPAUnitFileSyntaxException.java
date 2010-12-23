@@ -6,7 +6,7 @@ package org.jpaunit.exception;
  * Date: 12.12.10
  * Time: 21:11
  */
-public class JPAUnitFileSyntaxException extends RuntimeException {
+public class JPAUnitFileSyntaxException extends JPAUnitFileReadException {
     public JPAUnitFileSyntaxException() {
     }
 

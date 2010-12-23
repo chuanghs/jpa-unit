@@ -8,7 +8,7 @@ import javax.xml.parsers.ParserConfigurationException;
  * Date: 12.12.10
  * Time: 20:47
  */
-public class JPAUnitFileReadException extends Throwable {
+public class JPAUnitFileReadException extends Exception {
 
     public JPAUnitFileReadException(String message, Throwable cause) {
         super(message, cause);
@@ -21,7 +21,7 @@ public class JPAUnitFileReadException extends Throwable {
         super(message);
     }
 
-    public JPAUnitFileReadException(Exception e) {
-
+    public JPAUnitFileReadException(Throwable e) {
+        super(e);
     }
 }
