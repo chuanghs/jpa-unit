@@ -15,6 +15,8 @@ import java.util.Set;
 public interface EntityAccessor {
 
     Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
+            Byte.class, byte.class,
+            Character.class, char.class,
             Integer.class, int.class,
             Double.class, double.class,
             Boolean.class, boolean.class,
@@ -28,7 +30,7 @@ public interface EntityAccessor {
 
     boolean isSimpleType(String propertyName);
 
-    Class getPropertyType(String propertyName);
+    Class getType(String propertyName);
 
     void set(Object entity, String propertyName, Object value);
 }

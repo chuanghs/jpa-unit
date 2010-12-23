@@ -44,27 +44,13 @@ public class PropertyAccessor extends AEntityAccessor {
         return descriptors.get(propertyName);
     }
 
-    public Class getPropertyType(String propertyName) {
+    public Class getType(String propertyName) {
         PropertyDescriptor propertyDescriptor = descriptors.get(propertyName);
         if (propertyDescriptor != null)
             return propertyDescriptor.getPropertyType();
         else {
             log.warn("no property: " + propertyName + " in class: " + clazz.getCanonicalName());
             return null;
-        }
-    }
-
-
-    public boolean isSimpleType(String propertyName) {
-        return isSimpleType(descriptors.get(propertyName).getPropertyType());
-    }
-
-
-    public Object newInstance(String nodeName) {
-        try {
-            return getPD(nodeName).getPropertyType().newInstance();
-        } catch (Exception e) {
-            throw new ORMEntityAccessException(e);
         }
     }
 

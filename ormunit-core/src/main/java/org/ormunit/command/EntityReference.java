@@ -23,7 +23,7 @@ public class EntityReference {
     }
 
     public Class getPropertyClass() {
-        return entityAccessor.getPropertyType(propertyName);
+        return entityAccessor.getType(propertyName);
     }
 
     public Object getId() {

@@ -114,12 +114,12 @@ public class EntityNodeProcessor implements INodeProcessor {
                     propertyName,
                     ORMUnitHelper.convert(
                             provider.getIdType(
-                                    introspector.getPropertyType(propertyName)),
+                                    introspector.getType(propertyName)),
                             value)));
             return;
         }
 
-        introspector.set(entity, propertyName, ORMUnitHelper.convert(introspector.getPropertyType(propertyName), value));
+        introspector.set(entity, propertyName, ORMUnitHelper.convert(introspector.getType(propertyName), value));
     }
 
 }

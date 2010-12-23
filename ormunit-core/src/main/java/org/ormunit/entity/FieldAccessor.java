@@ -18,22 +18,22 @@ public class FieldAccessor extends AEntityAccessor {
 
     private static final Logger log = LoggerFactory.getLogger(FieldAccessor.class);
 
-    private Map<String, Field> descriptors = new HashMap<String, Field>();
+    private Map<String, Field> fields = new HashMap<String, Field>();
     private Class<?> clazz;
 
     public FieldAccessor(Class<?> clazz) {
         this.clazz = clazz;
         for (Field f : clazz.getDeclaredFields()) {
-            descriptors.put(f.getName(), f);
+            fields.put(f.getName(), f);
         }
     }
 
     public Field[] getFields() {
-        return descriptors.values().toArray(new Field[descriptors.size()]);
+        return fields.values().toArray(new Field[fields.size()]);
     }
 
-    public Class getPropertyType(String propertyName) {
-        Field f = descriptors.get(propertyName);
+    public Class getType(String propertyName) {
+        Field f = fields.get(propertyName);
         if (f != null)
             return f.getType();
         else {
@@ -42,38 +42,9 @@ public class FieldAccessor extends AEntityAccessor {
         }
     }
 
-
-    public boolean isSimpleType(String propertyName) {
-        return isSimpleType(descriptors.get(propertyName).getType());
-    }
-
-
-    public Object newInstance(String nodeName) {
-        try {
-            Class<?> type = descriptors.get(nodeName).getType();
-            if (!isSimpleType(type))
-                return type.newInstance();
-            else {
-                if (type == Integer.class || type == int.class)
-                    return 0;
-                if (type == Long.class || type == long.class)
-                    return 0l;
-                if (type == Double.class || type == double.class)
-                    return 0d;
-                if (type == Float.class || type == float.class)
-                    return 0f;
-                if (type == Boolean.class || type == boolean.class)
-                    return false;
-            }
-        } catch (Exception e) {
-            throw new ORMEntityAccessException(e);
-        }
-        return null;
-    }
-
     public void set(Object entity, String propertyName, Object value) {
         try {
-            Field pd = descriptors.get(propertyName);
+            Field pd = fields.get(propertyName);
             if (pd == null) {
                 log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
                 return;

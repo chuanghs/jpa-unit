@@ -23,20 +23,45 @@ public class EntityAccessorTest {
 
     }
 
+    class PropertyEntity {
+        private boolean booleanValue;
+
+        public boolean isBooleanValue() {
+            return booleanValue;
+        }
+
+        public void setBooleanValue(boolean booleanValue) {
+            this.booleanValue = booleanValue;
+        }
+    }
+
 
     FieldAccessor fieldAccessor = new FieldAccessor(FieldEntity.class);
+
+    @Test
+    public void testEquals_hashcode() {
+        FieldAccessor fieldAccessor1 = new FieldAccessor(FieldEntity.class);
+        FieldAccessor fieldAccessor2 = new FieldAccessor(PropertyEntity.class);
+
+        Assert.assertEquals(fieldAccessor, fieldAccessor1);
+        Assert.assertEquals(fieldAccessor1.hashCode(), fieldAccessor.hashCode());
+
+        Assert.assertTrue(!fieldAccessor.equals(fieldAccessor2));
+
+
+    }
 
     @Test
     public void testFieldAccessor() {
 
 
-        Assert.assertEquals((Class) int.class, fieldAccessor.getPropertyType("intField"));
+        Assert.assertEquals((Class) int.class, fieldAccessor.getType("intField"));
     }
 
-    @Test
+    @Test(expected = ORMEntityAccessException.class)
     public void testNewInstance() {
 
-        Assert.assertEquals(0, fieldAccessor.newInstance("intField"));
+        fieldAccessor.newInstance("intField");
 
     }
 

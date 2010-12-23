@@ -10,4 +10,8 @@ public class ORMEntityAccessException extends RuntimeException {
     public ORMEntityAccessException(Throwable cause) {
         super(cause);
     }
+
+    public ORMEntityAccessException(String cause) {
+        super(cause);
+    }
 }
