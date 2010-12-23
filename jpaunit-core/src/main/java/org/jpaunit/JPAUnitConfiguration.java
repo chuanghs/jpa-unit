@@ -1,6 +1,10 @@
 package org.jpaunit;
 
 import org.jpaunit.exception.JPAUnitConfigurationException;
+import org.jpaunit.node.EntityNodeProcessor;
+import org.jpaunit.node.INodeProcessor;
+import org.jpaunit.node.ImportNodeProcessor;
+import org.jpaunit.node.StatementNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,14 +23,20 @@ import java.util.Map;
 public class JPAUnitConfiguration {
 
     private static final Logger log = LoggerFactory.getLogger(JPAUnitConfiguration.class);
-
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";
 
     private Map<String, String> imports = new HashMap<String, String>();
+    private List<String> statements = new LinkedList<String>();
 
-     private List<String> statements = new LinkedList<String>();
+    private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
 
-     public void addStatement(String nodeValue) {
+    public JPAUnitConfiguration(){
+        nodeProcessors.put("statement", new StatementNodeProcessor());
+        nodeProcessors.put("import", new ImportNodeProcessor());
+    }
+
+
+    public void addStatement(String nodeValue) {
         statements.add(nodeValue);
     }
 
@@ -35,26 +45,34 @@ public class JPAUnitConfiguration {
     }
 
     public void executeStatements(EntityManager entityManager) {
-        for (String s : statements){
+        for (String s : statements) {
             entityManager.createNativeQuery(s).executeUpdate();
         }
     }
 
     public void addImport(String className, String alias) {
-        if (imports.containsKey(alias)){
+        if (imports.containsKey(alias)) {
             if (!className.equals(imports.get(alias)))
-                throw new JPAUnitConfigurationException("alias: "+alias+" is defined more than once ("+imports.get(className)+", "+className+")");
+                throw new JPAUnitConfigurationException("alias: " + alias + " is defined more than once (" + imports.get(className) + ", " + className + ")");
             else {
                 if (log.isWarnEnabled())
-                    log.warn("alias: "+alias+" is defined twice for the same class: "+className);
+                    log.warn("alias: " + alias + " is defined twice for the same class: " + className);
             }
         }
 
         if (!className.matches(ClassNamePattern))
-            throw new JPAUnitConfigurationException("className: "+className+" is invalid class name");
+            throw new JPAUnitConfigurationException("className: " + className + " is invalid class name");
 
         imports.put(alias, className);
+        registerNodeProcessor(alias, new EntityNodeProcessor(className));
     }
 
 
+    public void registerNodeProcessor(String nodeName, INodeProcessor nodeProcessor) {
+        nodeProcessors.put(nodeName, nodeProcessor);
+    }
+
+    public INodeProcessor getNodeProcessor(String nodeName) {
+        return nodeProcessors.get(nodeName);
+    }
 }

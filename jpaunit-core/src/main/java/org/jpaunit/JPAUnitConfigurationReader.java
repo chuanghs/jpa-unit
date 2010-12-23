@@ -2,6 +2,10 @@ package org.jpaunit;
 
 import org.jpaunit.exception.JPAUnitFileReadException;
 import org.jpaunit.exception.JPAUnitFileSyntaxException;
+import org.jpaunit.exception.JPAUnitNodeProcessingException;
+import org.jpaunit.node.INodeProcessor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -23,6 +27,8 @@ import java.io.InputStream;
 public class JPAUnitConfigurationReader {
 
 
+    private static final Logger log = LoggerFactory.getLogger(JPAUnitConfigurationReader.class);
+
     public JPAUnitConfiguration read(InputStream stream) throws ParserConfigurationException, IOException, SAXException, JPAUnitFileReadException {
         return this.read(stream, new JPAUnitConfiguration());
     }
@@ -40,43 +46,25 @@ public class JPAUnitConfigurationReader {
                 NodeList childNodes = firstChild.getChildNodes();
                 for (int i = 0; i < childNodes.getLength(); i++) {
                     Node jpaUnitElement = childNodes.item(i);
-                    if ("statement".equals(jpaUnitElement.getNodeName())) {
-                        NodeList statementChildren = jpaUnitElement.getChildNodes();
-                        if (statementChildren.getLength() > 1) {
-                            throw new JPAUnitFileSyntaxException("statement element (" + i + ") is allowed only to have 1 child: CDATA");
-                        }
-                        String statement = null;
+                    // take nodeprocessor responsible for processing this type of node
+                    INodeProcessor nodeProcessor = result.getNodeProcessor(jpaUnitElement.getNodeName());
+                    if (nodeProcessor!=null){
+                        // process node
 
-                        Node statementCDATA = statementChildren.item(0);
-                        if (statementCDATA != null && statementCDATA.getNodeType() == Node.CDATA_SECTION_NODE) {
-                            statement = statementCDATA.getNodeValue();
+                        try {
+                            nodeProcessor.process(jpaUnitElement, result);
+                        } catch (JPAUnitNodeProcessingException e) {
+                            throw new JPAUnitFileSyntaxException("error at node: "+i, e);
                         }
-                        if (statement == null) {
-                            NamedNodeMap attributes = jpaUnitElement.getAttributes();
-                            Node codeNode = attributes.getNamedItem("code");
-                            if (codeNode != null)
-                                statement = codeNode.getNodeValue();
-
+                    }  else {
+                        // if no such processor exists output warning
+                        // TODO: consider throwing an exception
+                        String s = jpaUnitElement.getNodeName() + " element (" + i + ") does not have associated " + INodeProcessor.class.getCanonicalName();
+                        if (log.isWarnEnabled()) {
+                            log.warn(s);
                         }
-                        if (statement != null)
-                            result.addStatement(statement);
-                    } else if ("import".equals(jpaUnitElement.getNodeName())){
-                        NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
-                        Node classNode = importAttributes.getNamedItem("class");
-                        Node aliasNode = importAttributes.getNamedItem("alias");
-
-                        if (classNode==null) {
-                            throw new JPAUnitFileSyntaxException("import element (" + i + ") is must have \"class\" attribute. It must be fully qualified class name");
-                        }
-                        String className = classNode.getNodeValue();
-                        int dotIndex = className.lastIndexOf(".");
-                        String alias = className.substring(dotIndex>-1?dotIndex+1:0);
-                        if (aliasNode != null){
-                            alias = aliasNode.getNodeValue();
-                        }
-                        result.addImport(className, alias);
+                        throw new JPAUnitFileSyntaxException(s);
                     }
-
                 }
             }
         } catch (ParserConfigurationException e) {
