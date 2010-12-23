@@ -30,12 +30,13 @@ public class JPAUnitConfigurationReaderTest {
     @Test
     public void testReadStatements() throws JPAUnitFileReadException, IOException {
 
-        byte[] value = "<jpaunit><statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement><statement code=\"code2\" /><statement code=\"code3\" /></jpaunit>".getBytes();
+        byte[] value = "<jpaunit><statement code=\"this code shouldnt be added\">code0</statement><statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement><statement code=\"code2\" /><statement code=\"code3\" /></jpaunit>".getBytes();
         JPAUnitConfiguration mock = spy(new JPAUnitConfiguration());
         new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), mock);
 
-        verify(mock, times(3)).getNodeProcessor(eq("statement"));
+        verify(mock, times(4)).getNodeProcessor(eq("statement"));
 
+        verify(mock, times(1)).addStatement(Matchers.eq("code0"));
         verify(mock, times(1)).addStatement(Matchers.eq("code1"));
         verify(mock, times(1)).addStatement(Matchers.eq("code2"));
         verify(mock, times(1)).addStatement(Matchers.eq("code3"));

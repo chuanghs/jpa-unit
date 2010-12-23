@@ -13,7 +13,7 @@ import org.w3c.dom.Node;
  */
 public class EntityNodeProcessor implements INodeProcessor {
 
-    private final String className;
+    private String className;
 
     public EntityNodeProcessor(String className){
         this.className = className;
@@ -24,6 +24,13 @@ public class EntityNodeProcessor implements INodeProcessor {
 
 
     public void process(Node jpaUnitElement, JPAUnitConfiguration result) throws JPAUnitNodeProcessingException {
+        Class entityClass = null;
+        try {
+            entityClass = Class.forName(className);
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
         //To change body of implemented methods use File | Settings | File Templates.
     }
 }

@@ -23,7 +23,7 @@ public class StatementNodeProcessor implements INodeProcessor {
         String statement = null;
 
         Node statementCDATA = statementChildren.item(0);
-        if (statementCDATA != null && statementCDATA.getNodeType() == Node.CDATA_SECTION_NODE) {
+        if (statementCDATA != null && (statementCDATA.getNodeType() == Node.CDATA_SECTION_NODE || statementCDATA.getNodeType() == Node.TEXT_NODE)) {
             statement = statementCDATA.getNodeValue();
         }
         if (statement == null) {
