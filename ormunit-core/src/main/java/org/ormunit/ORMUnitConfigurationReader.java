@@ -40,10 +40,6 @@ public class ORMUnitConfigurationReader {
     private String currentDir;
     private Class<?> workClass;
 
-    public ORMUnitConfigurationReader() {
-        this(ORMUnitConfigurationReader.class);
-    }
-
     public ORMUnitConfigurationReader(Class<?> workClass) {
         this(workClass, ORMUnitHelper.readOrmUnitProperties(ORMUnitConfigurationReader.class));
     }

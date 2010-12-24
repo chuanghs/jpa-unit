@@ -45,7 +45,7 @@ public class ORMUnitPropertiesTest {
 
     @Test
     public void testDefaultProperties() {
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader();
+        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(getClass());
 
         assertNotNull(jpaUnitConfigurationReader.getNodeProcessor("statement"));
         assertNotNull(jpaUnitConfigurationReader.getNodeProcessor("import"));

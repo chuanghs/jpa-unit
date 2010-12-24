@@ -64,7 +64,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(getClass()).read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -98,7 +98,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(getClass()).read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -131,7 +131,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(getClass()).read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(2);
@@ -161,7 +161,7 @@ public class CoreEntityNodeProcessorTest {
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
 
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(getClass()).read(bais, result);
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();

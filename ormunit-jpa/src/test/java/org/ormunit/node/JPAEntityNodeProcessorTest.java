@@ -55,7 +55,7 @@ public class JPAEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
@@ -73,7 +73,7 @@ public class JPAEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();

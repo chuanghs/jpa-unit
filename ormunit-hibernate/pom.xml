@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ormunit</artifactId>
         <groupId>org.ormunit</groupId>
-        <version>1.0-SNAPSHOT</version>
+        <version>0.9.0</version>
         <relativePath>../ormunit/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
@@ -15,7 +15,7 @@
          <dependency>
             <groupId>org.ormunit</groupId>
             <artifactId>ormunit-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>0.9.0</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>

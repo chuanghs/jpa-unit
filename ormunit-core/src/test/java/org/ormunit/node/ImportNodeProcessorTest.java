@@ -37,7 +37,7 @@ public class ImportNodeProcessorTest {
         byte[] value = ("<ormunit> " +
                 "<import class=\"1some.invalid.0ClassName\" alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
     }
 
@@ -46,7 +46,7 @@ public class ImportNodeProcessorTest {
         byte[] value = ("<ormunit> " +
                 "<import alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
     }
 
@@ -57,7 +57,7 @@ public class ImportNodeProcessorTest {
                 "<import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
 
 
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(2)).getNodeProcessor(eq("import"));
@@ -74,7 +74,7 @@ public class ImportNodeProcessorTest {
                 "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
                 "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
                 "</ormunit>").getBytes();
-        new ORMUnitConfigurationReader()
+        new ORMUnitConfigurationReader(getClass())
                 .read(new ByteArrayInputStream(value), configuration);
     }
 

@@ -1,4 +1,4 @@
-package org.ormunit.command;
+package org.ormunit;
 
 import org.hibernate.Session;
 import org.ormunit.ORMProvider;
@@ -37,7 +37,8 @@ public class HibernateORMProvider implements ORMProvider {
         return (T) session.get(propertyClass, (Serializable) id);
     }
 
-    public EntityAccessor getAccessor(Class<?> aClass) throws IntrospectionException {
+    public EntityAccessor getAccessor(Class<?> entityType)  {
+        //session.getSessionFactory().getClassMetadata(entityType).s
         return null;
     }
 }
