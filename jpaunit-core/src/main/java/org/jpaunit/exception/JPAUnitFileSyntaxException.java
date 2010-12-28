@@ -7,8 +7,6 @@ package org.jpaunit.exception;
  * Time: 21:11
  */
 public class JPAUnitFileSyntaxException extends JPAUnitFileReadException {
-    public JPAUnitFileSyntaxException() {
-    }
 
     public JPAUnitFileSyntaxException(String message) {
         super(message);
@@ -18,7 +16,4 @@ public class JPAUnitFileSyntaxException extends JPAUnitFileReadException {
         super(message, cause);
     }
 
-    public JPAUnitFileSyntaxException(Throwable cause) {
-        super(cause);
-    }
 }

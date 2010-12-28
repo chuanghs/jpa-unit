@@ -58,10 +58,6 @@ public class EntityNodeProcessor implements INodeProcessor {
         this.className = className;
     }
 
-    public String getClassName() {
-        return className;
-    }
-
     public synchronized void process(Node entityElement, JPAUnitConfiguration result, JPAUnitConfigurationReader reader) throws JPAUnitNodeProcessingException {
         Class entityClass = null;
         try {
@@ -73,18 +69,8 @@ public class EntityNodeProcessor implements INodeProcessor {
             processEntity(entityElement, entity);
 
             result.addEntity(entity);
-        } catch (ClassNotFoundException e) {
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        } catch (InstantiationException e) {
-            throw new RuntimeException(e);
-        } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        } catch (InvocationTargetException e) {
-            e.printStackTrace();
-        } catch (ParseException e) {
-            e.printStackTrace();
         }
 
 

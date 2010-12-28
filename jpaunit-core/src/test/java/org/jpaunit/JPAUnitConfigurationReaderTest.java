@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 public class JPAUnitConfigurationReaderTest {
 
 
-
     @Test
     public void testReadStatements() throws JPAUnitFileReadException, IOException {
 
@@ -131,4 +130,11 @@ public class JPAUnitConfigurationReaderTest {
         new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), conf);
     }
 
+
+    @Test(expected = JPAUnitFileReadException.class)
+    public void testInvalidSyntax() throws JPAUnitFileReadException {
+        byte[] value = "some non xml content".getBytes();
+        JPAUnitConfiguration conf = spy(new JPAUnitConfiguration());
+        new JPAUnitConfigurationReader().read(new ByteArrayInputStream(value), conf);
+    }
 }

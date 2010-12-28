@@ -8,18 +8,10 @@ package org.jpaunit.exception;
  * To change this template use File | Settings | File Templates.
  */
 public class JPAUnitNodeProcessingException extends Exception {
-    public JPAUnitNodeProcessingException() {
-    }
 
     public JPAUnitNodeProcessingException(String message) {
         super(message);
     }
 
-    public JPAUnitNodeProcessingException(String message, Throwable cause) {
-        super(message, cause);
-    }
 
-    public JPAUnitNodeProcessingException(Throwable cause) {
-        super(cause);
-    }
 }

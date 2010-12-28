@@ -55,9 +55,10 @@ public class EntityNodeProcessorTest {
     public void testSimplePropertiesElements() throws JPAUnitFileReadException, ParseException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<jpaunit> " +
                 "   <import class=\"org.jpaunit.node.SimplePOJO\" alias=\"pojo\" /> " +
-                "   <pojo integerValue=\"2\"> " +
+                "   <pojo integerValue=\"2\" longValue=\"23\"> " +
                 "       <integerValue>1</integerValue> " +
                 "       <doubleValue>1.23</doubleValue> " +
+                "       <floatValue>1.23</floatValue> " +
                 "       <booleanValue>true</booleanValue> " +
                 "       <stringValue>string</stringValue> " +
                 "       <timestampValue>2010-12-18 18:22:00</timestampValue> " +
@@ -71,6 +72,8 @@ public class EntityNodeProcessorTest {
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
         simplePOJO.setDoubleValue(1.23);
+        simplePOJO.setFloatValue(1.23f);
+        simplePOJO.setLongValue(23l);
         simplePOJO.setBooleanValue(true);
         simplePOJO.setStringValue("string");
 

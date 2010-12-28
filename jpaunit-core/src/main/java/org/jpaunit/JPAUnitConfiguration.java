@@ -1,16 +1,13 @@
 package org.jpaunit;
 
+import org.jpaunit.command.EntityCommand;
+import org.jpaunit.command.JPAUnitCommand;
+import org.jpaunit.command.JPAUnitCommandVisitor;
+import org.jpaunit.command.StatementCommand;
 import org.jpaunit.exception.JPAUnitConfigurationException;
-import org.jpaunit.node.EntityNodeProcessor;
-import org.jpaunit.node.INodeProcessor;
-import org.jpaunit.node.ImportNodeProcessor;
-import org.jpaunit.node.StatementNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.*;
 
 /**
@@ -27,20 +24,10 @@ public class JPAUnitConfiguration {
 
     private Map<String, String> imports = new HashMap<String, String>();
 
-    private List<String> statements = new LinkedList<String>();
+    private List<JPAUnitCommand> commands = new LinkedList<JPAUnitCommand>();
 
     public void addStatement(String nodeValue) {
-        statements.add(nodeValue);
-    }
-
-    public void addStatement(Integer index, String nodeValue) {
-        statements.add(index, nodeValue);
-    }
-
-    public void executeStatements(EntityManager entityManager) {
-        for (String s : statements) {
-            entityManager.createNativeQuery(s).executeUpdate();
-        }
+        commands.add(new StatementCommand(nodeValue));
     }
 
     public void addImport(String className, String alias) {
@@ -62,6 +49,12 @@ public class JPAUnitConfiguration {
 
 
     public void addEntity(Object entity) {
+        commands.add(new EntityCommand(entity));
+    }
 
+    public void visit(JPAUnitCommandVisitor visitor) {
+        for (JPAUnitCommand command : commands){
+            command.visit(visitor);
+        }
     }
 }

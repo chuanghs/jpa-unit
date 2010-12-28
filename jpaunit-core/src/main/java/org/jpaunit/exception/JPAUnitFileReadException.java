@@ -14,14 +14,10 @@ public class JPAUnitFileReadException extends Exception {
         super(message, cause);
     }
 
-    public JPAUnitFileReadException() {
-    }
-
     public JPAUnitFileReadException(String message) {
         super(message);
     }
 
     public JPAUnitFileReadException(Throwable e) {
-        super(e);
     }
 }

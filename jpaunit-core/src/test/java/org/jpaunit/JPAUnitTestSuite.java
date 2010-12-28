@@ -11,6 +11,9 @@ import org.junit.runners.Suite;
  * Time: 18:11
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({JPAUnitPropertiesTest.class, JPAUnitConfigurationReaderTest.class, EntityNodeProcessorTest.class})
+@Suite.SuiteClasses({JPAUnitPropertiesTest.class,
+        JPAUnitConfigurationReaderTest.class,
+        EntityNodeProcessorTest.class,
+        JPAUnitConfigurationTest.class})
 public class JPAUnitTestSuite {
 }

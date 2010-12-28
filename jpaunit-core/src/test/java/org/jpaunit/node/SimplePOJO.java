@@ -18,6 +18,8 @@ public class SimplePOJO {
     private String stringValue;
     private Timestamp timestampValue;
     private Date dateValue;
+    private Long longValue;
+    private Float floatValue;
 
     private SimplePOJO2 complexType;
 
@@ -57,6 +59,14 @@ public class SimplePOJO {
         this.complexType = complexType;
     }
 
+    public void setLongValue(Long longValue) {
+        this.longValue = longValue;
+    }
+
+    public void setFloatValue(Float floatValue) {
+        this.floatValue = floatValue;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -69,6 +79,8 @@ public class SimplePOJO {
         if (integerValue != that.integerValue) return false;
         if (complexType != null ? !complexType.equals(that.complexType) : that.complexType != null) return false;
         if (dateValue != null ? !dateValue.equals(that.dateValue) : that.dateValue != null) return false;
+        if (floatValue != null ? !floatValue.equals(that.floatValue) : that.floatValue != null) return false;
+        if (longValue != null ? !longValue.equals(that.longValue) : that.longValue != null) return false;
         if (stringValue != null ? !stringValue.equals(that.stringValue) : that.stringValue != null) return false;
         if (timestampValue != null ? !timestampValue.equals(that.timestampValue) : that.timestampValue != null)
             return false;
@@ -87,6 +99,8 @@ public class SimplePOJO {
         result = 31 * result + (stringValue != null ? stringValue.hashCode() : 0);
         result = 31 * result + (timestampValue != null ? timestampValue.hashCode() : 0);
         result = 31 * result + (dateValue != null ? dateValue.hashCode() : 0);
+        result = 31 * result + (longValue != null ? longValue.hashCode() : 0);
+        result = 31 * result + (floatValue != null ? floatValue.hashCode() : 0);
         result = 31 * result + (complexType != null ? complexType.hashCode() : 0);
         return result;
     }
@@ -100,6 +114,8 @@ public class SimplePOJO {
                 ", stringValue='" + stringValue + '\'' +
                 ", timestampValue=" + timestampValue +
                 ", dateValue=" + dateValue +
+                ", longValue=" + longValue +
+                ", floatValue=" + floatValue +
                 ", complexType=" + complexType +
                 '}';
     }
