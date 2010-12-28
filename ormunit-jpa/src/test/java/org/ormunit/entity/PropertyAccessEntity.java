@@ -1,6 +1,8 @@
 package org.ormunit.entity;
 
+import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,6 +11,8 @@ import javax.persistence.Id;
  * Time: 10:48
  * To change this template use File | Settings | File Templates.
  */
+@Entity
+@Table(name = "propertyaccessentity", schema = "testschema")
 public class PropertyAccessEntity {
 
     private Integer id;

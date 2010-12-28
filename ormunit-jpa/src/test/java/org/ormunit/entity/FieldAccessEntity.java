@@ -1,6 +1,6 @@
 package org.ormunit.entity;
 
-import javax.persistence.Id;
+import javax.persistence.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,11 +8,15 @@ import javax.persistence.Id;
  * Date: 19.12.10
  * Time: 22:05
  */
+@Entity
+@Table(name = "fieldaccessentity")
 public class FieldAccessEntity {
 
     @Id
     private int integerValue;
 
+    @ManyToOne
+    @JoinColumn(name = "complextype_id")
     private PropertyAccessEntity complexType;
 
 

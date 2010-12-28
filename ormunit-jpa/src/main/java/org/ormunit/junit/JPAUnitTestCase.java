@@ -1,16 +1,17 @@
 package org.ormunit.junit;
 
 import junit.framework.TestCase;
+import org.junit.After;
+import org.junit.Before;
 import org.ormunit.JPAORMProvider;
 import org.ormunit.ORMUnitConfigurationReader;
 import org.ormunit.ORMUnitHelper;
+import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -40,8 +41,12 @@ public abstract class JPAUnitTestCase extends TestCase {
         this.ormUnitFileName = ormUnitFileName;
         properties = ORMUnitHelper.readOrmUnitProperties(getClass());
 
-        if (isWithDB() && entityManagerFactories.get(unitName) == null)
-            entityManagerFactories.put(unitName, Persistence.createEntityManagerFactory(unitName));
+        if (isWithDB() && entityManagerFactories.get(unitName) == null) {
+
+            EntityManagerFactory entityManagerFactory = javax.persistence.Persistence.createEntityManagerFactory(unitName);
+
+            entityManagerFactories.put(unitName, entityManagerFactory);
+        }
     }
 
     protected final boolean isWithDB() {
@@ -53,19 +58,28 @@ public abstract class JPAUnitTestCase extends TestCase {
     }
 
 
+    @Before
     public void setUp() throws Exception {
         super.setUp();
         if (isWithDB()) {
             em = entityManagerFactories.get(this.unitName).createEntityManager();
             em.getTransaction().begin();
 
-            if (this.ormUnitFileName != null)
-                new ORMUnitConfigurationReader(getClass(), this.properties)
-                        .read(getClass().getResourceAsStream(this.ormUnitFileName), new JPAORMProvider(getEm()))
+            if (this.ormUnitFileName != null) {
+
+                ORMUnitConfigurationReader reader = new ORMUnitConfigurationReader(getClass(), this.properties);
+
+                for (Class<?> c : Helper.getManagedTypes(getClass(), this.unitName)) {
+                    reader.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName(), reader));
+                }
+
+                reader.read(getClass().getResourceAsStream(this.ormUnitFileName), new JPAORMProvider(getEm()))
                         .execute();
+            }
         }
     }
 
+    @After
     public void tearDown() throws Exception {
         if (isWithDB()) {
             em.clear();
@@ -74,5 +88,6 @@ public abstract class JPAUnitTestCase extends TestCase {
         }
         super.tearDown();
     }
+
 
 }
