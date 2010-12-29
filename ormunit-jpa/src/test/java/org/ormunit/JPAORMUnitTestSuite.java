@@ -2,6 +2,7 @@ package org.ormunit;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.ormunit.live.JPAUnitSimpleTest;
 import org.ormunit.node.JPAEntityNodeProcessorTest;
 
 /**
@@ -13,7 +14,8 @@ import org.ormunit.node.JPAEntityNodeProcessorTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         JPAORMProviderTest.class,
-        JPAEntityNodeProcessorTest.class
+        JPAEntityNodeProcessorTest.class,
+        JPAUnitSimpleTest.class
 })
 public class JPAORMUnitTestSuite {
 }

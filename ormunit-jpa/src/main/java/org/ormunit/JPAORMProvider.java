@@ -67,10 +67,13 @@ public class JPAORMProvider implements ORMProvider {
     public void entity(Object entity) {
         getEntityManager().merge(entity);
         getEntityManager().flush();
+        getEntityManager().clear();
     }
 
     public void statement(String statement) {
         getEntityManager().createNativeQuery(statement).executeUpdate();
+        getEntityManager().flush();
+        getEntityManager().clear();
     }
 
     public <T> T getReference(Class<T> propertyClass, Object id) {

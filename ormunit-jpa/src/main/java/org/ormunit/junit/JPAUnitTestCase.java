@@ -12,6 +12,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -65,17 +66,28 @@ public abstract class JPAUnitTestCase extends TestCase {
             em = entityManagerFactories.get(this.unitName).createEntityManager();
             em.getTransaction().begin();
 
+            InputStream inputStream = null;
             if (this.ormUnitFileName != null) {
+                inputStream = getClass().getResourceAsStream(this.ormUnitFileName);
+            } else {
+                inputStream = getClass().getResourceAsStream("./" + getClass().getSimpleName() + ".xml");
+            }
 
+
+            if (inputStream != null) {
                 ORMUnitConfigurationReader reader = new ORMUnitConfigurationReader(getClass(), this.properties);
 
                 for (Class<?> c : Helper.getManagedTypes(getClass(), this.unitName)) {
                     reader.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName(), reader));
                 }
 
-                reader.read(getClass().getResourceAsStream(this.ormUnitFileName), new JPAORMProvider(getEm()))
+
+                reader.read(inputStream, new JPAORMProvider(getEm()))
                         .execute();
             }
+
+            if (inputStream != null)
+                inputStream.close();
         }
     }
 
