@@ -32,6 +32,10 @@ public abstract class JPAUnitTestCase extends TestCase {
     private String ormUnitFileName;
     private EntityManager em;
 
+    public JPAUnitTestCase(String unitName) {
+        this(unitName, null);
+    }
+
     public JPAUnitTestCase(String unitName, String ormUnitFileName) {
         this.unitName = unitName;
         this.ormUnitFileName = ormUnitFileName;
@@ -52,8 +56,8 @@ public abstract class JPAUnitTestCase extends TestCase {
     }
 
     public EntityManager getEm() {
-		return em;
-	}
+        return em;
+    }
 
 
     public void setUp() throws Exception {
@@ -62,10 +66,17 @@ public abstract class JPAUnitTestCase extends TestCase {
             em = entityManagerFactories.get(this.unitName).createEntityManager();
             em.getTransaction().begin();
 
-            new ORMUnitConfigurationReader(new JPAORMProvider())
-                    .read(getClass().getResourceAsStream(this.ormUnitFileName))
-                    .visit(new JPAUnitCommandVisitor(getEm()));
+            if (this.ormUnitFileName != null)
+                new ORMUnitConfigurationReader(new JPAORMProvider())
+                        .read(getClass().getResourceAsStream(this.ormUnitFileName))
+                        .visit(new JPAUnitCommandVisitor(getEm()));
         }
+    }
+
+    public void tearDown() throws Exception {
+        if (isWithDB())
+            em.getTransaction().rollback();
+        super.tearDown();
     }
 
 }
