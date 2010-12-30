@@ -37,11 +37,14 @@ public class ORMUnitConfigurationReader {
 
     private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
 
-    public ORMUnitConfigurationReader() {
-        this(readProperties("/" + JPAUnitPropertiesFileName));
+    private final ORMProvider ormProvider;
+
+    public ORMUnitConfigurationReader(ORMProvider ormProvider) {
+        this(ormProvider, ORMUnitHelper.readOrmUnitProperties(ORMUnitConfigurationReader.class));
     }
 
-    public ORMUnitConfigurationReader(Properties properties) {
+    public ORMUnitConfigurationReader(ORMProvider ormProvider, Properties properties) {
+        this.ormProvider = ormProvider;
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
@@ -58,24 +61,6 @@ public class ORMUnitConfigurationReader {
 
     }
 
-
-    public static Properties readProperties(String fileName) {
-        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream(fileName);
-        Properties properties = new Properties();
-        try {
-            properties.load(resourceAsStream);
-        } catch (IOException e) {
-            throw new ORMUnitConfigurationException(e);
-        } finally {
-            if (resourceAsStream != null)
-                try {
-                    resourceAsStream.close();
-                } catch (IOException e) {
-                    log.error("noe default properties file", e);
-                }
-        }
-        return properties;
-    }
 
     public void registerNodeProcessor(String nodeName, INodeProcessor nodeProcessor) {
         nodeProcessors.put(nodeName, nodeProcessor);
@@ -136,5 +121,7 @@ public class ORMUnitConfigurationReader {
         return result;
     }
 
-
+public ORMProvider getOrmProvider() {
+        return ormProvider;
+    }
 }

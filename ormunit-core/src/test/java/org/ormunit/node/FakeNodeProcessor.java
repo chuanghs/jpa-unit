@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
  * Date: 18.12.10
  * Time: 17:03
  */
-public class TestNodeProcessor implements  INodeProcessor{
+public class FakeNodeProcessor implements  INodeProcessor{
     public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnitConfigurationReader reader) throws ORMUnitNodeProcessingException {
 
     }

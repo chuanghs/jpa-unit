@@ -1,15 +1,15 @@
 package org.ormunit;
 
-import javax.persistence.Id;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
-import java.lang.reflect.Field;
+import org.ormunit.exception.ORMUnitConfigurationException;
+
+import java.io.IOException;
+import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
@@ -18,33 +18,10 @@ import java.util.Date;
  * Time: 22:13
  */
 public class ORMUnitHelper {
+
     public static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
-    public static Class<?> getIdType(Class<?> propertyType) {
-        Class type = propertyType;
-        do {
-            for (Field f : type.getDeclaredFields()) {
-                if (f.getAnnotation(Id.class) != null)
-                    return f.getType();
-            }
-        } while ((type = type.getSuperclass()) != null);
-
-
-        try {
-            for (PropertyDescriptor pd : Introspector.getBeanInfo(propertyType).getPropertyDescriptors()) {
-                if (pd.getReadMethod() != null) {
-                    if (pd.getReadMethod().getAnnotation(Id.class) != null) {
-                        return pd.getPropertyType();
-                    }
-                }
-            }
-        } catch (IntrospectionException e) {
-            throw new RuntimeException(e);
-        }
-
-        return null;
-    }
 
     public static Object convert(Class<?> propertyType, String value) throws ParseException {
         if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
@@ -65,5 +42,48 @@ public class ORMUnitHelper {
             return value;
         }
         throw new RuntimeException("unsupported propertyType: " + propertyType.getCanonicalName());
+    }
+
+    public static Properties readOrmUnitProperties(Class<?> start) {
+
+        String[] split = start.getPackage().getName().split("\\.");
+        int i = 0;
+        String path = "/";
+        Properties defaults = readDefaults();
+        Properties result = new Properties();
+        try {
+            do {
+                InputStream propertiesStream = start.getResourceAsStream(path + ORMUnitConfigurationReader.JPAUnitPropertiesFileName);
+                result = new Properties();
+                result.putAll(defaults);
+                if (propertiesStream != null)
+                    result.load(propertiesStream);
+                defaults = result;
+                if (i < split.length)
+                    path = path + split[i] + "/";
+                i++;
+            } while (i <= split.length);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return result;
+    }
+
+    public static Properties readDefaults() {
+        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream("/"+ORMUnitConfigurationReader.JPAUnitPropertiesFileName);
+        Properties properties = new Properties();
+        try {
+            properties.load(resourceAsStream);
+        } catch (IOException e) {
+            throw new ORMUnitConfigurationException(e);
+        } finally {
+            if (resourceAsStream != null)
+                try {
+                    resourceAsStream.close();
+                } catch (IOException e) {
+                    // dont care about that
+                }
+        }
+        return properties;
     }
 }

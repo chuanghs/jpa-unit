@@ -46,9 +46,11 @@ public class EntityNodeProcessor implements INodeProcessor {
     private Map<Class, Map<String, PropertyDescriptor>> classDescriptors = new HashMap<Class, Map<String, PropertyDescriptor>>();
 
     private String className;
+    private ORMUnitConfigurationReader reader;
 
-    public EntityNodeProcessor(String className) {
+    public EntityNodeProcessor(String className, ORMUnitConfigurationReader reader) {
         this.className = className;
+        this.reader = reader;
     }
 
     public synchronized void process(Node entityElement, ORMUnitConfiguration result, ORMUnitConfigurationReader reader) throws ORMUnitNodeProcessingException {
@@ -163,7 +165,7 @@ public class EntityNodeProcessor implements INodeProcessor {
 
         if (value != null && value.matches(ReferencePattern)) {
             value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
-            references.add(new EntityReference(entity, pd, ORMUnitHelper.convert(ORMUnitHelper.getIdType(pd.getPropertyType()), value)));
+            references.add(new EntityReference(entity, pd, ORMUnitHelper.convert(reader.getOrmProvider().getIdType(pd.getPropertyType()), value)));
             return;
         }
 

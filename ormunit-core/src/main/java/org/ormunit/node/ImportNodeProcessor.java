@@ -29,6 +29,6 @@ public class ImportNodeProcessor implements INodeProcessor {
             alias = aliasNode.getNodeValue();
         }
         result.addImport(className, alias);
-        reader.registerNodeProcessor(alias, new EntityNodeProcessor(className));
+        reader.registerNodeProcessor(alias, new EntityNodeProcessor(className, reader));
     }
 }

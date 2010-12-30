@@ -9,7 +9,7 @@ import java.util.Date;
  * Date: 18.12.10
  * Time: 18:13
  */
-public class SimplePOJO extends BasePOJO {
+public class SimplePOJO  {
 
     private double doubleValue;
     private boolean booleanValue;
@@ -20,6 +20,16 @@ public class SimplePOJO extends BasePOJO {
     private Float floatValue;
 
     private SimplePOJO2 complexType;
+    private int integerValue;
+
+
+    public int getIntegerValue() {
+        return integerValue;
+    }
+
+    public void setIntegerValue(int intValue)  {
+        this.integerValue = intValue;
+    }
 
 
     public double getDoubleValue() {

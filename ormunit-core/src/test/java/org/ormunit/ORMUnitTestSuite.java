@@ -17,6 +17,7 @@ import org.junit.runners.Suite;
         ORMUnitPropertiesTest.class,
         ORMUnitConfigurationReaderTest.class,
         EntityNodeProcessorTest.class,
-        ORMUnitConfigurationTest.class})
+        ORMUnitConfigurationTest.class,
+        ORMUnitHelperTest.class})
 public class ORMUnitTestSuite {
 }

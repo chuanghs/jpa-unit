@@ -1,7 +1,5 @@
 package org.ormunit.entity;
 
-import javax.persistence.Id;
-
 /**
  * Created by IntelliJ IDEA.
  * User: Tomasz Krzyzak
@@ -23,7 +21,6 @@ public class SimplePOJO2 {
         this.stringValue = stringValue;
     }
 
-    @Id
     public int getIntValue() {
         return intValue;
     }

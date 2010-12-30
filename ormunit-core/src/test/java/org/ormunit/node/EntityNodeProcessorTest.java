@@ -1,5 +1,6 @@
 package org.ormunit.node;
 
+import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnitConfiguration;
 import org.ormunit.ORMUnitConfigurationReader;
 import org.ormunit.ORMUnitHelper;
@@ -43,7 +44,7 @@ public class EntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(mock(ORMProvider.class)).read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -75,7 +76,7 @@ public class EntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(mock(ORMProvider.class)).read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -108,7 +109,7 @@ public class EntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(bais, result);
+        new ORMUnitConfigurationReader(mock(ORMProvider.class)).read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(2);
@@ -122,57 +123,6 @@ public class EntityNodeProcessorTest {
         verify(result, times(1)).addImport(anyString(), anyString());
         verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
         verifyNoMoreInteractions(result);
-    }
-
-    @Test
-    public void testReferencePattern() {
-        Assert.assertFalse("ref()".matches(EntityNodeProcessor.ReferencePattern));
-
-        Assert.assertTrue("ref( )".matches(EntityNodeProcessor.ReferencePattern));
-        Assert.assertTrue("ref(1)".matches(EntityNodeProcessor.ReferencePattern));
-        Assert.assertTrue("ref(someStringReference)".matches(EntityNodeProcessor.ReferencePattern));
-    }
-
-
-    @Test
-    public void testExtractIdType() {
-        junit.framework.Assert.assertEquals(int.class, ORMUnitHelper.getIdType(SimplePOJO.class));
-        junit.framework.Assert.assertEquals(int.class, ORMUnitHelper.getIdType(SimplePOJO2.class));
-    }
-
-    @Test
-    public void testComplexTypeWithReference() throws ORMUnitFileReadException, IntrospectionException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
-                "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
-                "   <pojo complexType=\"ref(1)\"> " +
-                "   </pojo>" +
-                "</ormunit>").getBytes());
-
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(bais, result);
-
-        SimplePOJO entity = new SimplePOJO();
-        Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(entity, "complexType", 1));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
-    }
-
-    @Test
-    public void testComplexTypeWithReferenceSubElement() throws ORMUnitFileReadException, IntrospectionException {
-        ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
-                "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
-                "   <pojo> " +
-                "       <complexType> ref(1) </complexType> " +
-                "   </pojo>" +
-                "</ormunit>").getBytes());
-
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(bais, result);
-
-        SimplePOJO entity = new SimplePOJO();
-        Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(entity, "complexType", 1));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
     }
 
 }

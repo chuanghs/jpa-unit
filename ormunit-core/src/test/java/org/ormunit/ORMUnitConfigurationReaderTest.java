@@ -1,5 +1,7 @@
 package org.ormunit;
 
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.ormunit.command.StatementCommand;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
@@ -28,22 +30,27 @@ import static org.mockito.Mockito.*;
 public class ORMUnitConfigurationReaderTest {
 
 
+    @Spy
+    ORMUnitConfiguration configuration = new ORMUnitConfiguration();
+
     @Test
     public void testReadStatements() throws ORMUnitFileReadException, IOException {
 
-        byte[] value = "<ormunit> <statement code=\"this code shouldnt be added\">code0</statement><statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement><statement code=\"code2\" /><statement code=\"code3\" /></ormunit>".getBytes();
-        ORMUnitConfiguration mock = spy(new ORMUnitConfiguration());
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
-        reader.read(new ByteArrayInputStream(value), mock);
+        byte[] value = ("<ormunit> " +
+                "<statement code=\"this code shouldnt be added\">code0</statement>" +
+                "<statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement>" +
+                "<statement code=\"code2\" /><statement code=\"code3\" /></ormunit>").getBytes();
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class)));
+        reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(4)).getNodeProcessor(eq("statement"));
 
-        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code0")));
-        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code1")));
-        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code2")));
-        verify(mock, times(1)).addCommand(Matchers.eq(new StatementCommand("code3")));
+        verify(configuration, times(1)).addCommand(Matchers.eq(new StatementCommand("code0")));
+        verify(configuration, times(1)).addCommand(Matchers.eq(new StatementCommand("code1")));
+        verify(configuration, times(1)).addCommand(Matchers.eq(new StatementCommand("code2")));
+        verify(configuration, times(1)).addCommand(Matchers.eq(new StatementCommand("code3")));
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(configuration);
 
     }
 
@@ -51,13 +58,13 @@ public class ORMUnitConfigurationReaderTest {
     public void testStatementWith2Children() throws ORMUnitFileReadException, IOException {
 
         byte[] value = "<ormunit> <statement code=\"this code shouldnt be added\"><![CDATA[code1]]><somesubelem /></statement></ormunit>".getBytes();
-        ORMUnitConfiguration mock = spy(new ORMUnitConfiguration());
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
-        reader.read(new ByteArrayInputStream(value), mock);
+
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class)));
+        reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(2)).getNodeProcessor(eq("statements"));
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(configuration);
 
     }
 
@@ -67,19 +74,19 @@ public class ORMUnitConfigurationReaderTest {
         byte[] value = ("<ormunit> " +
                 "<import class=\"com.example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
 
-        ORMUnitConfiguration mock = spy(new ORMUnitConfiguration());
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
-        reader.read(new ByteArrayInputStream(value), mock);
+
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class)));
+        reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(2)).getNodeProcessor(eq("import"));
 
         verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
         verify(reader, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
 
-        verify(mock).addImport(eq("com.example.SomeClass1"), eq("sc1"));
-        verify(mock).addImport(eq("com.example.SomeClass"), eq("SomeClass"));
+        verify(configuration).addImport(eq("com.example.SomeClass1"), eq("sc1"));
+        verify(configuration).addImport(eq("com.example.SomeClass"), eq("SomeClass"));
 
-        verifyNoMoreInteractions(mock);
+        verifyNoMoreInteractions(configuration);
     }
 
     @Test(expected = ORMUnitConfigurationException.class)
@@ -88,7 +95,8 @@ public class ORMUnitConfigurationReaderTest {
                 "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
                 "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
                 "</ormunit>").getBytes();
-        new ORMUnitConfigurationReader().read(new ByteArrayInputStream(value), new ORMUnitConfiguration());
+        new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class))
+                .read(new ByteArrayInputStream(value), configuration);
     }
 
 
@@ -106,8 +114,9 @@ public class ORMUnitConfigurationReaderTest {
     @Test(expected = ORMUnitConfigurationException.class)
     public void testInvalidClassNames2() throws ORMUnitFileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"1com.example.SomeClass\" alias=\"sc1\"/></ormunit>".getBytes();
-        ORMUnitConfiguration conf = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(new ByteArrayInputStream(value), conf);
+
+        new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class))
+                   .read(new ByteArrayInputStream(value), configuration);
 
     }
 
@@ -115,9 +124,9 @@ public class ORMUnitConfigurationReaderTest {
     public void testRegisterNodeProcessor() throws ORMUnitFileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\" alias=\"sc2\"/></ormunit>".getBytes();
 
-        ORMUnitConfiguration conf = spy(new ORMUnitConfiguration());
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader());
-        reader.read(new ByteArrayInputStream(value), conf);
+
+        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class)));
+        reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(INodeProcessor.class));
         verify(reader, times(1)).registerNodeProcessor(eq("sc2"), any(INodeProcessor.class));
@@ -127,15 +136,16 @@ public class ORMUnitConfigurationReaderTest {
     @Test(expected = ORMUnitFileSyntaxException.class)
     public void testUnknownNode() throws ORMUnitFileReadException, IOException {
         byte[] value = "<ormunit><someInvalidAndUndUnknownNode/></ormunit>".getBytes();
-        ORMUnitConfiguration conf = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(new ByteArrayInputStream(value), conf);
+
+        new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class))
+                .read(new ByteArrayInputStream(value), configuration);
     }
 
 
     @Test(expected = ORMUnitFileReadException.class)
     public void testInvalidSyntax() throws ORMUnitFileReadException {
         byte[] value = "some non xml content".getBytes();
-        ORMUnitConfiguration conf = spy(new ORMUnitConfiguration());
-        new ORMUnitConfigurationReader().read(new ByteArrayInputStream(value), conf);
+        new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class))
+                   .read(new ByteArrayInputStream(value), configuration);
     }
 }

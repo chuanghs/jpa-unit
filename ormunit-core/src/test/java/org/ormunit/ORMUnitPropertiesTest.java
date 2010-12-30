@@ -1,10 +1,11 @@
 package org.ormunit;
 
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.node.TestNodeProcessor;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ormunit.exception.ORMUnitConfigurationException;
+import org.ormunit.node.FakeNodeProcessor;
 
 import java.util.Properties;
 
@@ -21,31 +22,31 @@ import static org.junit.Assert.assertTrue;
 public class ORMUnitPropertiesTest {
 
     @Test
-    public void testSetProperties(){
-        Properties properties =  new Properties();
+    public void testSetProperties() {
+        Properties properties = new Properties();
 
         String somestrangenode = "somestrangenode";
-        properties.setProperty(ORMUnitConfigurationReader.Properties_NodeProcessor_Prefix+ somestrangenode, TestNodeProcessor.class.getCanonicalName());
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(properties);
+        properties.setProperty(ORMUnitConfigurationReader.Properties_NodeProcessor_Prefix + somestrangenode, FakeNodeProcessor.class.getCanonicalName());
+        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class), properties);
 
-        assertTrue(jpaUnitConfigurationReader.getNodeProcessor(somestrangenode) instanceof TestNodeProcessor);
+        assertTrue(jpaUnitConfigurationReader.getNodeProcessor(somestrangenode) instanceof FakeNodeProcessor);
 
     }
 
     @Test(expected = ORMUnitConfigurationException.class)
-    public void testSetWrongProperties(){
-        Properties properties =  new Properties();
+    public void testSetWrongProperties() {
+        Properties properties = new Properties();
 
         String somestrangenode = "somestrangenode";
-        properties.setProperty(ORMUnitConfigurationReader.Properties_NodeProcessor_Prefix+ somestrangenode, "somestringthataintclassname");
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(properties);
+        properties.setProperty(ORMUnitConfigurationReader.Properties_NodeProcessor_Prefix + somestrangenode, "somestringthataintclassname");
+        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class), properties);
 
     }
 
 
     @Test
-    public void testDefaultProperties(){
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader();
+    public void testDefaultProperties() {
+        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(Mockito.mock(ORMProvider.class));
 
         assertNotNull(jpaUnitConfigurationReader.getNodeProcessor("statement"));
         assertNotNull(jpaUnitConfigurationReader.getNodeProcessor("import"));
