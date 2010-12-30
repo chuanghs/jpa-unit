@@ -42,7 +42,7 @@ public abstract class JPAUnitTestCase extends TestCase {
         properties = new Properties();
 
         try {
-            properties.load(getClass().getResourceAsStream("/ormunit.properties"));
+            properties.load(getClass().getResourceAsStream("/ormunit.default.properties"));
         } catch (IOException e) {
             log.error("", e);
         }

@@ -34,6 +34,7 @@ public class ORMUnitConfigurationReader {
 
     public static final String Properties_NodeProcessor_Prefix = "ormunit.nodeprocessor.";
     public static final String JPAUnitPropertiesFileName = "ormunit.properties";
+    public static final String JPAUnitDefaultPropertiesFileName = "ormunit.default.properties";
 
     private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
 
