@@ -107,9 +107,7 @@ public class ORMUnitConfigurationReader {
                             throw new ORMUnitFileSyntaxException("error at node: " + i, e);
                         }
                     } else {
-                        // if no such processor exists output warning
-                        // TODO: consider throwing an exception
-                        String s = jpaUnitElement.getNodeName() + " element (" + i + ") does not have associated " + INodeProcessor.class.getCanonicalName();
+                        String s = jpaUnitElement.getNodeName() + " element (" + i + ") does not have associated I" + INodeProcessor.class.getCanonicalName() + " implementations";
                         if (log.isWarnEnabled()) {
                             log.warn(s);
                         }
