@@ -10,13 +10,15 @@ import org.ormunit.entity.EntityAccessor;
  */
 public interface ORMProvider {
 
+    EntityAccessor getAccessor(Class<?> entityClass);
+
     Class getIdType(Class<?> entityClass);
 
     void entity(Object entity);
 
     void statement(String statement);
 
-    <T> T getReference(Class<T> propertyClass, Object id);
+    <T> T getReference(Class<T> entityClass, Object id);
 
-    EntityAccessor getAccessor(Class<?> aClass);
+    Class getCollectionParameterType(Class<?> entityClass, String propertyName);
 }

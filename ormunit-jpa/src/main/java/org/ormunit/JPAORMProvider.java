@@ -80,6 +80,11 @@ public class JPAORMProvider implements ORMProvider {
         return getEntityManager().getReference(propertyClass, id);  //To change body of implemented methods use File | Settings | File Templates.
     }
 
+    public Class getCollectionParameterType(Class<?> entityClass, String propertyName) {
+        // TODO: extract field or property parameter type
+        return Object.class;
+    }
+
     public EntityManager getEntityManager() {
         return entityManager;
     }

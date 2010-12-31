@@ -37,7 +37,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class CoreEntityNodeProcessorTest {
 
-
     @Mock
     ORMProvider ormProvider;
 
@@ -173,6 +172,31 @@ public class CoreEntityNodeProcessorTest {
         result.execute();
 
         verify(ormProvider, times(1)).getReference(eq(SimplePOJO2.class), anyInt());
+    }
+
+    @Test
+    public void testCollection() throws ORMUnitFileReadException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"pojo2\" /> " +
+                "   <pojo> " +
+                "       <collection>" +
+                "           <pojo2 stringValue=\"some string 1\" intValue=\"1\" />" +
+                "           <pojo2 stringValue=\"some string 2\" intValue=\"2\" />" +
+                "       </collection> " +
+                "   </pojo>" +
+                "</ormunit>").getBytes());
+
+        when(ormProvider.getCollectionParameterType(eq(SimplePOJO.class) ,eq("collection"))).thenReturn(SimplePOJO2.class);
+
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
+        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader(getClass()));
+        configurationReader.read(bais, result);
+
+        verify(configurationReader, times(2)).getNodeProcessor("pojo2");
+        verify(ormProvider, times(1)).getCollectionParameterType(eq(SimplePOJO.class) ,eq("collection"));
+
+
     }
 
 }

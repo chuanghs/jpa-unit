@@ -17,7 +17,9 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import java.util.Collection;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -87,6 +89,11 @@ public class EntityNodeProcessor implements INodeProcessor {
                     }
                 }
                 set(provider, entity, propertyName, propertyValue, references);
+            }
+            if (Collection.class.isAssignableFrom(introspector.getType(propertyName))) {
+
+            } else if (Map.class.isAssignableFrom(introspector.getType(propertyName))) {
+
             } else {
 
                 if (child.getChildNodes().getLength() == 1) {
