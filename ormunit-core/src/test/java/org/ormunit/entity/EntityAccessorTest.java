@@ -173,9 +173,17 @@ public class EntityAccessorTest {
 
     }
 
-    public class GenericTestSubClass extends GenericTestClass<SimplePOJO, Integer> {
+    public class GenericTestSubClass<Z> extends GenericTestClass<SimplePOJO, Z> {
 
-        public <K extends SimplePOJO2> Collection<K> getCollectionK(){return null;}
+        private Collection<Z> z;
+
+        public <K extends SimplePOJO2> Collection<K> getCollectionK() {
+            return null;
+        }
+
+        public Collection<Z> getZ() {
+            return z;
+        }
 
     }
 
@@ -200,6 +208,17 @@ public class EntityAccessorTest {
         Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("t"));
 
 
+    }
+
+    public class GenericTestSubSubClass extends GenericTestSubClass<Integer> {
+
+    }
+
+    @Test
+    public void testExtractingClass4() {
+        PropertyAccessor pa = new PropertyAccessor(GenericTestSubSubClass.class);
+
+        Assert.assertEquals(Integer.class, pa.getCollectionParameterType("z"));
     }
 
 }

@@ -1,6 +1,8 @@
 package org.ormunit.entity;
 
 import org.ormunit.exception.ORMEntityAccessException;
+import org.ormunit.exception.ORMUnitAccessorException;
+import org.ormunit.exception.ORMUnitInstantiationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +107,8 @@ public class PropertyAccessor extends AEntityAccessor {
                 Type type = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
                 return extractClass(type);
             }
-        }
+        } else
+            throw new ORMUnitAccessorException("property: "+propertyName+" of class: "+getClass().getCanonicalName()+" is not Collection");
         return Object.class;
     }
 
