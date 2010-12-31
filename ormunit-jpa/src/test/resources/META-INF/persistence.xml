@@ -3,6 +3,8 @@
              xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_1_0.xsd"
              version="1.0">
     <persistence-unit name="ormunit-jpa" transaction-type="RESOURCE_LOCAL">
+        <!--jta-data-source>java:/yourJTADataSource</jta-data-source -->
+        <!--non-jta-data-source>java:/yourNonJTADataSource</non-jta-data-source -->
 
         <class>org.ormunit.entity.PropertyAccessEntity</class>
         <class>org.ormunit.entity.FieldAccessEntity</class>
