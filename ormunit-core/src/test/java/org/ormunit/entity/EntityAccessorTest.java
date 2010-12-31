@@ -143,7 +143,7 @@ public class EntityAccessorTest {
 
     }
 
-    public class GenericTestClass<T> {
+    public class GenericTestClass<T, K> {
 
         private Collection<? extends String> extendsString;
 
@@ -173,7 +173,7 @@ public class EntityAccessorTest {
 
     }
 
-    public class GenericTestSubClass extends GenericTestClass<SimplePOJO> {
+    public class GenericTestSubClass extends GenericTestClass<SimplePOJO, Integer> {
 
         public <K extends SimplePOJO2> Collection<K> getCollectionK(){return null;}
 

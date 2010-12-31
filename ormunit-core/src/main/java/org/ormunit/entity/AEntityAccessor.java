@@ -36,19 +36,20 @@ public abstract class AEntityAccessor implements EntityAccessor {
             return extractClass(((ParameterizedType) type).getActualTypeArguments()[0]);
         } else if (type instanceof TypeVariable) {
             TypeVariable tv = (TypeVariable) type;
-
             Type genericSuperclass = getEntityClass().getGenericSuperclass();
             if (genericSuperclass instanceof ParameterizedType) {
                 ParameterizedType pt = (ParameterizedType) genericSuperclass;
                 int index = 0;
                 for (TypeVariable dtv : ((Class)pt.getRawType()).getTypeParameters()) {
-                    if (dtv.getName().equals(tv.getName())) {
+                    if (dtv.equals(tv)) {
                         return extractClass(((ParameterizedType) genericSuperclass).getActualTypeArguments()[index]);
                     }
                     index++;
                 }
             }
-            return extractClass(((TypeVariable) type).getBounds()[0]);
+
+            if (tv.getBounds().length>0)
+                return extractClass(tv.getBounds()[0]);
         }
 
         return null;  //To change body of created methods use File | Settings | File Templates.
