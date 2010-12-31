@@ -5,17 +5,17 @@
     <parent>
         <artifactId>ormunit</artifactId>
         <groupId>org.ormunit</groupId>
-        <version>0.9.0</version>
+        <version>0.9.1</version>
         <relativePath>../ormunit/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ormunit-hibernate</artifactId>
     <dependencies>
-         <dependency>
+        <dependency>
             <groupId>org.ormunit</groupId>
             <artifactId>ormunit-core</artifactId>
-            <version>0.9.0</version>
+            <version>0.9.1</version>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
