@@ -19,9 +19,9 @@ import java.util.Set;
  * Date: 28.12.10
  * Time: 23:05
  */
-public class Helper {
+public class JPAHelper {
 
-    private static final Logger log = LoggerFactory.getLogger(Helper.class);
+    private static final Logger log = LoggerFactory.getLogger(JPAHelper.class);
 
     public static Set<Class> getManagedTypes(Class<?> caller, String unitName) {
         InputStream stream = null;

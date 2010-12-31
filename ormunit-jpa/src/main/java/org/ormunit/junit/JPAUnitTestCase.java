@@ -77,7 +77,7 @@ public abstract class JPAUnitTestCase extends TestCase {
             if (inputStream != null) {
                 ORMUnitConfigurationReader reader = new ORMUnitConfigurationReader(getClass(), this.properties);
 
-                for (Class<?> c : Helper.getManagedTypes(getClass(), this.unitName)) {
+                for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
                     reader.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName(), reader));
                 }
 

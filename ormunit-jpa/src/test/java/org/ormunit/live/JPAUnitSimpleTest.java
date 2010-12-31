@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.entity.FieldAccessEntity;
 import org.ormunit.entity.PropertyAccessEntity;
-import org.ormunit.junit.Helper;
+import org.ormunit.junit.JPAHelper;
 import org.ormunit.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;
@@ -28,7 +28,7 @@ public class JPAUnitSimpleTest extends JPAUnitTestCase {
     public void testTransaction() throws JAXBException {
         assertTrue(getEm().getTransaction().isActive());
 
-        assertEquals(2, Helper.getManagedTypes(getClass(), "ormunit-jpa").size());
+        assertEquals(2, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
     }
 
     @Test
