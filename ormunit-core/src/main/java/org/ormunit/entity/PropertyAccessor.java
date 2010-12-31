@@ -7,9 +7,7 @@ import org.slf4j.LoggerFactory;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
+import java.lang.reflect.*;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -103,12 +101,15 @@ public class PropertyAccessor extends AEntityAccessor {
         PropertyDescriptor pd = getPD(propertyName);
         if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
             Type genericReturnType = pd.getReadMethod().getGenericReturnType();
-            if (genericReturnType instanceof ParameterizedType){
-                return (Class) ((ParameterizedType)genericReturnType).getActualTypeArguments()[0];
+            if (genericReturnType instanceof ParameterizedType) {
+                Type type = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
+                return extractClass(type);
             }
         }
         return Object.class;
     }
+
+
 
     @Override
     public boolean equals(Object o) {

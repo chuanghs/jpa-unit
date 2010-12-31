@@ -4,7 +4,6 @@ import org.ormunit.exception.ORMEntityAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -27,9 +26,12 @@ public class FieldAccessor extends AEntityAccessor {
 
     public FieldAccessor(Class<?> clazz) {
         this.clazz = clazz;
-        for (Field f : clazz.getDeclaredFields()) {
-            fields.put(f.getName(), f);
-        }
+        do {
+            for (Field f : clazz.getDeclaredFields()) {
+                fields.put(f.getName(), f);
+            }
+            clazz = clazz.getSuperclass();
+        } while (clazz != null);
     }
 
     public Field[] getFields() {
@@ -79,15 +81,16 @@ public class FieldAccessor extends AEntityAccessor {
     }
 
     public Class getCollectionParameterType(String propertyName) {
-         Field f = fields.get(propertyName);
-         if (Collection.class.isAssignableFrom(f.getType())) {
-             Type genericType = f.getGenericType();
-             if (genericType instanceof ParameterizedType){
-                 return (Class) ((ParameterizedType)genericType).getActualTypeArguments()[0];
-             }
-         }
-         return Object.class;
-     }
+        Field f = fields.get(propertyName);
+        if (Collection.class.isAssignableFrom(f.getType())) {
+            Type genericType = f.getGenericType();
+            if (genericType instanceof ParameterizedType) {
+                Type type = ((ParameterizedType) genericType).getActualTypeArguments()[0];
+                return extractClass(type);
+            }
+        }
+        return Object.class;
+    }
 
 
     @Override

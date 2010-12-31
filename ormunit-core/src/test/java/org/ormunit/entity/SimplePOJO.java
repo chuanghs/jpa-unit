@@ -26,7 +26,7 @@ public class SimplePOJO {
 
     private Collection<SimplePOJO2> collection;
 
-    private AbstractList<SimplePOJO2> abstractCollection;
+    private AbstractList<? extends SimplePOJO2> abstractCollection;
 
 
     public int getIntegerValue() {
@@ -149,7 +149,7 @@ public class SimplePOJO {
         return true;
     }
 
-    public AbstractList<SimplePOJO2> getAbstractCollection() {
+    public AbstractList<? extends SimplePOJO2> getAbstractCollection() {
         return abstractCollection;
     }
 

@@ -3,7 +3,7 @@ package org.ormunit.entity;
 import org.ormunit.exception.ORMEntityAccessException;
 import org.ormunit.exception.ORMUnitInstantiationException;
 
-import java.lang.reflect.Modifier;
+import java.lang.reflect.*;
 import java.util.*;
 
 /**
@@ -20,6 +20,38 @@ public abstract class AEntityAccessor implements EntityAccessor {
 
     public boolean isSimpleType(String propertyName) {
         return isSimpleType(getType(propertyName));
+    }
+
+
+    protected Class extractClass(Type type) {
+        if (type instanceof Class)
+            return (Class) type;
+        if (type instanceof WildcardType) {
+            if (((WildcardType) type).getLowerBounds().length > 0) {
+                return extractClass(((WildcardType) type).getLowerBounds()[0]);
+            } else if (((WildcardType) type).getUpperBounds().length > 0) {
+                return extractClass(((WildcardType) type).getUpperBounds()[0]);
+            }
+        } else if (type instanceof ParameterizedType) {
+            return extractClass(((ParameterizedType) type).getActualTypeArguments()[0]);
+        } else if (type instanceof TypeVariable) {
+            TypeVariable tv = (TypeVariable) type;
+
+            Type genericSuperclass = getEntityClass().getGenericSuperclass();
+            if (genericSuperclass instanceof ParameterizedType) {
+                ParameterizedType pt = (ParameterizedType) genericSuperclass;
+                int index = 0;
+                for (TypeVariable dtv : ((Class)pt.getRawType()).getTypeParameters()) {
+                    if (dtv.getName().equals(tv.getName())) {
+                        return extractClass(((ParameterizedType) genericSuperclass).getActualTypeArguments()[index]);
+                    }
+                    index++;
+                }
+            }
+            return extractClass(((TypeVariable) type).getBounds()[0]);
+        }
+
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public Object newInstance(String propertyName) {

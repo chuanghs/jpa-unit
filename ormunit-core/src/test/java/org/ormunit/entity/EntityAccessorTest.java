@@ -7,6 +7,8 @@ import org.junit.runners.JUnit4;
 import org.ormunit.exception.ORMEntityAccessException;
 import org.ormunit.exception.ORMUnitInstantiationException;
 
+import java.util.Collection;
+
 import static org.mockito.Mockito.*;
 
 /**
@@ -112,6 +114,12 @@ public class EntityAccessorTest {
     }
 
     @Test
+    public void testGetCollectionParameterType2_Property() {
+        PropertyAccessor pa = new PropertyAccessor(SimplePOJO.class);
+        Assert.assertEquals(SimplePOJO2.class, pa.getCollectionParameterType("abstractCollection"));
+    }
+
+    @Test
     public void testGetCollectionParameterType_Field() {
         FieldAccessor pa = new FieldAccessor(SimplePOJO.class);
         Assert.assertEquals(SimplePOJO2.class, pa.getCollectionParameterType("collection"));
@@ -124,12 +132,73 @@ public class EntityAccessorTest {
         try {
             pa.newInstance("abstractCollection");
             Assert.fail();
-        } catch (ORMUnitInstantiationException e) {}
+        } catch (ORMUnitInstantiationException e) {
+        }
 
-         try {
+        try {
             pa.newInstance("nonexistingproperty");
             Assert.fail();
-        } catch (ORMUnitInstantiationException e) {}
+        } catch (ORMUnitInstantiationException e) {
+        }
+
+    }
+
+    public class GenericTestClass<T> {
+
+        private Collection<? extends String> extendsString;
+
+        private Collection<? super String> superString;
+
+        private Collection<? extends T> extendsT;
+
+        private Collection<? super T> superT;
+
+        private Collection<T> t;
+
+    }
+
+
+    @Test
+    public void testExtractingClass1() {
+
+        FieldAccessor fa = new FieldAccessor(GenericTestClass.class);
+
+        Assert.assertEquals(String.class, fa.getCollectionParameterType("extendsString"));
+        Assert.assertEquals(String.class, fa.getCollectionParameterType("superString"));
+
+        Assert.assertEquals(Object.class, fa.getCollectionParameterType("extendsT"));
+        Assert.assertEquals(Object.class, fa.getCollectionParameterType("superT"));
+        Assert.assertEquals(Object.class, fa.getCollectionParameterType("t"));
+
+
+    }
+
+    public class GenericTestSubClass extends GenericTestClass<SimplePOJO> {
+
+        public <K extends SimplePOJO2> Collection<K> getCollectionK(){return null;}
+
+    }
+
+    @Test
+    public void testExtractingClass2() {
+        PropertyAccessor pa = new PropertyAccessor(GenericTestSubClass.class);
+
+        Assert.assertEquals(SimplePOJO2.class, pa.getCollectionParameterType("collectionK"));
+    }
+
+
+    @Test
+    public void testExtractingClass3() {
+
+        FieldAccessor fa = new FieldAccessor(GenericTestSubClass.class);
+
+        Assert.assertEquals(String.class, fa.getCollectionParameterType("extendsString"));
+        Assert.assertEquals(String.class, fa.getCollectionParameterType("superString"));
+
+        Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("extendsT"));
+        Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("superT"));
+        Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("t"));
+
 
     }
 
