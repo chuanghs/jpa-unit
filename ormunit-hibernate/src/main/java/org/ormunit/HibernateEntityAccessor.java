@@ -10,6 +10,10 @@ import org.ormunit.entity.AEntityAccessor;
  */
 public class HibernateEntityAccessor extends AEntityAccessor {
 
+    public Class getEntityClass() {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public Object newInstance(String propertyName) {
         return null;
     }
@@ -20,5 +24,13 @@ public class HibernateEntityAccessor extends AEntityAccessor {
 
     public void set(Object entity, String propertyName, Object value) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Object get(Object entity, String propertyName) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Class getCollectionParameterType(String propertyName) {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

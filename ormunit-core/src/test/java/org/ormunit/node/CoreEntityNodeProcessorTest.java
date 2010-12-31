@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Set;
 
 import static org.mockito.Matchers.eq;
@@ -187,15 +188,26 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        when(ormProvider.getCollectionParameterType(eq(SimplePOJO.class) ,eq("collection"))).thenReturn(SimplePOJO2.class);
-
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
         ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader(getClass()));
         configurationReader.read(bais, result);
 
         verify(configurationReader, times(2)).getNodeProcessor("pojo2");
-        verify(ormProvider, times(1)).getCollectionParameterType(eq(SimplePOJO.class) ,eq("collection"));
 
+        SimplePOJO pojo = new SimplePOJO();
+        LinkedList<SimplePOJO2> collection = new LinkedList<SimplePOJO2>();
+        SimplePOJO2 pojo2 = new SimplePOJO2();
+        pojo2.setStringValue("some string 1");
+        pojo2.setIntValue(1);
+        collection.add(pojo2);
+
+        pojo2 = new SimplePOJO2();
+        pojo2.setStringValue("some string 2");
+        pojo2.setIntValue(2);
+        collection.add(pojo2);
+        pojo.setCollection(collection);
+
+        verify(result, times(1)).addCommand(new EntityCommand(pojo));
 
     }
 

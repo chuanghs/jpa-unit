@@ -8,6 +8,9 @@ import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,6 +47,10 @@ public class PropertyAccessor extends AEntityAccessor {
         return descriptors.get(propertyName);
     }
 
+    public Class getEntityClass() {
+        return this.clazz;
+    }
+
     public Class getType(String propertyName) {
         PropertyDescriptor propertyDescriptor = descriptors.get(propertyName);
         if (propertyDescriptor != null)
@@ -71,6 +78,36 @@ public class PropertyAccessor extends AEntityAccessor {
         } catch (Exception e) {
             throw new ORMEntityAccessException(e);
         }
+    }
+
+    public Object get(Object entity, String propertyName) {
+        try {
+            PropertyDescriptor pd = getPD(propertyName);
+            if (pd == null) {
+                log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
+                return null;
+            }
+            Method getter = pd.getReadMethod();
+            if (getter == null) {
+                log.warn("there is no setter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
+                return null;
+            }
+
+            return getter.invoke(entity);
+        } catch (Exception e) {
+            throw new ORMEntityAccessException(e);
+        }
+    }
+
+    public Class getCollectionParameterType(String propertyName) {
+        PropertyDescriptor pd = getPD(propertyName);
+        if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
+            Type genericReturnType = pd.getReadMethod().getGenericReturnType();
+            if (genericReturnType instanceof ParameterizedType){
+                return (Class) ((ParameterizedType)genericReturnType).getActualTypeArguments()[0];
+            }
+        }
+        return Object.class;
     }
 
     @Override

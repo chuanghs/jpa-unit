@@ -4,7 +4,11 @@ import org.ormunit.exception.ORMEntityAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -32,6 +36,10 @@ public class FieldAccessor extends AEntityAccessor {
         return fields.values().toArray(new Field[fields.size()]);
     }
 
+    public Class getEntityClass() {
+        return this.clazz;
+    }
+
     public Class getType(String propertyName) {
         Field f = fields.get(propertyName);
         if (f != null)
@@ -55,6 +63,32 @@ public class FieldAccessor extends AEntityAccessor {
             throw new ORMEntityAccessException(e);
         }
     }
+
+    public Object get(Object entity, String propertyName) {
+        Field pd = fields.get(propertyName);
+        if (pd == null) {
+            log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
+            return null;
+        }
+        pd.setAccessible(true);
+        try {
+            return pd.get(entity);
+        } catch (IllegalAccessException e) {
+            throw new ORMEntityAccessException(e);
+        }
+    }
+
+    public Class getCollectionParameterType(String propertyName) {
+         Field f = fields.get(propertyName);
+         if (Collection.class.isAssignableFrom(f.getType())) {
+             Type genericType = f.getGenericType();
+             if (genericType instanceof ParameterizedType){
+                 return (Class) ((ParameterizedType)genericType).getActualTypeArguments()[0];
+             }
+         }
+         return Object.class;
+     }
+
 
     @Override
     public boolean equals(Object o) {

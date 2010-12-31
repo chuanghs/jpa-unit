@@ -1,6 +1,7 @@
 package org.ormunit.entity;
 
 import java.sql.Timestamp;
+import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Date;
 
@@ -24,6 +25,8 @@ public class SimplePOJO {
     private int integerValue;
 
     private Collection<SimplePOJO2> collection;
+
+    private AbstractList<SimplePOJO2> abstractCollection;
 
 
     public int getIntegerValue() {
@@ -128,8 +131,30 @@ public class SimplePOJO {
         if (stringValue != null ? !stringValue.equals(that.stringValue) : that.stringValue != null) return false;
         if (timestampValue != null ? !timestampValue.equals(that.timestampValue) : that.timestampValue != null)
             return false;
+        if (collection != null ? !sameElements(that.collection) : that.collection!=null) return false;
 
         return true;
+    }
+
+    private boolean sameElements(Collection<SimplePOJO2> collection) {
+        if (collection == null )
+            return false;
+        if (this.collection.size()!=collection.size()){
+            return false;
+        }
+        for (SimplePOJO2 pojo2 : this.collection){
+            if (!collection.contains(pojo2))
+                return false;
+        }
+        return true;
+    }
+
+    public AbstractList<SimplePOJO2> getAbstractCollection() {
+        return abstractCollection;
+    }
+
+    public void setAbstractCollection(AbstractList<SimplePOJO2> abstractCollection) {
+        this.abstractCollection = abstractCollection;
     }
 
     @Override

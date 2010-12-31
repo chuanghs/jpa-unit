@@ -5,6 +5,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.ormunit.exception.ORMEntityAccessException;
+import org.ormunit.exception.ORMUnitInstantiationException;
+
+import static org.mockito.Mockito.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -79,6 +82,55 @@ public class EntityAccessorTest {
 
         FieldEntity simplePOJO = new FieldEntity();
         fieldAccessor.set(simplePOJO, "nonExistingField", 1);
+    }
+
+    @Test
+    public void testGetProperty() {
+        PropertyAccessor pa = new PropertyAccessor(SimplePOJO.class);
+
+        SimplePOJO pojo = spy(new SimplePOJO());
+        pojo.setStringValue("someStringValue");
+
+        pa.get(pojo, "stringValue");
+
+        verify(pojo, times(1)).getStringValue();
+    }
+
+    @Test
+    public void testField() {
+        FieldAccessor pa = new FieldAccessor(SimplePOJO.class);
+
+        SimplePOJO pojo = new SimplePOJO();
+        pojo.setStringValue("someStringValue");
+        Assert.assertEquals(pojo.getStringValue(), pa.get(pojo, "stringValue"));
+    }
+
+    @Test
+    public void testGetCollectionParameterType_Property() {
+        PropertyAccessor pa = new PropertyAccessor(SimplePOJO.class);
+        Assert.assertEquals(SimplePOJO2.class, pa.getCollectionParameterType("collection"));
+    }
+
+    @Test
+    public void testGetCollectionParameterType_Field() {
+        FieldAccessor pa = new FieldAccessor(SimplePOJO.class);
+        Assert.assertEquals(SimplePOJO2.class, pa.getCollectionParameterType("collection"));
+    }
+
+    @Test
+    public void testInstantiations() {
+
+        PropertyAccessor pa = new PropertyAccessor(SimplePOJO.class);
+        try {
+            pa.newInstance("abstractCollection");
+            Assert.fail();
+        } catch (ORMUnitInstantiationException e) {}
+
+         try {
+            pa.newInstance("nonexistingproperty");
+            Assert.fail();
+        } catch (ORMUnitInstantiationException e) {}
+
     }
 
 }

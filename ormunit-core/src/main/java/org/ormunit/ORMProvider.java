@@ -19,6 +19,4 @@ public interface ORMProvider {
     void statement(String statement);
 
     <T> T getReference(Class<T> entityClass, Object id);
-
-    Class getCollectionParameterType(Class<?> entityClass, String propertyName);
 }

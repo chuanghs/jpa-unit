@@ -26,6 +26,8 @@ public interface EntityAccessor {
             Timestamp.class,
             String.class));
 
+    Class getEntityClass();
+
     Object newInstance(String propertyName);
 
     boolean isSimpleType(String propertyName);
@@ -33,4 +35,8 @@ public interface EntityAccessor {
     Class getType(String propertyName);
 
     void set(Object entity, String propertyName, Object value);
+
+    Object get(Object entity, String propertyName);
+
+    Class getCollectionParameterType(String propertyName);
 }
