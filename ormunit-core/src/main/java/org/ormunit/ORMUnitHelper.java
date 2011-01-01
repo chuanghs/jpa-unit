@@ -25,7 +25,9 @@ public class ORMUnitHelper {
 
     public static Object convert(Class<?> propertyType, String value) throws ConvertionException {
         try {
-            if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
+            if (propertyType.equals(Object.class)){
+                return value;
+            } else if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
                 return Integer.parseInt(value);
             } else if (propertyType.equals(Double.class) || propertyType.equals(double.class)) {
                 return Double.parseDouble(value);

@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.AbstractList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.Map;
 
 /**
  * Created by IntelliJ IDEA.
@@ -28,6 +29,15 @@ public class SimplePOJO {
 
     private AbstractList<? extends SimplePOJO2> abstractCollection;
 
+    private Map<Integer, SimplePOJO2> map;
+
+    public Map<Integer, SimplePOJO2> getMap() {
+        return map;
+    }
+
+    public void setMap(Map<Integer, SimplePOJO2> map) {
+        this.map = map;
+    }
 
     public int getIntegerValue() {
         return integerValue;
