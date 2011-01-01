@@ -1,16 +1,14 @@
 package org.ormunit.entity;
 
 import org.ormunit.exception.ORMEntityAccessException;
-import org.ormunit.exception.ORMUnitAccessorException;
-import org.ormunit.exception.ORMUnitInstantiationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
-import java.lang.reflect.*;
-import java.util.Collection;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,18 +98,17 @@ public class PropertyAccessor extends AEntityAccessor {
     }
 
     public Class getCollectionParameterType(String propertyName) {
-        PropertyDescriptor pd = getPD(propertyName);
-        if (Collection.class.isAssignableFrom(pd.getPropertyType())) {
-            Type genericReturnType = pd.getReadMethod().getGenericReturnType();
-            if (genericReturnType instanceof ParameterizedType) {
-                Type type = ((ParameterizedType) genericReturnType).getActualTypeArguments()[0];
-                return extractClass(type);
-            }
-        } else
-            throw new ORMUnitAccessorException("property: "+propertyName+" of class: "+getClass().getCanonicalName()+" is not Collection");
-        return Object.class;
+        PropertyDescriptor field = getPD(propertyName);
+        return getCollectionParameterType(propertyName,
+                (ParameterizedType) field.getReadMethod().getGenericReturnType());
     }
 
+
+    public Class[] getMapParameterTypes(String propertyName) {
+        PropertyDescriptor field = getPD(propertyName);
+        return getMapParameterTypes(propertyName,
+                (ParameterizedType) field.getReadMethod().getGenericReturnType());
+    }
 
 
     @Override

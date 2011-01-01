@@ -211,4 +211,25 @@ public class CoreEntityNodeProcessorTest {
 
     }
 
+    @Test
+    public void testMap() throws ORMUnitFileReadException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"pojo2\" /> " +
+                "   <pojo> " +
+                "       <map>" +
+                "           <entry key=\"1\"><pojo2 stringValue=\"some string 1\" intValue=\"1\" /></entry>" +
+                "           <entry key=\"2\"><pojo2 stringValue=\"some string 2\" intValue=\"2\" /></entry>" +
+                "       </map> " +
+                "   </pojo>" +
+                "</ormunit>").getBytes());
+
+        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(ormProvider));
+        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader(getClass()));
+        configurationReader.read(bais, result);
+
+        verify(configurationReader, times(2)).getNodeProcessor("import");
+        verify(configurationReader, times(2)).getNodeProcessor("pojo2");
+    }
+
 }

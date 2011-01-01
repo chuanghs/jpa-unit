@@ -78,18 +78,26 @@ public class EntityNodeProcessor implements INodeProcessor {
             String propertyName = propertyNode.getNodeName();
 
             if (introspector.isSimpleType(propertyName)) {
-                String propertyValue = processSimpleType(provider, propertyNode,  introspector, references);
+                String propertyValue = processSimpleType(provider, propertyNode, introspector, references);
                 set(provider, entity, propertyName, propertyValue, references);
             }
-            if (Collection.class.isAssignableFrom(introspector.getType(propertyName))) {
+            Class type = introspector.getType(propertyName);
+            if (type == null)
+                throw new ORMUnitNodeProcessingException("no such property: " + propertyName + " in class: " + className);
+            if (Collection.class.isAssignableFrom(type)) {
                 Collection c = processCollection(provider, propertyNode, introspector, references);
                 if (introspector.get(entity, propertyName) != null) {
                     ((Collection) introspector.get(entity, propertyName)).addAll(c);
                 } else {
                     introspector.set(entity, propertyName, c);
                 }
-            } else if (Map.class.isAssignableFrom(introspector.getType(propertyName))) {
-
+            } else if (Map.class.isAssignableFrom(type)) {
+                Map map = processMap(provider, propertyNode, introspector, references);
+                if (introspector.get(entity, propertyName) != null) {
+                    ((Map) introspector.get(entity, propertyName)).putAll(map);
+                } else {
+                    introspector.set(entity, propertyName, map);
+                }
             } else {
 
                 if (propertyNode.getChildNodes().getLength() == 1) {
@@ -108,6 +116,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         return entity;
     }
 
+
     private String processSimpleType(ORMProvider provider, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileSyntaxException {
         String propertyName = propertyNode.getNodeName();
         String propertyValue = null;
@@ -125,42 +134,96 @@ public class EntityNodeProcessor implements INodeProcessor {
         return propertyValue;
     }
 
+    private Map processMap(ORMProvider provider, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
+        String propertyName = propertyNode.getNodeName();
+        Map map = (Map) introspector.newInstance(propertyName);
+        Class[] mapParameterTypes = introspector.getMapParameterTypes(propertyName); // {key, value}
+
+        NodeList entryNodes = propertyNode.getChildNodes();
+        for (int i = 0; i < entryNodes.getLength(); i++) {
+            Node entryNode = entryNodes.item(i);
+            if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
+                String key = entryNode.getAttributes().getNamedItem("key").getNodeValue();
+                Object value = null;
+                NodeList entryValues = entryNode.getChildNodes();
+                for (int entry = 0; entry < entryValues.getLength(); entry++) {
+                    Node valueNode = entryValues.item(entry);
+                    if (valueNode.getNodeType() == Node.ELEMENT_NODE) {
+
+
+                        Object element = processEntity(provider, valueNode, references);
+
+                        if (!mapParameterTypes[1].isAssignableFrom(element.getClass())) {
+                            throw new ORMUnitNodeProcessingException(valueNode.getNodeName() + "(" + element.getClass().getCanonicalName() + ") is not subclass of collection parameter typ: " + mapParameterTypes[1].getCanonicalName());
+                        }
+
+                        try {
+                            map.put(ORMUnitHelper.convert(mapParameterTypes[0], key),
+                                    element);
+                        } catch (ConvertionException e) {
+                            throw new ORMUnitFileReadException("cannot convert: "+key+" to desired type: "+mapParameterTypes[0].getCanonicalName(), e);
+                        }
+                    }
+                }
+            }
+        }
+
+        return map;
+    }
+
     private Collection processCollection(ORMProvider provider, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
         String propertyName = propertyNode.getNodeName();
 
-        try {
-            Collection c = (Collection) introspector.newInstance(propertyName);
-            Class collectionParameterType = introspector.getCollectionParameterType(propertyName);
+        Collection c = (Collection) introspector.newInstance(propertyName);
+        Class collectionParameterType = introspector.getCollectionParameterType(propertyName);
 
-            NodeList collectionNodes = propertyNode.getChildNodes();
-            for (int i = 0; i < collectionNodes.getLength(); i++) {
-                Node collectionElementNode = collectionNodes.item(i);
-                if (collectionElementNode.getNodeType() == Node.ELEMENT_NODE) {
+        NodeList collectionNodes = propertyNode.getChildNodes();
+        for (int i = 0; i < collectionNodes.getLength(); i++) {
+            Node elementNode = collectionNodes.item(i);
+            if (elementNode.getNodeType() == Node.ELEMENT_NODE) {
+                Object element = processEntity(provider, elementNode, references);
 
-                    INodeProcessor nodeProcessor = reader.getNodeProcessor(collectionElementNode.getNodeName());
-                    if (nodeProcessor instanceof EntityNodeProcessor) {
-                        Class entityClass = ((EntityNodeProcessor) nodeProcessor).getEntityClass();
-
-                        if (!collectionParameterType.isAssignableFrom(entityClass)){
-                            throw new ORMUnitNodeProcessingException(collectionElementNode.getNodeName()+"("+entityClass+") is not subclass of collection parameter typ: "+collectionParameterType.getCanonicalName());
-                        }
-
-                        c.add(processEntity(
-                                provider,
-                                collectionElementNode,
-                                entityClass.newInstance(),
-                                references));
-                    } else
-                        throw new ORMUnitFileSyntaxException("");
+                if (!collectionParameterType.isAssignableFrom(element.getClass())) {
+                    throw new ORMUnitNodeProcessingException(elementNode.getNodeName() + "(" + element.getClass().getCanonicalName() + ") is not subclass of collection parameter typ: " + collectionParameterType.getCanonicalName());
                 }
+
+                c.add(element);
             }
-            return c;
-        } catch (ORMUnitFileSyntaxException e) {
-            throw e;
-        } catch (Exception e) {
-            throw new ORMUnitFileReadException("", e);
         }
+        return c;
+
     }
+
+    private Object processEntity(ORMProvider provider, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
+        INodeProcessor nodeProcessor = reader.getNodeProcessor(valueNode.getNodeName());
+
+        Object element = null;
+        if (nodeProcessor instanceof EntityNodeProcessor) {
+            Class entityClass = null;
+            try {
+                entityClass = ((EntityNodeProcessor) nodeProcessor).getEntityClass();
+            } catch (ClassNotFoundException e) {
+                throw new ORMUnitFileReadException(e);
+            }
+
+
+            try {
+                element = processEntity(
+                        provider,
+                        valueNode,
+                        entityClass.newInstance(),
+                        references);
+            } catch (InstantiationException e) {
+                throw new ORMUnitFileReadException(e);
+            } catch (IllegalAccessException e) {
+                throw new ORMUnitFileReadException(e);
+            }
+        } else
+            throw new ORMUnitFileSyntaxException("");
+
+        return element;
+    }
+
 
     private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) {
         EntityAccessor introspector = provider.getAccessor(entity.getClass());

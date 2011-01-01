@@ -8,6 +8,7 @@ import org.ormunit.exception.ORMEntityAccessException;
 import org.ormunit.exception.ORMUnitInstantiationException;
 
 import java.util.Collection;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 
@@ -63,7 +64,7 @@ public class EntityAccessorTest {
         Assert.assertEquals((Class) int.class, fieldAccessor.getType("intField"));
     }
 
-    @Test(expected = ORMEntityAccessException.class)
+    @Test(expected = ORMUnitInstantiationException.class)
     public void testNewInstance() {
 
         fieldAccessor.newInstance("intField");
@@ -143,17 +144,29 @@ public class EntityAccessorTest {
 
     }
 
-    public class GenericTestClass<T, K> {
+    public interface ExtraMap<K> extends Map<Integer, String> {
+
+    }
+
+    public class GenericTestClass<GTC1, GTC2> {
 
         private Collection<? extends String> extendsString;
 
         private Collection<? super String> superString;
 
-        private Collection<? extends T> extendsT;
+        private Collection<? extends GTC1> extendsT;
 
-        private Collection<? super T> superT;
+        private Collection<? super GTC1> superT;
 
-        private Collection<T> t;
+        private Collection<GTC1> t;
+
+        private Map<GTC1, Integer> mapTInteger;
+
+        private Map<GTC1, ? extends Integer> mapTextendsInteger;
+
+        private Map<? extends GTC1, Integer> mapextendsTInteger;
+
+        private ExtraMap<GTC2> extraMap;
 
     }
 
@@ -173,15 +186,15 @@ public class EntityAccessorTest {
 
     }
 
-    public class GenericTestSubClass<Z> extends GenericTestClass<SimplePOJO, Z> {
+    public class GenericTestSubClass<GTSC> extends GenericTestClass<SimplePOJO, GTSC> {
 
-        private Collection<Z> z;
+        private Collection<GTSC> z;
 
         public <K extends SimplePOJO2> Collection<K> getCollectionK() {
             return null;
         }
 
-        public Collection<Z> getZ() {
+        public Collection<GTSC> getZ() {
             return z;
         }
 
@@ -203,10 +216,10 @@ public class EntityAccessorTest {
         Assert.assertEquals(String.class, fa.getCollectionParameterType("extendsString"));
         Assert.assertEquals(String.class, fa.getCollectionParameterType("superString"));
 
-        Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("extendsT"));
         Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("superT"));
         Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("t"));
 
+        Assert.assertEquals(SimplePOJO.class, fa.getCollectionParameterType("extendsT"));
 
     }
 
@@ -219,6 +232,27 @@ public class EntityAccessorTest {
         PropertyAccessor pa = new PropertyAccessor(GenericTestSubSubClass.class);
 
         Assert.assertEquals(Integer.class, pa.getCollectionParameterType("z"));
+    }
+
+    @Test
+    public void testExtractMapTypes(){
+        FieldAccessor fa = new FieldAccessor(GenericTestClass.class);
+
+        Class[] mapTIntegers = fa.getMapParameterTypes("mapTInteger");
+        Assert.assertEquals(Object.class, mapTIntegers[0]);
+        Assert.assertEquals(Integer.class, mapTIntegers[1]);
+
+        mapTIntegers = fa.getMapParameterTypes("mapTextendsInteger");
+        Assert.assertEquals(Object.class, mapTIntegers[0]);
+        Assert.assertEquals(Integer.class, mapTIntegers[1]);
+
+        mapTIntegers = fa.getMapParameterTypes("mapextendsTInteger");
+        Assert.assertEquals(Object.class, mapTIntegers[0]);
+        Assert.assertEquals(Integer.class, mapTIntegers[1]);
+
+        mapTIntegers = fa.getMapParameterTypes("extraMap");
+        Assert.assertEquals(Integer.class, mapTIntegers[0]);
+        Assert.assertEquals(String.class, mapTIntegers[1]);
     }
 
 }

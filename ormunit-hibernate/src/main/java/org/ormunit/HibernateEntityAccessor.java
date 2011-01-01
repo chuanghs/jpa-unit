@@ -33,4 +33,8 @@ public class HibernateEntityAccessor extends AEntityAccessor {
     public Class getCollectionParameterType(String propertyName) {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
+
+    public Class[] getMapParameterTypes(String propertyName) {
+        return new Class[0];  //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

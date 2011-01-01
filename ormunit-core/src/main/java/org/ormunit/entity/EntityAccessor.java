@@ -39,4 +39,6 @@ public interface EntityAccessor {
     Object get(Object entity, String propertyName);
 
     Class getCollectionParameterType(String propertyName);
+
+    Class[] getMapParameterTypes(String propertyName);
 }

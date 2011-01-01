@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import java.lang.reflect.Field;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -81,15 +80,19 @@ public class FieldAccessor extends AEntityAccessor {
     }
 
     public Class getCollectionParameterType(String propertyName) {
-        Field f = fields.get(propertyName);
-        if (Collection.class.isAssignableFrom(f.getType())) {
-            Type genericType = f.getGenericType();
-            if (genericType instanceof ParameterizedType) {
-                Type type = ((ParameterizedType) genericType).getActualTypeArguments()[0];
-                return extractClass(type);
-            }
-        }
-        return Object.class;
+        Field field = fields.get(propertyName);
+        Type genericType = field.getGenericType();
+
+        return getCollectionParameterType(propertyName, (ParameterizedType) genericType);
+    }
+
+
+    public Class[] getMapParameterTypes(String propertyName) {
+        Field field = fields.get(propertyName);
+        Class<?> type = field.getType();
+        Type genericType = field.getGenericType();
+
+        return getMapParameterTypes(propertyName, (ParameterizedType) genericType);
     }
 
 
