@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.ormunit.JPAORMProvider;
-import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.ORMUnit;
 import org.ormunit.ORMUnitHelper;
 import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
@@ -75,7 +75,7 @@ public abstract class JPAUnitTestCase extends TestCase {
 
 
             if (inputStream != null) {
-                ORMUnitConfigurationReader reader = new ORMUnitConfigurationReader(getClass(), this.properties);
+                ORMUnit reader = new ORMUnit(getClass(), this.properties);
 
                 for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
                     reader.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName(), reader));

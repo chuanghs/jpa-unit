@@ -1,7 +1,7 @@
 package org.ormunit.node;
 
 import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.ORMUnit;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.slf4j.Logger;
@@ -50,7 +50,7 @@ public class ImportNodeProcessor implements INodeProcessor {
 
     }
 
-    public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnitConfigurationReader reader) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnit reader) throws ORMUnitNodeProcessingException {
         NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
         Node classNode = importAttributes.getNamedItem("class");
         Node aliasNode = importAttributes.getNamedItem("alias");

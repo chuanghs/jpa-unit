@@ -2,7 +2,7 @@ package org.ormunit.node;
 
 import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.ORMUnit;
 import org.ormunit.ORMUnitHelper;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
@@ -34,9 +34,9 @@ public class EntityNodeProcessor implements INodeProcessor {
     public static final String ReferencePattern = "ref\\(.+\\)";
 
     private final String className;
-    private final ORMUnitConfigurationReader reader;
+    private final ORMUnit reader;
 
-    public EntityNodeProcessor(String className, ORMUnitConfigurationReader reader) {
+    public EntityNodeProcessor(String className, ORMUnit reader) {
         this.className = className;
         this.reader = reader;
     }
@@ -45,7 +45,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         return Class.forName(className);
     }
 
-    public synchronized void process(Node entityElement, ORMUnitConfiguration result, ORMUnitConfigurationReader reader) throws ORMUnitNodeProcessingException {
+    public synchronized void process(Node entityElement, ORMUnitConfiguration result, ORMUnit reader) throws ORMUnitNodeProcessingException {
         try {
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();

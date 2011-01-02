@@ -68,7 +68,7 @@ public class ORMUnitHelper {
         Properties result = new Properties();
         try {
             do {
-                InputStream propertiesStream = start.getResourceAsStream(path + ORMUnitConfigurationReader.JPAUnitPropertiesFileName);
+                InputStream propertiesStream = start.getResourceAsStream(path + ORMUnit.JPAUnitPropertiesFileName);
                 result = new Properties();
                 result.putAll(defaults);
                 if (propertiesStream != null)
@@ -85,7 +85,7 @@ public class ORMUnitHelper {
     }
 
     public static Properties readDefaults() {
-        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream("/" + ORMUnitConfigurationReader.JPAUnitDefaultPropertiesFileName);
+        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream("/" + ORMUnit.JPAUnitDefaultPropertiesFileName);
         Properties properties = new Properties();
         try {
             properties.load(resourceAsStream);

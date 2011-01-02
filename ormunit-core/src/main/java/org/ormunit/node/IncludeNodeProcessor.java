@@ -1,7 +1,7 @@
 package org.ormunit.node;
 
+import org.ormunit.ORMUnit;
 import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.w3c.dom.Node;
@@ -15,7 +15,7 @@ import org.w3c.dom.Node;
 public class IncludeNodeProcessor implements INodeProcessor {
 
 
-    public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnitConfigurationReader reader) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnit reader) throws ORMUnitNodeProcessingException {
         Node srcNode = jpaUnitElement.getAttributes().getNamedItem("src");
         if (srcNode != null) {
             try {
@@ -26,7 +26,7 @@ public class IncludeNodeProcessor implements INodeProcessor {
         }
     }
 
-    public void include(String s, ORMUnitConfigurationReader configurationReader, ORMUnitConfiguration configuration) throws ORMUnitFileReadException {
+    public void include(String s, ORMUnit configurationReader, ORMUnitConfiguration configuration) throws ORMUnitFileReadException {
         configurationReader.read(s, configuration);
     }
 }

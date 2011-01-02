@@ -7,7 +7,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.JPAORMProvider;
 import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.ORMUnit;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.FieldAccessEntity;
@@ -55,7 +55,7 @@ public class JPAEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
-        new ORMUnitConfigurationReader(getClass()).read(bais, result);
+        new ORMUnit(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
@@ -73,7 +73,7 @@ public class JPAEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
-        new ORMUnitConfigurationReader(getClass()).read(bais, result);
+        new ORMUnit(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();

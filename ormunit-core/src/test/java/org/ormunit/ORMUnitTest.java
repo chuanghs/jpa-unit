@@ -27,7 +27,7 @@ import static org.mockito.Mockito.*;
  * Time: 15:40
  */
 @RunWith(MockitoJUnitRunner.class)
-public class ORMUnitConfigurationReaderTest {
+public class ORMUnitTest {
 
 
     @Spy
@@ -40,7 +40,7 @@ public class ORMUnitConfigurationReaderTest {
                 "<statement code=\"this code shouldnt be added\">code0</statement>" +
                 "<statement code=\"this code shouldnt be added\"><![CDATA[code1]]></statement>" +
                 "<statement code=\"code2\" /><statement code=\"code3\" /></ormunit>").getBytes();
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit reader = spy(new ORMUnit(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(4)).getNodeProcessor(eq("statement"));
@@ -59,7 +59,7 @@ public class ORMUnitConfigurationReaderTest {
 
         byte[] value = "<ormunit> <statement code=\"this code shouldnt be added\"><![CDATA[code1]]><somesubelem /></statement></ormunit>".getBytes();
 
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit reader = spy(new ORMUnit(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(2)).getNodeProcessor(eq("statements"));
@@ -84,7 +84,7 @@ public class ORMUnitConfigurationReaderTest {
     public void testInvalidClassNames2() throws ORMUnitFileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"1com.example.SomeClass\" alias=\"sc1\"/></ormunit>".getBytes();
 
-        new ORMUnitConfigurationReader(getClass())
+        new ORMUnit(getClass())
                 .read(new ByteArrayInputStream(value), configuration);
 
     }
@@ -94,7 +94,7 @@ public class ORMUnitConfigurationReaderTest {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\" alias=\"sc2\"/></ormunit>".getBytes();
 
 
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit reader = spy(new ORMUnit(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(INodeProcessor.class));
@@ -106,7 +106,7 @@ public class ORMUnitConfigurationReaderTest {
     public void testUnknownNode() throws ORMUnitFileReadException, IOException {
         byte[] value = "<ormunit><someInvalidAndUndUnknownNode/></ormunit>".getBytes();
 
-        new ORMUnitConfigurationReader(getClass())
+        new ORMUnit(getClass())
                 .read(new ByteArrayInputStream(value), configuration);
     }
 
@@ -114,15 +114,15 @@ public class ORMUnitConfigurationReaderTest {
     @Test(expected = ORMUnitFileReadException.class)
     public void testInvalidSyntax() throws ORMUnitFileReadException {
         byte[] value = "some non xml content".getBytes();
-        new ORMUnitConfigurationReader(getClass())
+        new ORMUnit(getClass())
                 .read(new ByteArrayInputStream(value), configuration);
     }
 
     @Test
     public void testInclude() throws ORMUnitFileReadException {
-        String workDir = "/" + ORMUnitConfigurationReader.class.getPackage().getName().replace(".", "/");
+        String workDir = "/" + ORMUnit.class.getPackage().getName().replace(".", "/");
 
-        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit configurationReader = spy(new ORMUnit(getClass()));
         IncludeNodeProcessor includeNodeProcessor = new IncludeNodeProcessor();
 
         doReturn(new ByteArrayInputStream("<ormunit></ormunit>".getBytes())).when(configurationReader).getResourceAsStream(eq(workDir + "/someOtherFile.xml"));
@@ -137,9 +137,9 @@ public class ORMUnitConfigurationReaderTest {
     public void testIncludeChangeWorkDir1() throws ORMUnitFileReadException {
         //byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
 
-        String workDir = "/" + ORMUnitConfigurationReader.class.getPackage().getName().replace(".", "/");
+        String workDir = "/" + ORMUnit.class.getPackage().getName().replace(".", "/");
 
-        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit configurationReader = spy(new ORMUnit(getClass()));
         IncludeNodeProcessor includeNodeProcessor = new IncludeNodeProcessor();
 
         doReturn(configuration).when(configurationReader).read(any(InputStream.class), same(configuration));
@@ -157,9 +157,9 @@ public class ORMUnitConfigurationReaderTest {
     public void testIncludeChangeWorkDirRecurrent() throws ORMUnitFileReadException {
         byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
 
-        String workDir = "/" + ORMUnitConfigurationReader.class.getPackage().getName().replace(".", "/");
+        String workDir = "/" + ORMUnit.class.getPackage().getName().replace(".", "/");
 
-        ORMUnitConfigurationReader configurationReader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit configurationReader = spy(new ORMUnit(getClass()));
 
 
 //        doReturn(configuration).when(configurationReader).read(any(InputStream.class), same(configuration));

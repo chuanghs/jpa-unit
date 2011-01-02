@@ -25,8 +25,8 @@ public class ORMUnitPropertiesTest {
         Properties properties = new Properties();
 
         String somestrangenode = "somestrangenode";
-        properties.setProperty(ORMUnitConfigurationReader.Properties_NodeProcessor_Prefix + somestrangenode, FakeNodeProcessor.class.getCanonicalName());
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(properties);
+        properties.setProperty(ORMUnit.Properties_NodeProcessor_Prefix + somestrangenode, FakeNodeProcessor.class.getCanonicalName());
+        ORMUnit jpaUnitConfigurationReader = new ORMUnit(properties);
 
         assertTrue(jpaUnitConfigurationReader.getNodeProcessor(somestrangenode) instanceof FakeNodeProcessor);
 
@@ -37,15 +37,15 @@ public class ORMUnitPropertiesTest {
         Properties properties = new Properties();
 
         String somestrangenode = "somestrangenode";
-        properties.setProperty(ORMUnitConfigurationReader.Properties_NodeProcessor_Prefix + somestrangenode, "somestringthataintclassname");
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(properties);
+        properties.setProperty(ORMUnit.Properties_NodeProcessor_Prefix + somestrangenode, "somestringthataintclassname");
+        ORMUnit jpaUnitConfigurationReader = new ORMUnit(properties);
 
     }
 
 
     @Test
     public void testDefaultProperties() {
-        ORMUnitConfigurationReader jpaUnitConfigurationReader = new ORMUnitConfigurationReader(getClass());
+        ORMUnit jpaUnitConfigurationReader = new ORMUnit(getClass());
 
         assertNotNull(jpaUnitConfigurationReader.getNodeProcessor("statement"));
         assertNotNull(jpaUnitConfigurationReader.getNodeProcessor("import"));

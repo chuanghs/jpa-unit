@@ -5,8 +5,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
+import org.ormunit.ORMUnit;
 import org.ormunit.ORMUnitConfiguration;
-import org.ormunit.ORMUnitConfigurationReader;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
@@ -37,7 +37,7 @@ public class ImportNodeProcessorTest {
         byte[] value = ("<ormunit> " +
                 "<import class=\"1some.invalid.0ClassName\" alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit reader = spy(new ORMUnit(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
     }
 
@@ -46,7 +46,7 @@ public class ImportNodeProcessorTest {
         byte[] value = ("<ormunit> " +
                 "<import alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit reader = spy(new ORMUnit(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
     }
 
@@ -57,7 +57,7 @@ public class ImportNodeProcessorTest {
                 "<import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
 
 
-        ORMUnitConfigurationReader reader = spy(new ORMUnitConfigurationReader(getClass()));
+        ORMUnit reader = spy(new ORMUnit(getClass()));
         reader.read(new ByteArrayInputStream(value), configuration);
 
         verify(reader, times(2)).getNodeProcessor(eq("import"));
@@ -74,7 +74,7 @@ public class ImportNodeProcessorTest {
                 "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
                 "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
                 "</ormunit>").getBytes();
-        new ORMUnitConfigurationReader(getClass())
+        new ORMUnit(getClass())
                 .read(new ByteArrayInputStream(value), configuration);
     }
 
