@@ -15,7 +15,6 @@ import static org.mockito.Mockito.*;
  * User: krzyzak
  * Date: 28.12.10
  * Time: 15:31
- * To change this template use File | Settings | File Templates.
  */
 @RunWith(MockitoJUnitRunner.class)
 public class ORMUnitConfigurationTest {

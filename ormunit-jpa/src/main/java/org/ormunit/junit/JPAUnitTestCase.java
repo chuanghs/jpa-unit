@@ -32,6 +32,7 @@ public abstract class JPAUnitTestCase extends TestCase {
     private Properties properties;
     private String ormUnitFileName;
     private EntityManager em;
+    private ORMUnit ormUnit;
 
     public JPAUnitTestCase(String unitName) {
         this(unitName, null);
@@ -40,13 +41,14 @@ public abstract class JPAUnitTestCase extends TestCase {
     public JPAUnitTestCase(String unitName, String ormUnitFileName) {
         this.unitName = unitName;
         this.ormUnitFileName = ormUnitFileName;
-        properties = ORMUnitHelper.readOrmUnitProperties(getClass());
 
-        if (isWithDB() && entityManagerFactories.get(unitName) == null) {
+        ormUnit = new ORMUnit(getClass(), properties = ORMUnitHelper.readOrmUnitProperties(getClass()));
+        String fullUnitName = ormUnit.getDefaultDataSourceName() + unitName;
 
-            EntityManagerFactory entityManagerFactory = javax.persistence.Persistence.createEntityManagerFactory(unitName);
-
-            entityManagerFactories.put(unitName, entityManagerFactory);
+        if (isWithDB() && entityManagerFactories.get(fullUnitName) == null) {
+            entityManagerFactories.put(
+                    fullUnitName,
+                    javax.persistence.Persistence.createEntityManagerFactory(unitName, ormUnit.getDefaultDataSourceProperties()));
         }
     }
 
@@ -63,7 +65,9 @@ public abstract class JPAUnitTestCase extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         if (isWithDB()) {
-            em = entityManagerFactories.get(this.unitName).createEntityManager();
+            String fullUnitName = ormUnit.getDefaultDataSourceName() + unitName;
+
+            em = entityManagerFactories.get(fullUnitName).createEntityManager(ormUnit.getDefaultDataSourceProperties());
             em.getTransaction().begin();
 
             InputStream inputStream = null;
@@ -75,14 +79,13 @@ public abstract class JPAUnitTestCase extends TestCase {
 
 
             if (inputStream != null) {
-                ORMUnit reader = new ORMUnit(getClass(), this.properties);
 
                 for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
-                    reader.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName(), reader));
+                    ormUnit.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName(), ormUnit));
                 }
 
 
-                reader.read(inputStream, new JPAORMProvider(getEm()))
+                ormUnit.read(inputStream, new JPAORMProvider(getEm()))
                         .execute();
             }
 

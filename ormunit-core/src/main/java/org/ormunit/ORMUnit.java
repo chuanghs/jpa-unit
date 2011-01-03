@@ -205,6 +205,10 @@ public class ORMUnit {
         return currentDir;
     }
 
+    public String getDefaultDataSourceName() {
+        return this.defaultDataSourceName;
+    }
+
     public Properties getDefaultDataSourceProperties() {
         if (this.defaultDataSourceName==null)
             throw new ORMUnitConfigurationException("No "+Properties_DatasourcesDefault_Prefix+" property found");
