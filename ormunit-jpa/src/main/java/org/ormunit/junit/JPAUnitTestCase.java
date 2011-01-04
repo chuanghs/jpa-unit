@@ -3,6 +3,7 @@ package org.ormunit.junit;
 import junit.framework.TestCase;
 import org.ormunit.JPAORMProvider;
 import org.ormunit.ORMUnitConfigurationReader;
+import org.ormunit.ORMUnitHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,13 +38,7 @@ public abstract class JPAUnitTestCase extends TestCase {
     public JPAUnitTestCase(String unitName, String ormUnitFileName) {
         this.unitName = unitName;
         this.ormUnitFileName = ormUnitFileName;
-        properties = new Properties();
-
-        try {
-            properties.load(getClass().getResourceAsStream("/ormunit.default.properties"));
-        } catch (IOException e) {
-            log.error("", e);
-        }
+        properties = ORMUnitHelper.readOrmUnitProperties(getClass());
 
         if (isWithDB() && entityManagerFactories.get(unitName) == null)
             entityManagerFactories.put(unitName, Persistence.createEntityManagerFactory(unitName));
@@ -65,15 +60,18 @@ public abstract class JPAUnitTestCase extends TestCase {
             em.getTransaction().begin();
 
             if (this.ormUnitFileName != null)
-                new ORMUnitConfigurationReader(getClass())
+                new ORMUnitConfigurationReader(getClass(), this.properties)
                         .read(getClass().getResourceAsStream(this.ormUnitFileName), new JPAORMProvider(getEm()))
                         .execute();
         }
     }
 
     public void tearDown() throws Exception {
-        if (isWithDB())
+        if (isWithDB()) {
+            em.clear();
+            em.close();
             em.getTransaction().rollback();
+        }
         super.tearDown();
     }
 

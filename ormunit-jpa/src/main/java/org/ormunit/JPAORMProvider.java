@@ -65,7 +65,8 @@ public class JPAORMProvider implements ORMProvider {
     }
 
     public void entity(Object entity) {
-        getEntityManager().persist(entity);
+        getEntityManager().merge(entity);
+        getEntityManager().flush();
     }
 
     public void statement(String statement) {
