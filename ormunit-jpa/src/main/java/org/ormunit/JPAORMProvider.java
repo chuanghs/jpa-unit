@@ -8,10 +8,18 @@ import javax.persistence.EmbeddedId;
 import javax.persistence.EntityManager;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.spi.PersistenceProvider;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.WeakHashMap;
+import java.net.URL;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,7 +28,6 @@ import java.util.WeakHashMap;
  * Time: 10:43
  */
 public class JPAORMProvider implements ORMProvider {
-
 
     private EntityManager entityManager;
     private final WeakHashMap<Class, WeakReference<EntityAccessor>> inspectors = new WeakHashMap<Class, WeakReference<EntityAccessor>>();
@@ -60,6 +67,10 @@ public class JPAORMProvider implements ORMProvider {
         return false;
     }
 
+    public JPAORMProvider() {
+
+    }
+
     public JPAORMProvider(EntityManager entityManager) {
         this.entityManager = entityManager;
     }
@@ -78,6 +89,10 @@ public class JPAORMProvider implements ORMProvider {
 
     public <T> T getReference(Class<T> propertyClass, Object id) {
         return getEntityManager().getReference(propertyClass, id);  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setEntityManager(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
     public EntityManager getEntityManager() {
@@ -132,6 +147,8 @@ public class JPAORMProvider implements ORMProvider {
         } while (entityClass != null && result == null);
         return result;
     }
+
+
 
 
 }

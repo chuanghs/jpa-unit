@@ -1,6 +1,6 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnitConfiguration;
+import org.ormunit.ORMUnitTestSet;
 import org.ormunit.ORMUnit;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
@@ -25,14 +25,14 @@ public class ImportNodeProcessor implements INodeProcessor {
     private static final Logger log = LoggerFactory.getLogger(ImportNodeProcessor.class);
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";
 
-    private final WeakHashMap<ORMUnitConfiguration, WeakReference<Map<String, String>>> confImports = new WeakHashMap<ORMUnitConfiguration, WeakReference<Map<String, String>>>();
+    private final WeakHashMap<ORMUnitTestSet, WeakReference<Map<String, String>>> confImports = new WeakHashMap<ORMUnitTestSet, WeakReference<Map<String, String>>>();
 
-    public void addImport(ORMUnitConfiguration configuration, String className, String alias) {
+    public void addImport(ORMUnitTestSet testSet, String className, String alias) {
 
-        if (confImports.get(configuration) == null) {
-            confImports.put(configuration, new WeakReference<Map<String, String>>(new HashMap<String, String>()));
+        if (confImports.get(testSet) == null) {
+            confImports.put(testSet, new WeakReference<Map<String, String>>(new HashMap<String, String>()));
         }
-        Map<String, String> imports = confImports.get(configuration).get();
+        Map<String, String> imports = confImports.get(testSet).get();
 
 
         if (imports.containsKey(alias)) {
@@ -50,7 +50,7 @@ public class ImportNodeProcessor implements INodeProcessor {
 
     }
 
-    public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
         NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
         Node classNode = importAttributes.getNamedItem("class");
         Node aliasNode = importAttributes.getNamedItem("alias");
@@ -65,6 +65,6 @@ public class ImportNodeProcessor implements INodeProcessor {
             alias = aliasNode.getNodeValue();
         }
         addImport(result, className, alias);
-        reader.registerNodeProcessor(alias, new EntityNodeProcessor(className, reader));
+        result.registerNodeProcessor(alias, new EntityNodeProcessor(className));
     }
 }

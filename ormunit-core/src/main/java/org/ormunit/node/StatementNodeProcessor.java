@@ -1,6 +1,6 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnitConfiguration;
+import org.ormunit.ORMUnitTestSet;
 import org.ormunit.ORMUnit;
 import org.ormunit.command.StatementCommand;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
@@ -16,7 +16,7 @@ import org.w3c.dom.NodeList;
  */
 public class StatementNodeProcessor implements INodeProcessor {
 
-    public void process(Node jpaUnitElement, ORMUnitConfiguration result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
         NodeList statementChildren = jpaUnitElement.getChildNodes();
         if (statementChildren.getLength() > 1) {
             throw new ORMUnitNodeProcessingException("statement element is allowed only to have 1 child: CDATA or text");

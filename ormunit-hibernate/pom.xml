@@ -11,6 +11,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>ormunit-hibernate</artifactId>
+    <name>ormunit-hibernate</name>
     <dependencies>
         <dependency>
             <groupId>org.ormunit</groupId>

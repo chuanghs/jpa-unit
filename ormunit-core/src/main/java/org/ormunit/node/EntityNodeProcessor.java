@@ -1,9 +1,9 @@
 package org.ormunit.node;
 
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnitConfiguration;
 import org.ormunit.ORMUnit;
 import org.ormunit.ORMUnitHelper;
+import org.ormunit.ORMUnitTestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.EntityAccessor;
@@ -34,22 +34,21 @@ public class EntityNodeProcessor implements INodeProcessor {
     public static final String ReferencePattern = "ref\\(.+\\)";
 
     private final String className;
-    private final ORMUnit reader;
 
-    public EntityNodeProcessor(String className, ORMUnit reader) {
+
+    public EntityNodeProcessor(String className) {
         this.className = className;
-        this.reader = reader;
     }
 
     public Class getEntityClass() throws ClassNotFoundException {
         return Class.forName(className);
     }
 
-    public synchronized void process(Node entityElement, ORMUnitConfiguration result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+    public synchronized void process(Node entityElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
         try {
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();
-            processEntity(result.getProvider(), entityElement, entity, references);
+            processEntity(result, entityElement, entity, references);
 
             result.addCommand(new EntityCommand(entity, references));
         } catch (Exception e) {
@@ -60,11 +59,13 @@ public class EntityNodeProcessor implements INodeProcessor {
     }
 
 
-    public Object processEntity(ORMProvider provider, Node entityElement, Object entity, Set<EntityReference> references) throws ORMUnitFileReadException {
-
+    public Object processEntity(ORMUnitTestSet testSet, Node entityElement, Object entity, Set<EntityReference> references) throws ORMUnitFileReadException {
+        ORMProvider provider = testSet.getProvider();
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
 
+
         NamedNodeMap attributes = entityElement.getAttributes();
+
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
             set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
@@ -85,14 +86,14 @@ public class EntityNodeProcessor implements INodeProcessor {
             if (type == null)
                 throw new ORMUnitNodeProcessingException("no such property: " + propertyName + " in class: " + className);
             if (Collection.class.isAssignableFrom(type)) {
-                Collection c = processCollection(provider, propertyNode, introspector, references);
+                Collection c = processCollection(testSet, propertyNode, introspector, references);
                 if (introspector.get(entity, propertyName) != null) {
                     ((Collection) introspector.get(entity, propertyName)).addAll(c);
                 } else {
                     introspector.set(entity, propertyName, c);
                 }
             } else if (Map.class.isAssignableFrom(type)) {
-                Map map = processMap(provider, propertyNode, introspector, references);
+                Map map = processMap(testSet, propertyNode, introspector, references);
                 if (introspector.get(entity, propertyName) != null) {
                     ((Map) introspector.get(entity, propertyName)).putAll(map);
                 } else {
@@ -109,7 +110,7 @@ public class EntityNodeProcessor implements INodeProcessor {
                         continue;
                     }
                 }
-                Object entity1 = processEntity(provider, propertyNode, introspector.newInstance(propertyName), references);
+                Object entity1 = processEntity(testSet, propertyNode, introspector.newInstance(propertyName), references);
                 introspector.set(entity, propertyName, entity1);
             }
         }
@@ -134,7 +135,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         return propertyValue;
     }
 
-    private Map processMap(ORMProvider provider, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
+    private Map processMap(ORMUnitTestSet testSet, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
         String propertyName = propertyNode.getNodeName();
         Map map = (Map) introspector.newInstance(propertyName);
         Class[] mapParameterTypes = introspector.getMapParameterTypes(propertyName); // {key, value}
@@ -151,7 +152,7 @@ public class EntityNodeProcessor implements INodeProcessor {
                     if (valueNode.getNodeType() == Node.ELEMENT_NODE) {
 
 
-                        Object element = processEntity(provider, valueNode, references);
+                        Object element = processEntity(testSet, valueNode, references);
 
                         if (!mapParameterTypes[1].isAssignableFrom(element.getClass())) {
                             throw new ORMUnitNodeProcessingException(valueNode.getNodeName() + "(" + element.getClass().getCanonicalName() + ") is not subclass of collection parameter typ: " + mapParameterTypes[1].getCanonicalName());
@@ -161,7 +162,7 @@ public class EntityNodeProcessor implements INodeProcessor {
                             map.put(ORMUnitHelper.convert(mapParameterTypes[0], key),
                                     element);
                         } catch (ConvertionException e) {
-                            throw new ORMUnitFileReadException("cannot convert: "+key+" to desired type: "+mapParameterTypes[0].getCanonicalName(), e);
+                            throw new ORMUnitFileReadException("cannot convert: " + key + " to desired type: " + mapParameterTypes[0].getCanonicalName(), e);
                         }
                     }
                 }
@@ -171,7 +172,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         return map;
     }
 
-    private Collection processCollection(ORMProvider provider, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
+    private Collection processCollection(ORMUnitTestSet testSet, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
         String propertyName = propertyNode.getNodeName();
 
         Collection c = (Collection) introspector.newInstance(propertyName);
@@ -181,7 +182,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         for (int i = 0; i < collectionNodes.getLength(); i++) {
             Node elementNode = collectionNodes.item(i);
             if (elementNode.getNodeType() == Node.ELEMENT_NODE) {
-                Object element = processEntity(provider, elementNode, references);
+                Object element = processEntity(testSet, elementNode, references);
 
                 if (!collectionParameterType.isAssignableFrom(element.getClass())) {
                     throw new ORMUnitNodeProcessingException(elementNode.getNodeName() + "(" + element.getClass().getCanonicalName() + ") is not subclass of collection parameter typ: " + collectionParameterType.getCanonicalName());
@@ -194,8 +195,8 @@ public class EntityNodeProcessor implements INodeProcessor {
 
     }
 
-    private Object processEntity(ORMProvider provider, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
-        INodeProcessor nodeProcessor = reader.getNodeProcessor(valueNode.getNodeName());
+    private Object processEntity(ORMUnitTestSet testset, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
+        INodeProcessor nodeProcessor = testset.getNodeProcessor(valueNode.getNodeName());
 
         Object element = null;
         if (nodeProcessor instanceof EntityNodeProcessor) {
@@ -209,7 +210,7 @@ public class EntityNodeProcessor implements INodeProcessor {
 
             try {
                 element = processEntity(
-                        provider,
+                        testset,
                         valueNode,
                         entityClass.newInstance(),
                         references);

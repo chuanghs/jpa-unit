@@ -60,17 +60,21 @@ public class ORMUnitHelper {
     }
 
     public static Properties readOrmUnitProperties(Class<?> start) {
+        return readOrmUnitProperties(start, new Properties());
+    }
+
+    public static Properties readOrmUnitProperties(Class<?> start, Properties d) {
 
         String[] split = start.getPackage().getName().split("\\.");
         int i = 0;
         String path = "/";
-        Properties defaults = readDefaults();
+        Properties defaults = readDefaults(d);
         Properties result = new Properties();
         try {
             do {
                 InputStream propertiesStream = start.getResourceAsStream(path + ORMUnit.JPAUnitPropertiesFileName);
-                result = new Properties();
-                result.putAll(defaults);
+                result = new Properties(defaults);
+
                 if (propertiesStream != null)
                     result.load(propertiesStream);
                 defaults = result;
@@ -84,9 +88,9 @@ public class ORMUnitHelper {
         return result;
     }
 
-    public static Properties readDefaults() {
-        InputStream resourceAsStream = ORMUnitConfiguration.class.getResourceAsStream("/" + ORMUnit.JPAUnitDefaultPropertiesFileName);
-        Properties properties = new Properties();
+    public static Properties readDefaults(Properties d) {
+        InputStream resourceAsStream = ORMUnitTestSet.class.getResourceAsStream("/" + ORMUnit.JPAUnitDefaultPropertiesFileName);
+        Properties properties = new Properties(d);
         try {
             properties.load(resourceAsStream);
         } catch (IOException e) {

@@ -6,7 +6,7 @@ import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitConfiguration;
+import org.ormunit.ORMUnitTestSet;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
@@ -30,7 +30,7 @@ public class ImportNodeProcessorTest {
 
 
     @Spy
-    ORMUnitConfiguration configuration = new ORMUnitConfiguration(mock(ORMProvider.class));
+    ORMUnitTestSet testSet = new ORMUnitTestSet(mock(ORMProvider.class));
 
     @Test(expected = ORMUnitConfigurationException.class)
     public void testImportInvalidClassName() throws ORMUnitFileReadException {
@@ -38,7 +38,7 @@ public class ImportNodeProcessorTest {
                 "<import class=\"1some.invalid.0ClassName\" alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
         ORMUnit reader = spy(new ORMUnit(getClass()));
-        reader.read(new ByteArrayInputStream(value), configuration);
+        reader.read(new ByteArrayInputStream(value), testSet);
     }
 
     @Test(expected = ORMUnitFileSyntaxException.class)
@@ -47,7 +47,7 @@ public class ImportNodeProcessorTest {
                 "<import alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
         ORMUnit reader = spy(new ORMUnit(getClass()));
-        reader.read(new ByteArrayInputStream(value), configuration);
+        reader.read(new ByteArrayInputStream(value), testSet);
     }
 
     @Test
@@ -58,14 +58,14 @@ public class ImportNodeProcessorTest {
 
 
         ORMUnit reader = spy(new ORMUnit(getClass()));
-        reader.read(new ByteArrayInputStream(value), configuration);
+        reader.read(new ByteArrayInputStream(value), testSet);
 
-        verify(reader, times(2)).getNodeProcessor(eq("import"));
+        verify(testSet, times(2)).getNodeProcessor(eq("import"));
 
-        verify(reader, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
-        verify(reader, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
+        verify(testSet, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
+        verify(testSet, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
 
-        verifyNoMoreInteractions(configuration);
+        //verifyNoMoreInteractions(testSet);
     }
 
     @Test(expected = ORMUnitConfigurationException.class)
@@ -75,7 +75,7 @@ public class ImportNodeProcessorTest {
                 "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
                 "</ormunit>").getBytes();
         new ORMUnit(getClass())
-                .read(new ByteArrayInputStream(value), configuration);
+                .read(new ByteArrayInputStream(value), testSet);
     }
 
 }

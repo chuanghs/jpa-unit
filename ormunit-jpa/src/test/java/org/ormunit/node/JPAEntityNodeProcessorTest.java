@@ -6,7 +6,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.JPAORMProvider;
-import org.ormunit.ORMUnitConfiguration;
+import org.ormunit.ORMUnitTestSet;
 import org.ormunit.ORMUnit;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
@@ -54,7 +54,7 @@ public class JPAEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
+        ORMUnitTestSet result = spy(new ORMUnitTestSet(new JPAORMProvider(em)));
         new ORMUnit(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();
@@ -72,7 +72,7 @@ public class JPAEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitConfiguration result = spy(new ORMUnitConfiguration(new JPAORMProvider(em)));
+        ORMUnitTestSet result = spy(new ORMUnitTestSet(new JPAORMProvider(em)));
         new ORMUnit(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();

@@ -33,16 +33,18 @@ public class ORMUnit {
     private static final Logger log = LoggerFactory.getLogger(ORMUnit.class);
 
     public static final String Properties_NodeProcessor_Prefix = "ormunit.nodeprocessor.";
-    public static final String Properties_Datasources_Prefix = "ormunit.datasources";
-    public static final String Properties_DatasourcesDefault_Prefix = "ormunit.datasources.default";
+    public static final String Properties_Datasources = "ormunit.datasources";
+    public static final String Properties_DatasourcesDefault = "ormunit.datasources.default";
 
     public static final String JPAUnitPropertiesFileName = "ormunit.properties";
     public static final String JPAUnitDefaultPropertiesFileName = "ormunit.default.properties";
 
+    public static final String DefaultDSName = "test-default";
 
-    private Map<String, INodeProcessor> nodeProcessors = new HashMap<String, INodeProcessor>();
+
     private String currentDir;
     private Class<?> workClass;
+    private Properties properties;
     private String defaultDataSourceName;
     private Map<String, Properties> dsProperties = new HashMap<String, Properties>();
 
@@ -56,27 +58,17 @@ public class ORMUnit {
 
     public ORMUnit(Class<?> workClass, Properties properties) {
         this.workClass = workClass;
-        defaultDataSourceName = properties.getProperty(Properties_DatasourcesDefault_Prefix);
+        this.properties = properties;
+        this.defaultDataSourceName = properties.getProperty(Properties_DatasourcesDefault);
 
-        String datasources = properties.getProperty(Properties_Datasources_Prefix);
-        if (datasources!=null){
+        String datasources = properties.getProperty(Properties_Datasources);
+        if (datasources != null) {
             String[] split = datasources.split(",");
-            for (String s : split){
+            for (String s : split) {
                 this.dsProperties.put(s.trim(), extractDataSourceProperties(s.trim(), properties));
             }
-        }
-        Enumeration<?> enumeration = properties.propertyNames();
-        while (enumeration.hasMoreElements()) {
-            String name = (String) enumeration.nextElement();
-            if (name.startsWith(Properties_NodeProcessor_Prefix)) {
-                String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
-                try {
-                    Class<?> clazz = Class.forName(properties.getProperty(name));
-                    registerNodeProcessor(nodeType, (INodeProcessor) Class.forName(properties.getProperty(name)).newInstance());
-                } catch (Exception e) {
-                    throw new ORMUnitConfigurationException(e);
-                }
-            }
+
+            this.dsProperties.put(DefaultDSName, extractDataSourceProperties(DefaultDSName, properties));
         }
         currentDir = "/" + workClass.getPackage().getName().replace(".", "/");
 
@@ -86,9 +78,9 @@ public class ORMUnit {
         Properties result = new Properties();
 
         Enumeration<?> names = properties.propertyNames();
-        while (names.hasMoreElements()){
+        while (names.hasMoreElements()) {
             String name = (String) names.nextElement();
-            if (name.startsWith(trim+".")){
+            if (name.startsWith(trim + ".")) {
                 String extractedPropertyName = name.substring(trim.length() + 1);
                 String propertyValue = properties.getProperty(name);
                 result.setProperty(extractedPropertyName.trim(), propertyValue.trim());
@@ -98,21 +90,13 @@ public class ORMUnit {
         return result;
     }
 
-
-    public void registerNodeProcessor(String nodeName, INodeProcessor nodeProcessor) {
-        nodeProcessors.put(nodeName, nodeProcessor);
-    }
-
-    public INodeProcessor getNodeProcessor(String nodeName) {
-        return nodeProcessors.get(nodeName);
-    }
-
-    public ORMUnitConfiguration read(InputStream stream, ORMProvider provider) throws ORMUnitFileReadException {
-        return this.read(stream, new ORMUnitConfiguration(provider));
+    public ORMUnitTestSet read(InputStream stream, ORMProvider provider) throws ORMUnitFileReadException {
+        return this.read(stream, new ORMUnitTestSet(provider));
     }
 
 
-    public ORMUnitConfiguration read(InputStream stream, ORMUnitConfiguration result) throws ORMUnitFileReadException {
+    public ORMUnitTestSet read(InputStream stream, ORMUnitTestSet result) throws ORMUnitFileReadException {
+        registerNodeProcessors(result);
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
             DocumentBuilder db = dbf.newDocumentBuilder();
@@ -128,7 +112,7 @@ public class ORMUnit {
                         continue;
 
                     // take nodeprocessor responsible for processing this type of node
-                    INodeProcessor nodeProcessor = getNodeProcessor(jpaUnitElement.getNodeName());
+                    INodeProcessor nodeProcessor = result.getNodeProcessor(jpaUnitElement.getNodeName());
                     if (nodeProcessor != null) {
                         // process node
 
@@ -156,7 +140,24 @@ public class ORMUnit {
         return result;
     }
 
-    public ORMUnitConfiguration read(String filePath, ORMUnitConfiguration result) throws ORMUnitFileReadException {
+    private void registerNodeProcessors(ORMUnitTestSet testset) {
+        Enumeration<?> enumeration = properties.propertyNames();
+        while (enumeration.hasMoreElements()) {
+            String name = (String) enumeration.nextElement();
+            if (name.startsWith(Properties_NodeProcessor_Prefix)) {
+                String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
+                try {
+                    Class<?> clazz = Class.forName(properties.getProperty(name));
+                    testset.registerNodeProcessor(nodeType, (INodeProcessor) Class.forName(properties.getProperty(name)).newInstance());
+                } catch (Exception e) {
+                    throw new ORMUnitConfigurationException(e);
+                }
+            }
+        }
+    }
+
+
+    public ORMUnitTestSet read(String filePath, ORMUnitTestSet result) throws ORMUnitFileReadException {
         filePath = filePath.replace("\\", "/").trim();
 
 
@@ -210,8 +211,8 @@ public class ORMUnit {
     }
 
     public Properties getDefaultDataSourceProperties() {
-        if (this.defaultDataSourceName==null)
-            throw new ORMUnitConfigurationException("No "+Properties_DatasourcesDefault_Prefix+" property found");
+        if (this.defaultDataSourceName == null)
+            throw new ORMUnitConfigurationException("No " + Properties_DatasourcesDefault + " property found");
         return this.dsProperties.get(this.defaultDataSourceName);
     }
 }

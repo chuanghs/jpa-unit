@@ -28,7 +28,7 @@ import org.ormunit.node.SimplePOJOTest;
         CoreEntityNodeProcessorTest.class,
 
         ORMUnitTest.class,
-        ORMUnitConfigurationTest.class,
+        ORMUnitTestSetTest.class,
         ORMUnitDataSourceTest.class
 })
 public class ORMUnitTestSuite {
