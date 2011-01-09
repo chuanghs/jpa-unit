@@ -15,8 +15,12 @@ import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.Table;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,10 +48,18 @@ public abstract class JPAUnitTestCase extends TestCase {
     private static Map<String, Properties> persistenceProviderProperties = new HashMap<String, Properties>();
     private static Map<String, EntityManagerFactory> entityManagerFactories = new HashMap<String, EntityManagerFactory>();
 
+    private static final boolean derby = isDerby();
+    private static final boolean hsql = isHSQL();
+    private static final boolean h2 = isH2();
+
+    private static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;create=true";
+
+    private static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa";
+
+    private static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa;MODE=DERBY";
+
     static {
-        boolean derby = isDerby();
-        boolean hsql = isHSQL();
-        boolean h2 = isH2();
+
 
         Properties eclipseLinkConnection = new Properties();
         Properties hibernateConnection = new Properties();
@@ -65,15 +77,15 @@ public abstract class JPAUnitTestCase extends TestCase {
             if (derby) {
                 driverClassName = derbyDriverClassName;
                 hibernateDialect = "org.hibernate.dialect.DerbyDialect";
-                url = "jdbc:derby:memory:unit-testing-jpa;create=true";
+                url = JDBC_URL_DERBY;
             } else if (hsql) {
                 driverClassName = hsqlDriverClassName;
                 hibernateDialect = "org.hibernate.dialect.HSQLDialect";
-                url = "jdbc:hsqldb:mem:unit-testing-jpa";
+                url = JDBC_URL_HSQL;
             } else if (h2) {
                 driverClassName = h2DriverClassName;
                 hibernateDialect = "org.hibernate.dialect.H2Dialect";
-                url = "jdbc:h2:mem:unit-testing-jpa";
+                url = JDBC_URL_H2;
             }
 
             hibernateConnection.setProperty(ORMUnit.Properties_Datasources, ORMUnit.DefaultDSName);
@@ -90,7 +102,6 @@ public abstract class JPAUnitTestCase extends TestCase {
             openJPAConnection.setProperty(ORMUnit.DefaultDSName + ".openjpa.ConnectionPassword", "");
             openJPAConnection.setProperty(ORMUnit.DefaultDSName + ".openjpa.ConnectionURL", url);
             openJPAConnection.setProperty(ORMUnit.DefaultDSName + ".openjpa.ConnectionDriverNam", driverClassName);
-            openJPAConnection.setProperty(ORMUnit.DefaultDSName + ".hibernate.dialect", hibernateDialect);
 
 
             eclipseLinkConnection.setProperty(ORMUnit.Properties_Datasources, ORMUnit.DefaultDSName);
@@ -99,8 +110,7 @@ public abstract class JPAUnitTestCase extends TestCase {
             eclipseLinkConnection.setProperty(ORMUnit.DefaultDSName + ".javax.persistence.jdbc.password", "");
             eclipseLinkConnection.setProperty(ORMUnit.DefaultDSName + ".javax.persistence.jdbc.url", url);
             eclipseLinkConnection.setProperty(ORMUnit.DefaultDSName + ".javax.persistence.jdbc.driver", driverClassName);
-            eclipseLinkConnection.setProperty(ORMUnit.DefaultDSName + ".eclipselink.ddl-generation", "create-tables");
-            eclipseLinkConnection.setProperty(ORMUnit.DefaultDSName + ".eclipselink.ddl-generation.output-mode", "database");
+            eclipseLinkConnection.setProperty(ORMUnit.DefaultDSName + ".eclipselink.target-database", "oracle.toplink.essentials.platform.database.H2Platform");
 
         }
 
@@ -113,7 +123,7 @@ public abstract class JPAUnitTestCase extends TestCase {
     private ORMUnit ormUnit;
     private JPAORMProvider provider = new JPAORMProvider();
     private ORMUnitTestSet testSet;
-    private boolean derby;
+
 
     public JPAUnitTestCase(String unitName) {
         this(unitName, null);
@@ -139,14 +149,6 @@ public abstract class JPAUnitTestCase extends TestCase {
         String fullUnitName = (ormUnit.getDefaultDataSourceName() != null ? ormUnit.getDefaultDataSourceName() : "") + unitName;
 
         if (isWithDB()) {
-            if (entityManagerFactories.get(fullUnitName) == null) {
-                entityManagerFactories.put(
-                        fullUnitName,
-                        javax.persistence.Persistence.createEntityManagerFactory(
-                                unitName,
-                                ormUnit.getDefaultDataSourceName() != null ? ormUnit.getDefaultDataSourceProperties() : new Properties()));
-
-            }
             testSet = new ORMUnitTestSet(provider);
 
             InputStream inputStream = null;
@@ -155,19 +157,59 @@ public abstract class JPAUnitTestCase extends TestCase {
             } else {
                 inputStream = getClass().getResourceAsStream("./" + getClass().getSimpleName() + ".xml");
             }
-
-
             if (inputStream != null) {
 
-                for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
-                    testSet.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
-                }
 
+                try {
+                    Connection con = null;
+
+                    if (derby) {
+                        con = DriverManager.getConnection(JDBC_URL_DERBY, "sa", "");
+                    } else if (hsql) {
+                        con = DriverManager.getConnection(JDBC_URL_HSQL, "sa", "");
+                    } else if (h2) {
+                        con = DriverManager.getConnection(JDBC_URL_H2, "sa", "");
+                    }
+
+                    for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
+                        testSet.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
+
+                        try {
+
+
+                            if (con == null)
+                                continue;
+                            String x = extractSchemaName(c);
+                            if (x != null) {
+                                log.info("creating schema: "+x);
+                                PreparedStatement preparedStatement = con.prepareStatement("create schema "+x.toUpperCase());
+
+                                preparedStatement.executeUpdate();
+                            }
+                        } catch (Throwable e) {
+                            log.error(e.getMessage());
+                        }
+                    }
+                    if (con != null)
+                        con.close();
+                } catch (Exception e) {
+
+                }
 
                 try {
                     ormUnit.read(inputStream, testSet);
                 } catch (ORMUnitFileReadException e) {
                     throw new ORMUnitConfigurationException(e);
+                }
+
+
+                if (entityManagerFactories.get(fullUnitName) == null) {
+                    entityManagerFactories.put(
+                            fullUnitName,
+                            javax.persistence.Persistence.createEntityManagerFactory(
+                                    unitName,
+                                    ormUnit.getDefaultDataSourceName() != null ? ormUnit.getDefaultDataSourceProperties() : new Properties()));
+
                 }
 
             }
@@ -178,6 +220,13 @@ public abstract class JPAUnitTestCase extends TestCase {
                     log.error(e.getMessage());
                 }
         }
+    }
+
+    private String extractSchemaName(Class<?> c) {
+        Table annotation = c.getAnnotation(Table.class);
+        if (annotation != null && !"".equals(annotation.schema()))
+            return annotation.schema();
+        return null;
     }
 
     protected final boolean isWithDB() {
@@ -194,6 +243,7 @@ public abstract class JPAUnitTestCase extends TestCase {
         super.setUp();
         if (isWithDB()) {
             String fullUnitName = ormUnit.getDefaultDataSourceName() + unitName;
+
 
             em = entityManagerFactories.get(fullUnitName).createEntityManager(ormUnit.getDefaultDataSourceProperties());
             em.getTransaction().begin();

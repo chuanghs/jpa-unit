@@ -3,7 +3,7 @@ package org.ormunit;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.ormunit.live.JPAUnitSimpleTest;
-import org.ormunit.live.JPAUnitSimpleTest2;
+import org.ormunit.live.h2.JPAUnitSimpleTest2;
 import org.ormunit.node.JPAEntityNodeProcessorTest;
 
 /**

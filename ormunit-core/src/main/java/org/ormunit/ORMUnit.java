@@ -122,7 +122,7 @@ public class ORMUnit {
                             throw new ORMUnitFileSyntaxException("error at node: " + i, e);
                         }
                     } else {
-                        String s = jpaUnitElement.getNodeName() + " element (" + i + ") does not have associated I" + INodeProcessor.class.getCanonicalName() + " implementations";
+                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": "+jpaUnitElement.getNodeName()+") does not have associated I" + INodeProcessor.class.getCanonicalName() + " implementations";
                         if (log.isWarnEnabled()) {
                             log.warn(s);
                         }
