@@ -30,35 +30,32 @@ import java.util.Properties;
  */
 public class ORMUnit {
 
-    private static final Logger log = LoggerFactory.getLogger(ORMUnit.class);
-
     public static final String Properties_NodeProcessor_Prefix = "ormunit.nodeprocessor.";
+    public static final String PropertiesFileName = "ormunit.properties";
+    public static final String DefaultPropertiesFileName = "ormunit.default.properties";
+
     public static final String Properties_Datasources = "ormunit.datasources";
     public static final String Properties_DatasourcesDefault = "ormunit.datasources.default";
 
-    public static final String JPAUnitPropertiesFileName = "ormunit.properties";
-    public static final String JPAUnitDefaultPropertiesFileName = "ormunit.default.properties";
 
-    public static final String DefaultDSName = "test-default";
-
-
+    private static final Logger log = LoggerFactory.getLogger(ORMUnit.class);
     private String currentDir;
     private Class<?> workClass;
-    private Properties properties;
+
     private String defaultDataSourceName;
     private Map<String, Properties> dsProperties = new HashMap<String, Properties>();
+    private Properties properties;
 
     public ORMUnit(Class<?> workClass) {
-        this(workClass, ORMUnitHelper.readOrmUnitProperties(ORMUnit.class));
+        this(workClass, ORMUnitHelper.readOrmUnitProperties(workClass));
+
     }
 
-    public ORMUnit(Properties properties) {
-        this(ORMUnit.class, properties);
-    }
-
-    public ORMUnit(Class<?> workClass, Properties properties) {
-        this.workClass = workClass;
+    public ORMUnit(Class<?> aClass, Properties properties) {
+        this.workClass = aClass;
         this.properties = properties;
+        currentDir = "/" + workClass.getPackage().getName().replace(".", "/");
+
         this.defaultDataSourceName = properties.getProperty(Properties_DatasourcesDefault);
 
         String datasources = properties.getProperty(Properties_Datasources);
@@ -67,10 +64,7 @@ public class ORMUnit {
             for (String s : split) {
                 this.dsProperties.put(s.trim(), extractDataSourceProperties(s.trim(), properties));
             }
-
-            this.dsProperties.put(DefaultDSName, extractDataSourceProperties(DefaultDSName, properties));
         }
-        currentDir = "/" + workClass.getPackage().getName().replace(".", "/");
 
     }
 
@@ -88,6 +82,29 @@ public class ORMUnit {
         }
 
         return result;
+    }
+
+    public String getDefaultDataSourceName() {
+        return this.defaultDataSourceName;
+    }
+
+    public Properties getDefaultDataSourceProperties() {
+        if (this.defaultDataSourceName == null) {
+            throw new ORMUnitConfigurationException("no default datasource");
+        }
+        return this.getDefaultDataSourceProperties(new Properties());
+    }
+
+    public Properties getDefaultDataSourceProperties(Properties defaults) {
+        Properties properties1 = this.dsProperties.get(this.defaultDataSourceName);
+        Properties result = new Properties(defaults);
+        if (properties1 != null) {
+            for (String propertyName : properties1.stringPropertyNames()) {
+                result.setProperty(propertyName, properties1.getProperty(propertyName));
+            }
+        }
+        return result;
+
     }
 
     public ORMUnitTestSet read(InputStream stream, ORMProvider provider) throws ORMUnitFileReadException {
@@ -122,7 +139,7 @@ public class ORMUnit {
                             throw new ORMUnitFileSyntaxException("error at node: " + i, e);
                         }
                     } else {
-                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": "+jpaUnitElement.getNodeName()+") does not have associated I" + INodeProcessor.class.getCanonicalName() + " implementations";
+                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + INodeProcessor.class.getCanonicalName() + " implementations";
                         if (log.isWarnEnabled()) {
                             log.warn(s);
                         }
@@ -206,13 +223,10 @@ public class ORMUnit {
         return currentDir;
     }
 
-    public String getDefaultDataSourceName() {
-        return this.defaultDataSourceName;
+
+    public Class<?> getWorkClass() {
+        return workClass;
     }
 
-    public Properties getDefaultDataSourceProperties() {
-        if (this.defaultDataSourceName == null)
-            throw new ORMUnitConfigurationException("No " + Properties_DatasourcesDefault + " property found");
-        return this.dsProperties.get(this.defaultDataSourceName);
-    }
+
 }

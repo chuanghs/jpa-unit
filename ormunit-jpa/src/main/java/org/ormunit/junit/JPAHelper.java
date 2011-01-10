@@ -1,6 +1,7 @@
 package org.ormunit.junit;
 
 import com.sun.java.xml.ns.persistence.Persistence;
+import org.ormunit.JPAORMProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -26,19 +27,21 @@ import java.util.regex.Pattern;
  */
 public class JPAHelper {
 
+
     private static final Logger log = LoggerFactory.getLogger(JPAHelper.class);
+
+    public static final String derbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
+    public static final String h2DriverClassName = "org.h2.Driver";
+    public static final String hsqlDriverClassName = "org.hsql.jdbcDriver";
+
 
     private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
 
 
     public static String getPersistenceProvider(Class<?> caller, String unitName) {
-        Persistence persistenceUnit = getPersistenceUnit(caller);
+        Persistence.PersistenceUnit persistenceUnit = getPersistenceUnit(caller, unitName);
         if (persistenceUnit != null) {
-            for (Persistence.PersistenceUnit pu : persistenceUnit.getPersistenceUnit()) {
-                if (pu.getName().equals(unitName)) {
-                    return pu.getProvider();
-                }
-            }
+            return persistenceUnit.getProvider();
         }
         return null;
     }
@@ -46,27 +49,25 @@ public class JPAHelper {
     public static Set<Class> getManagedTypes(Class<?> caller, String unitName) {
         Persistence cast = null;
 
-        cast = getPersistenceUnit(caller);
+        Persistence.PersistenceUnit pu = getPersistenceUnit(caller, unitName);
 
-        if (cast != null) {
-            for (Persistence.PersistenceUnit pu : cast.getPersistenceUnit()) {
-                if (pu.getName().equals(unitName)) {
-                    Set<Class> classes = new HashSet<Class>();
-                    for (String cn : pu.getClazz()) {
-                        try {
-                            classes.add(Class.forName(cn));
-                        } catch (ClassNotFoundException e) {
-                            log.error(e.getMessage());
-                        }
-                    }
-                    return classes;
+        if (pu != null) {
+
+            Set<Class> classes = new HashSet<Class>();
+            for (String cn : pu.getClazz()) {
+                try {
+                    classes.add(Class.forName(cn));
+                } catch (ClassNotFoundException e) {
+                    log.error(e.getMessage());
                 }
             }
+            return classes;
+
         }
         return null;
     }
 
-    private static Persistence getPersistenceUnit(Class<?> caller) {
+    private static Persistence.PersistenceUnit getPersistenceUnit(Class<?> caller, String unitName) {
         InputStream stream = null;
         Persistence cast = null;
         try {
@@ -79,11 +80,7 @@ public class JPAHelper {
                 XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(stream);
 
                 cast = Persistence.class.cast(unmarshaller.unmarshal(xer));
-
-
             }
-
-
         } catch (Exception e) {
             log.error("", e);
             e.printStackTrace();
@@ -96,7 +93,17 @@ public class JPAHelper {
                 }
             }
         }
-        return cast;
+        Persistence.PersistenceUnit result = null;
+
+        for (Persistence.PersistenceUnit pu : cast.getPersistenceUnit()) {
+            if (pu.getName().equals(unitName)) {
+                result = pu;
+                break;
+            }
+        }
+
+
+        return result;
     }
 
     public static List<String> findAllProviders() {
@@ -138,4 +145,35 @@ public class JPAHelper {
         return names;
     }
 
+    public static boolean isDerby() {
+        return isClassAvailable(derbyDriverClassName);
+    }
+
+    private static boolean isClassAvailable(String derbyDriverClassName) {
+        try {
+            Class.forName(derbyDriverClassName);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static boolean isHSQL() {
+        return isClassAvailable(hsqlDriverClassName);
+    }
+
+    public static boolean isH2() {
+        return isClassAvailable(h2DriverClassName);
+    }
+
+    public static Properties getProperties(Class<?> aClass, String unitName, Properties defaults) {
+        Properties result = new Properties(defaults);
+
+        Persistence.PersistenceUnit.Properties properties = getPersistenceUnit(aClass, unitName).getProperties();
+        for (Persistence.PersistenceUnit.Properties.Property p : properties.getProperty()) {
+            result.setProperty(p.getName(), p.getValue());
+        }
+
+        return result;
+    }
 }

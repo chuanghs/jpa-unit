@@ -17,7 +17,7 @@ import org.ormunit.node.SimplePOJOTest;
 @RunWith(Suite.class)
 @Suite.SuiteClasses({
         SimplePOJOTest.class,
-        ORMUnitPropertiesTest.class,
+
         ORMUnitHelperTest.class,
         ORMUnitIntrospectorTest.class,
 
