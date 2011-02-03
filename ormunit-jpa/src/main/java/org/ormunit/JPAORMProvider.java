@@ -87,6 +87,8 @@ public class JPAORMProvider implements ORMProvider {
             hibernateConnection.setProperty("hibernate.connection.url", url);
             hibernateConnection.setProperty("hibernate.connection.driver_class", driverClassName);
             hibernateConnection.setProperty("hibernate.dialect", hibernateDialect);
+            hibernateConnection.setProperty("hibernate.connection.autocommit", "false");
+            hibernateConnection.setProperty("connection.autocommit", "false");
 
             openJPAConnection.setProperty("openjpa.ConnectionUserName", "sa");
             openJPAConnection.setProperty("openjpa.ConnectionPassword", "");
@@ -172,15 +174,19 @@ public class JPAORMProvider implements ORMProvider {
     }
 
     public void entity(Object entity) {
-        getEntityManager().merge(entity);
-        getEntityManager().flush();
-        getEntityManager().clear();
+        try {
+            getEntityManager().persist(entity);
+        } catch (Throwable e) {
+            getEntityManager().merge(entity);
+        }
+        //getEntityManager().flush();
+        //getEntityManager().clear();
     }
 
     public void statement(String statement) {
         getEntityManager().createNativeQuery(statement).executeUpdate();
-        getEntityManager().flush();
-        getEntityManager().clear();
+        //getEntityManager().flush();
+        //getEntityManager().clear();
     }
 
     public <T> T getReference(Class<T> propertyClass, Object id) {

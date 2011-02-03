@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -109,10 +111,14 @@ public abstract class JPAUnitTestCase extends TestCase {
 
                 con = provider.getConnection();
                 if (con != null) {
+                    Set<String> createdSchemas = new HashSet<String>();
                     for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
                         try {
 
                             String x = extractSchemaName(c);
+                            if (createdSchemas.contains(x))
+                                continue;
+                            createdSchemas.add(x);
 
                             if (x != null) {
                                 log.info("creating schema: " + x);
@@ -129,13 +135,18 @@ public abstract class JPAUnitTestCase extends TestCase {
                             log.error(e.getMessage());
                         }
                     }
-                    con.close();
+
                 }
             } catch (Exception e) {
                 log.error(e.getMessage());
             }
+
             provider.setUp();
+            long start = System.nanoTime();
             testSet.execute();
+            System .out.println("setting up testcase: "+(System.nanoTime()-start)/1000000.0+"ms");
+
+            con.close();
         }
     }
 

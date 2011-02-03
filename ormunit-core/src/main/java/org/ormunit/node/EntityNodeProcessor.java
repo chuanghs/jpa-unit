@@ -229,18 +229,22 @@ public class EntityNodeProcessor implements INodeProcessor {
     private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) {
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
         try {
+            Class type = introspector.getType(propertyName);
+            if (type==null)
+                throw new ORMUnitNodeProcessingException("could not determine property type: "+propertyName+" of class: "+entity.getClass().getCanonicalName());
+
             if (value != null && value.matches(ReferencePattern)) {
                 value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
                 references.add(new EntityReference(
                         introspector,
                         propertyName,
                         ORMUnitHelper.convert(
-                                provider.getIdType(introspector.getType(propertyName)),
+                                provider.getIdType(type),
                                 value)));
 
             } else {
                 introspector.set(entity, propertyName, ORMUnitHelper.convert(
-                        introspector.getType(propertyName),
+                        type,
                         value));
             }
         } catch (ConvertionException e) {
