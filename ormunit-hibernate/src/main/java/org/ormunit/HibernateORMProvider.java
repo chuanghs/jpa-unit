@@ -1,6 +1,8 @@
 package org.ormunit;
 
 import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.cfg.Configuration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,8 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -24,12 +28,16 @@ public class HibernateORMProvider extends AORMProvider {
 
     private static final Logger log = LoggerFactory.getLogger(HibernateORMProvider.class);
 
-    private final Session session;
     private final boolean selfManagedSession;
+    private Session session;
+    private SessionFactory sessionFactory;
 
     private ORMUnit ormUnit;
     private String unitName;
     private Properties persistenceContextProperties;
+
+    private static Map<String, SessionFactory> factoriesMap = new HashMap<String, SessionFactory>();
+
 
     public HibernateORMProvider(Session session) {
         this.session = session;
@@ -40,7 +48,13 @@ public class HibernateORMProvider extends AORMProvider {
         this.ormUnit = ormUnit;
         this.unitName = unitName;
         this.persistenceContextProperties = ormUnit.getDefaultDataSourceProperties();
-        this.session = null;
+
+        sessionFactory = factoriesMap.get(unitName);
+        if (sessionFactory == null) {
+            Configuration configure = new Configuration().configure(unitName);
+            sessionFactory = configure.buildSessionFactory();
+            factoriesMap.put(unitName, sessionFactory);
+        }
         this.selfManagedSession = true;
 
     }
@@ -84,12 +98,16 @@ public class HibernateORMProvider extends AORMProvider {
     }
 
     public void setUp() {
-        session.getTransaction().begin();
+        if (selfManagedSession){
+            this.session = sessionFactory.openSession();
+        }
+        this.session.getTransaction().begin();
     }
 
     public void tearDown() {
         session.getTransaction().rollback();
-        session.close();
+        if (selfManagedSession)
+            session.close();
     }
 
     public Connection getConnection() throws SQLException {
