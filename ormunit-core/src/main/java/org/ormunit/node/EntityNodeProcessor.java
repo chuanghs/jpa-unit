@@ -143,7 +143,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         NodeList entryNodes = propertyNode.getChildNodes();
         for (int i = 0; i < entryNodes.getLength(); i++) {
             Node entryNode = entryNodes.item(i);
-            if (entryNode.getNodeType() == Node.ELEMENT_NODE) {
+            if (entryNode.getNodeType() == Node.ELEMENT_NODE && entryNode.getNodeName().equals("entry")) {
                 String key = entryNode.getAttributes().getNamedItem("key").getNodeValue();
                 Object value = null;
                 NodeList entryValues = entryNode.getChildNodes();
