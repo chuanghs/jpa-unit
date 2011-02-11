@@ -20,12 +20,12 @@ import java.util.*;
  * Date: 30.12.10
  * Time: 10:43
  */
-public class JPAORMProvider implements ORMProvider {
+public class JPAORMProvider extends AORMProvider {
 
     private Properties properties;
     private EntityManager entityManager;
 
-    private final WeakHashMap<Class, WeakReference<EntityAccessor>> inspectors = new WeakHashMap<Class, WeakReference<EntityAccessor>>();
+
 
     public static final String DefaultDSName = "test-default";
 
@@ -53,7 +53,6 @@ public class JPAORMProvider implements ORMProvider {
     private boolean selfManagedEM = true;
 
     static {
-
 
         Properties eclipseLinkConnection = new Properties();
         Properties hibernateConnection = new Properties();
@@ -136,18 +135,7 @@ public class JPAORMProvider implements ORMProvider {
 
     }
 
-    public EntityAccessor getAccessor(Class<?> clazz) {
-        if (inspectors.get(clazz) == null) {
 
-            if (isPropertyAccessed(clazz)) {
-                inspectors.put(clazz, new WeakReference<EntityAccessor>(new PropertyAccessor(clazz)));
-            } else if (isFieldAccessed(clazz)) {
-                inspectors.put(clazz, new WeakReference<EntityAccessor>(new FieldAccessor(clazz)));
-            } else
-                throw new RuntimeException("invalid entity class, its neither PropertyAccessed nor FieldAccessed entity");
-        }
-        return inspectors.get(clazz).get();
-    }
 
     public boolean isPropertyAccessed(Class clazz) {
         while (clazz != null) {
@@ -163,7 +151,7 @@ public class JPAORMProvider implements ORMProvider {
     public boolean isFieldAccessed(Class clazz) {
         while (clazz != null) {
             for (Field m : clazz.getDeclaredFields()) {
-                if (m.getAnnotation(Id.class) != null)
+                if (m.getAnnotation(Id.class) != null || m.getAnnotation(EmbeddedId.class)!=null)
                     return true;
             }
             clazz = clazz.getSuperclass();

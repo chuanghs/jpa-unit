@@ -18,8 +18,8 @@ import javax.persistence.Table;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.util.Properties;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,19 +46,17 @@ public abstract class JPAUnitTestCase extends TestCase {
 
     public JPAUnitTestCase(String unitName, String ormUnitFileName) {
 
-        ormUnit = new ORMUnit(getClass());
-        this.provider = new JPAORMProvider(ormUnit, unitName);
+        this.properties = ORMUnitHelper.readOrmUnitProperties(getClass());
+        this.ormUnit = new ORMUnit(getClass());
+        this.provider = createProvider(unitName);
         this.unitName = unitName;
         this.ormUnitFileName = ormUnitFileName;
-
-
-        properties = ORMUnitHelper.readOrmUnitProperties(getClass());
 
         if (isWithDB()) {
             testSet = new ORMUnitTestSet(provider);
 
             // adding entityNodeProcessor for every entity class defined in persistence unit
-            for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
+            for (Class<?> c : getManagedTypes()) {
                 testSet.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
             }
 
@@ -84,6 +82,7 @@ public abstract class JPAUnitTestCase extends TestCase {
         }
     }
 
+
     private String extractSchemaName(Class<?> c) {
         Table annotation = c.getAnnotation(Table.class);
         if (annotation != null && !"".equals(annotation.schema()))
@@ -95,11 +94,6 @@ public abstract class JPAUnitTestCase extends TestCase {
         return !"false".equals(properties.getProperty("test_with_db." + unitName));
     }
 
-    public EntityManager getEm() {
-        return provider.getEntityManager();
-    }
-
-
     @Before
     public void setUp() throws Exception {
         super.setUp();
@@ -109,20 +103,14 @@ public abstract class JPAUnitTestCase extends TestCase {
 
                 con = provider.getConnection();
                 if (con != null) {
-                    for (Class<?> c : JPAHelper.getManagedTypes(getClass(), this.unitName)) {
+                    for (Class<?> c : getManagedTypes()) {
                         try {
 
                             String x = extractSchemaName(c);
 
                             if (x != null) {
                                 log.info("creating schema: " + x);
-                                PreparedStatement preparedStatement = con.prepareStatement("create schema " + x.toUpperCase());
-
-                                int i = preparedStatement.executeUpdate();
-
-                                con.prepareStatement("create table " + x + ".testtable (id int primary key)").executeUpdate();
-                                con.prepareStatement("select * from  " + x + ".testtable").executeQuery();
-                                log.info(i + "");
+                                con.prepareStatement("create schema " + x.toUpperCase()).executeUpdate();
                             }
 
                         } catch (Throwable e) {
@@ -145,6 +133,20 @@ public abstract class JPAUnitTestCase extends TestCase {
             provider.tearDown();
         }
         super.tearDown();
+    }
+
+
+    private JPAORMProvider createProvider(String unitName) {
+        return new JPAORMProvider(ormUnit, unitName);
+    }
+
+
+    public EntityManager getEm() {
+        return provider.getEntityManager();
+    }
+
+    private Set<Class> getManagedTypes() {
+        return JPAHelper.getManagedTypes(getClass(), this.unitName);
     }
 
 
