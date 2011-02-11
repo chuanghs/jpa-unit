@@ -124,13 +124,7 @@ public abstract class JPAUnitTestCase extends TestCase {
 
                             if (x != null) {
                                 log.info("creating schema: " + x);
-                                PreparedStatement preparedStatement = con.prepareStatement("create schema " + x.toUpperCase());
-
-                                int i = preparedStatement.executeUpdate();
-
-                                con.prepareStatement("create table " + x + ".testtable (id int primary key)").executeUpdate();
-                                con.prepareStatement("select * from  " + x + ".testtable").executeQuery();
-                                log.info(i + "");
+                                con.prepareStatement("create schema " + x.toUpperCase()+" authorization DBA ").executeUpdate();
                             }
 
                         } catch (Throwable e) {
