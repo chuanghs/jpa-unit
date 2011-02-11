@@ -106,6 +106,8 @@ public abstract class JPAUnitTestCase extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         if (isWithDB()) {
+            long start = System.nanoTime();
+
             Connection con = null;
             try {
 
@@ -142,9 +144,9 @@ public abstract class JPAUnitTestCase extends TestCase {
             }
 
             provider.setUp();
-            long start = System.nanoTime();
+
             testSet.execute();
-            System .out.println("setting up testcase: "+(System.nanoTime()-start)/1000000.0+"ms");
+            log.error("setting up testcase: "+(System.nanoTime()-start)/1000000.0+"ms");
 
             con.close();
         }

@@ -4,6 +4,8 @@ import org.ormunit.entity.EntityAccessor;
 import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessor;
 import org.ormunit.junit.JPAHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.lang.ref.WeakReference;
@@ -21,6 +23,8 @@ import java.util.*;
  * Time: 10:43
  */
 public class JPAORMProvider implements ORMProvider {
+
+    private static final Logger log = LoggerFactory.getLogger(JPAORMProvider.class);
 
     private Properties properties;
     private EntityManager entityManager;
@@ -275,10 +279,12 @@ public class JPAORMProvider implements ORMProvider {
             }
 
             entityManager = entityManagerFactories.get(fullUnitName).createEntityManager(flatten);*/
+            log.error("Creating EntityManagerFactory & EntityManager... ");
             entityManagerFactory = Persistence.createEntityManagerFactory(
                     unitName,
                     flatten);
             entityManager = entityManagerFactory.createEntityManager();
+            log.error("EntityManagerFactory & EntityManager created.");
         }
 
         entityManager.getTransaction().begin();
