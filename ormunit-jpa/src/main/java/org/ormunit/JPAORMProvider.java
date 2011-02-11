@@ -49,8 +49,9 @@ public class JPAORMProvider implements ORMProvider {
     private String unitName;
     private Properties persistenceContextProperties;
 
-    private static Map<String, EntityManagerFactory> entityManagerFactories = new HashMap<String, EntityManagerFactory>();
+    //private static Map<String, EntityManagerFactory> entityManagerFactories = new HashMap<String, EntityManagerFactory>();
     private boolean selfManagedEM = true;
+    private EntityManagerFactory entityManagerFactory;
 
     static {
 
@@ -264,7 +265,7 @@ public class JPAORMProvider implements ORMProvider {
 
             // creating entitymanagerfactory for given connection properties and persistence unit name
             Properties flatten = flatten(persistenceContextProperties);
-            if (entityManagerFactories.get(fullUnitName) == null) {
+            /*if (entityManagerFactories.get(fullUnitName) == null) {
                 entityManagerFactories.put(
                         fullUnitName,
                         javax.persistence.Persistence.createEntityManagerFactory(
@@ -273,7 +274,11 @@ public class JPAORMProvider implements ORMProvider {
 
             }
 
-            entityManager = entityManagerFactories.get(fullUnitName).createEntityManager(flatten);
+            entityManager = entityManagerFactories.get(fullUnitName).createEntityManager(flatten);*/
+            entityManagerFactory = Persistence.createEntityManagerFactory(
+                    unitName,
+                    flatten);
+            entityManager = entityManagerFactory.createEntityManager();
         }
 
         entityManager.getTransaction().begin();
@@ -293,6 +298,7 @@ public class JPAORMProvider implements ORMProvider {
         entityManager.getTransaction().rollback();
         if (selfManagedEM) {
             entityManager.close();
+            entityManagerFactory.close();
         }
     }
 }
