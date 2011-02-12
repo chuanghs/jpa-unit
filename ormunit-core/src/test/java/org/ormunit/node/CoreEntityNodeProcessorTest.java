@@ -5,6 +5,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnit;
@@ -76,8 +77,8 @@ public class CoreEntityNodeProcessorTest {
         simplePOJO.setTimestampValue(new Timestamp(date.getTime()));
         simplePOJO.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2010-12-18"));
 
-        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
-        verify(result, times(1)).getProvider();
+        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
+        verify(result, times(2)).getProvider();
 
         //verifyNoMoreInteractions(result);
     }
@@ -112,8 +113,8 @@ public class CoreEntityNodeProcessorTest {
         simplePOJO.setTimestampValue(new Timestamp(date.getTime()));
         simplePOJO.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2010-12-18"));
 
-        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
-        verify(result, times(1)).getProvider();
+        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
+        verify(result, times(2)).getProvider();
         //verifyNoMoreInteractions(result);
     }
 
@@ -143,8 +144,8 @@ public class CoreEntityNodeProcessorTest {
         simplePOJO.setComplexType(complexType);
 
 
-        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO)));
-        verify(result, times(2)).getProvider();
+        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
+        verify(result, times(3)).getProvider();
 
         //verifyNoMoreInteractions(result);
     }
@@ -165,14 +166,45 @@ public class CoreEntityNodeProcessorTest {
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(new PropertyAccessor(SimplePOJO.class), "complexType", 1));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
+        references.add(new EntityReference("complexType", 1));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass()), references)));
 
 
-        when(ormProvider.getReference(eq(SimplePOJO2.class), anyInt())).thenReturn(new SimplePOJO2());
+        when(ormProvider.getDBEntity(eq(SimplePOJO2.class), anyInt())).thenReturn(new SimplePOJO2());
         result.execute();
 
-        verify(ormProvider, times(1)).getReference(eq(SimplePOJO2.class), anyInt());
+        verify(ormProvider, times(1)).getDBEntity(eq(SimplePOJO2.class), anyInt());
+    }
+
+    @Test
+    public void testComplexTypeWithORMReference() throws ORMUnitFileReadException, IntrospectionException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"pojo2\" />" +
+                "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
+                "   <pojo2 ormId=\"some weird id\" /> " +
+                "   <pojo complexType=\"ormref( some weird id )\"> " +
+                "   </pojo>" +
+                "</ormunit>").getBytes());
+
+        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+
+
+        when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
+
+        new ORMUnit(getClass()).read(bais, result);
+
+        EntityCommand entityCommand = new EntityCommand("some weird id", new SimplePOJO2(), ormProvider.getAccessor(SimplePOJO2.class), new HashSet<EntityReference>());
+        verify(result).addCommand(Mockito.eq(entityCommand));
+
+
+        HashSet<EntityReference> entityReferences = new HashSet<EntityReference>();
+        entityReferences.add(new EntityReference("complexType" ,"some weird id", EntityReference.Type.ORMUNIT));
+        EntityCommand entityCommand1 = new EntityCommand(null, new SimplePOJO(), ormProvider.getAccessor(SimplePOJO.class), entityReferences);
+        verify(result).addCommand(Mockito.eq(entityCommand1));
+
+        result.execute();
+        verify(ormProvider, times(0)).getDBEntity(eq(SimplePOJO2.class), anyInt());
+
     }
 
     @Test
@@ -207,7 +239,7 @@ public class CoreEntityNodeProcessorTest {
         collection.add(pojo2);
         pojo.setCollection(collection);
 
-        verify(result, times(1)).addCommand(new EntityCommand(pojo));
+        verify(result, times(1)).addCommand(new EntityCommand(pojo, ormProvider.getAccessor(pojo.getClass())));
 
     }
 

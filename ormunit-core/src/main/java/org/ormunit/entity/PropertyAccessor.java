@@ -37,10 +37,6 @@ public class PropertyAccessor extends AEntityAccessor {
         }
     }
 
-    public PropertyDescriptor[] getProperties() {
-        return descriptors.values().toArray(new PropertyDescriptor[descriptors.size()]);
-    }
-
     public PropertyDescriptor getPD(String propertyName) {
         return descriptors.get(propertyName);
     }
@@ -63,13 +59,11 @@ public class PropertyAccessor extends AEntityAccessor {
         try {
             PropertyDescriptor pd = getPD(propertyName);
             if (pd == null) {
-                log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
-                return;
+                new ORMEntityAccessException("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
             }
             Method setter = pd.getWriteMethod();
             if (setter == null) {
-                log.warn("there is no setter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
-                return;
+                new ORMEntityAccessException("there is no setter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
             }
 
             setter.invoke(entity, value);
@@ -82,13 +76,11 @@ public class PropertyAccessor extends AEntityAccessor {
         try {
             PropertyDescriptor pd = getPD(propertyName);
             if (pd == null) {
-                log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
-                return null;
+                new ORMEntityAccessException("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
             }
             Method getter = pd.getReadMethod();
             if (getter == null) {
-                log.warn("there is no setter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
-                return null;
+                new ORMEntityAccessException("there is no getter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
             }
 
             return getter.invoke(entity);

@@ -1,8 +1,6 @@
 package org.ormunit.entity;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,13 +15,24 @@ public class PropertyAccessEntity {
 
     private Integer id;
 
+    private String someProperty;
+
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {
         return id;
     }
 
     public void setId(Integer id) {
         this.id = id;
+    }
+
+    public void setSomeProperty(String someProperty) {
+        this.someProperty = someProperty;
+    }
+
+    public String getSomeProperty() {
+        return someProperty;
     }
 
     @Override

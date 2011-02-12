@@ -55,8 +55,7 @@ public class FieldAccessor extends AEntityAccessor {
         try {
             Field pd = fields.get(propertyName);
             if (pd == null) {
-                log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
-                return;
+                new ORMEntityAccessException("attribute: " + propertyName + " does not have corresponding property in class: " + clazz.getCanonicalName());
             }
             pd.setAccessible(true);
             pd.set(entity, value);
@@ -68,8 +67,7 @@ public class FieldAccessor extends AEntityAccessor {
     public Object get(Object entity, String propertyName) {
         Field pd = fields.get(propertyName);
         if (pd == null) {
-            log.warn("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
-            return null;
+            new ORMEntityAccessException("attribute: " + propertyName + " does not have corresponding property in class: " + clazz.getCanonicalName());
         }
         pd.setAccessible(true);
         try {

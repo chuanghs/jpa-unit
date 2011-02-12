@@ -29,13 +29,14 @@ public class ORMUnitTestSet {
     }
 
     public void addCommand(ORMUnitCommand command) {
-        commands.add(command);
+        if (command!=null)
+            commands.add(command);
     }
 
 
     public void execute() {
         for (ORMUnitCommand command : commands) {
-            command.visit(provider);
+            command.visit(this);
         }
     }
 

@@ -1,14 +1,14 @@
 <ormunit>
 
-    <PropertyAccessEntity id="1"/>
-    <PropertyAccessEntity id="2"/>
-    <PropertyAccessEntity id="3"/>
-    <PropertyAccessEntity id="4"/>
+    <PropertyAccessEntity ormId="1"/>
+    <PropertyAccessEntity ormId="2"/>
+    <PropertyAccessEntity ormId="3"/>
+    <PropertyAccessEntity ormId="4"/>
 
-    <FieldAccessEntity integerValue="1" complexType="ref(1)"/>
-    <FieldAccessEntity integerValue="2" complexType="ref(1)"/>
-    <FieldAccessEntity integerValue="3" complexType="ref(2)"/>
-    <FieldAccessEntity integerValue="4" complexType="ref(3)"/>
-    <FieldAccessEntity integerValue="5" complexType="ref(4)"/>
+    <FieldAccessEntity integerValue="1" complexType="ormref(1)"/>
+    <FieldAccessEntity integerValue="2" complexType="ormref(1)"/>
+    <FieldAccessEntity integerValue="3" complexType="ormref(2)"/>
+    <FieldAccessEntity integerValue="4" complexType="ormref(3)"/>
+    <FieldAccessEntity integerValue="5" complexType="ormref(4)"/>
 
 </ormunit>
