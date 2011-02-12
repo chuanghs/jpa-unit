@@ -7,10 +7,7 @@ import org.ormunit.ORMUnitTestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.EntityAccessor;
-import org.ormunit.exception.ConvertionException;
-import org.ormunit.exception.ORMUnitFileReadException;
-import org.ormunit.exception.ORMUnitFileSyntaxException;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NamedNodeMap;
@@ -32,6 +29,7 @@ public class EntityNodeProcessor implements INodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(EntityNodeProcessor.class);
     public static final String ReferencePattern = "ref\\(.+\\)";
+    public static final String ORMReferencePattern = "ormref\\(.+\\)";
 
     private final String className;
 
@@ -48,9 +46,12 @@ public class EntityNodeProcessor implements INodeProcessor {
         try {
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();
-            processEntity(result, entityElement, entity, references);
+            String ormId = processEntity(result, entityElement, entity, references);
 
-            result.addCommand(new EntityCommand(entity, references));
+            result.addCommand(new EntityCommand(ormId,
+                    entity,
+                    result.getProvider().getAccessor(entity.getClass()),
+                    references));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -59,16 +60,20 @@ public class EntityNodeProcessor implements INodeProcessor {
     }
 
 
-    public Object processEntity(ORMUnitTestSet testSet, Node entityElement, Object entity, Set<EntityReference> references) throws ORMUnitFileReadException {
+    public String processEntity(ORMUnitTestSet testSet, Node entityElement, Object entity, Set<EntityReference> references) throws ORMUnitFileReadException {
         ORMProvider provider = testSet.getProvider();
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
-
+        String ormId = null;
 
         NamedNodeMap attributes = entityElement.getAttributes();
 
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
-            set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
+            if ("ormId".equals(attribute.getNodeName())) {
+                ormId = attribute.getNodeValue();
+            } else {
+                set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
+            }
         }
 
         NodeList children = entityElement.getChildNodes();
@@ -110,11 +115,12 @@ public class EntityNodeProcessor implements INodeProcessor {
                         continue;
                     }
                 }
-                Object entity1 = processEntity(testSet, propertyNode, introspector.newInstance(propertyName), references);
+                Object entity1 = introspector.newInstance(propertyName);
+                processEntity(testSet, propertyNode, entity1, references);
                 introspector.set(entity, propertyName, entity1);
             }
         }
-        return entity;
+        return ormId;
     }
 
 
@@ -209,11 +215,8 @@ public class EntityNodeProcessor implements INodeProcessor {
 
 
             try {
-                element = processEntity(
-                        testset,
-                        valueNode,
-                        entityClass.newInstance(),
-                        references);
+                element = entityClass.newInstance();
+                processEntity(testset,valueNode,element,references);
             } catch (InstantiationException e) {
                 throw new ORMUnitFileReadException(e);
             } catch (IllegalAccessException e) {
@@ -229,18 +232,26 @@ public class EntityNodeProcessor implements INodeProcessor {
     private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) {
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
         try {
+            Class type = introspector.getType(propertyName);
+            if (type == null)
+                throw new ORMEntityAccessException("Property: " + propertyName + " does not exists for entity: " + entity.getClass().getCanonicalName());
             if (value != null && value.matches(ReferencePattern)) {
-                value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")"));
+                value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")")).trim();
                 references.add(new EntityReference(
-                        introspector,
                         propertyName,
                         ORMUnitHelper.convert(
-                                provider.getIdType(introspector.getType(propertyName)),
+                                provider.getIdType(type),
                                 value)));
 
+            } else if (value != null && value.matches(ORMReferencePattern)) {
+                value = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")")).trim();
+                references.add(new EntityReference(
+                        propertyName,
+                        value,
+                        EntityReference.Type.ORMUNIT));
             } else {
                 introspector.set(entity, propertyName, ORMUnitHelper.convert(
-                        introspector.getType(propertyName),
+                        type,
                         value));
             }
         } catch (ConvertionException e) {

@@ -109,8 +109,8 @@ public abstract class JPAUnitTestCase extends TestCase {
                             String x = extractSchemaName(c);
 
                             if (x != null) {
-                                log.info("creating schema: " + x);
-                                con.prepareStatement("create schema " + x.toUpperCase()).executeUpdate();
+                                //log.info("creating schema: " + x);
+                                //con.prepareStatement("create schema " + x.toUpperCase()).executeUpdate();
                             }
 
                         } catch (Throwable e) {
@@ -123,6 +123,8 @@ public abstract class JPAUnitTestCase extends TestCase {
                 log.error(e.getMessage());
             }
             provider.setUp();
+            provider.getEntityManager().flush();
+            provider.getEntityManager().clear();
             testSet.execute();
         }
     }

@@ -1,8 +1,13 @@
 package org.ormunit.command;
 
 import org.ormunit.ORMProvider;
+import org.ormunit.ORMUnitTestSet;
+import org.ormunit.entity.EntityAccessor;
+import org.ormunit.exception.ORMUnitConfigurationException;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,33 +18,90 @@ import java.util.Set;
  */
 public class EntityCommand extends ORMUnitCommand {
 
+    private final String ormId;
     private final Object entity;
+    private EntityAccessor accessor;
     private final Set<EntityReference> references;
 
-    public EntityCommand(Object entity) {
-        this.entity = entity;
-        this.references = new HashSet<EntityReference>();
+    public EntityCommand(Object entity, EntityAccessor accessor) {
+        this(null, entity, accessor);
     }
 
-    public EntityCommand(Object entity, Set<EntityReference> references) {
+    public EntityCommand(String ormid, Object entity, EntityAccessor accessor) {
+        this(ormid, entity, accessor, new HashSet<EntityReference>());
+    }
+
+    public EntityCommand(String ormid, Object entity, EntityAccessor accessor, Set<EntityReference> references) {
+        this.ormId = ormid;
         this.entity = entity;
+        this.accessor = accessor;
         this.references = references;
     }
 
-    @Override
-    public void visit(ORMProvider visitor) {
-
-        for (EntityReference ref : references) {
-            Object reference = visitor.getReference(ref.getPropertyClass(), ref.getId());
-            ref.set(getEntity(), reference);
-        }
-        visitor.entity(this.entity);
-
+    public String getOrmId() {
+        return ormId;
     }
+
+    public Class getPropertyClass(String propertyName) {
+        return accessor.getType(propertyName);
+    }
+
+    public void set(Object entity, Object value, String propertyName) {
+        try {
+            accessor.set(entity, propertyName, value);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public void visit(ORMUnitTestSet testSet) {
+        ORMProvider provider = testSet.getProvider();
+        for (EntityReference ref : references) {
+            Class propertyClass = getPropertyClass(ref.getPropertyName());
+            Object reference = null;
+            if (ref.getType() == EntityReference.Type.DB) {
+                reference = provider.getDBEntity(propertyClass, ref.getId());
+            } else if (ref.getType() == EntityReference.Type.ORMUNIT) {
+                reference = getORMEntity(testSet, (String) ref.getId());
+            }
+
+            if (reference == null)
+                throw new ORMUnitConfigurationException("Entity: " + propertyClass.getCanonicalName() + " with id: '" + ref.getId() + "' cannot be found for entity: " + entity.getClass().getCanonicalName());
+
+            set(getEntity(), reference, ref.getPropertyName());
+        }
+        provider.entity(this.entity);
+        if (this.ormId != null) {
+            registerORMEntity(testSet, this.entity, this.ormId);
+        }
+    }
+
+    private static Map<ORMUnitTestSet, Map<String, Object>> entities = new HashMap<ORMUnitTestSet, Map<String, Object>>();
+
+    private Object getORMEntity(ORMUnitTestSet testSet, String id) {
+        Map<String, Object> stringObjectMap = entities.get(testSet);
+        if (stringObjectMap != null) {
+            return stringObjectMap.get(id);
+        }
+        return null;
+    }
+
+    private void registerORMEntity(ORMUnitTestSet testSet, Object entity, String ormId) {
+        Map<String, Object> stringObjectMap = entities.get(testSet);
+        if (stringObjectMap == null) {
+            entities.put(testSet, stringObjectMap = new HashMap<String, Object>());
+        }
+        if (stringObjectMap.get(ormId)!=null)
+            throw new ORMUnitConfigurationException("Multiple entities with same ormId: "+ormId);
+        stringObjectMap.put(ormId, entity);
+    }
+
 
     @Override
     public String toString() {
         return "EntityWithRefsCommand{" +
+                "ormId=" + getOrmId() +
                 "entity=" + getEntity() +
                 ", references=" + references +
                 '}';

@@ -10,6 +10,7 @@ import org.ormunit.exception.ORMUnitInstantiationException;
 import java.util.Collection;
 import java.util.Map;
 
+import static junit.framework.Assert.fail;
 import static org.mockito.Mockito.*;
 
 /**
@@ -31,6 +32,18 @@ public class EntityAccessorTest {
 
     class PropertyEntity {
         private boolean booleanValue;
+
+        private int noSetterProperty;
+
+        private int noGetterProperty;
+
+        public void setNoGetterProperty(int noGetterProperty) {
+            this.noGetterProperty = noGetterProperty;
+        }
+
+        public int getNoSetterProperty() {
+            return noSetterProperty;
+        }
 
         public boolean isBooleanValue() {
             return booleanValue;
@@ -78,6 +91,7 @@ public class EntityAccessorTest {
         simplePOJO.intField = 2;
         fieldAccessor.set(simplePOJO, "intField", 1);
         Assert.assertEquals(1, simplePOJO.intField);
+
     }
 
     @Test(expected = ORMEntityAccessException.class)
@@ -97,6 +111,30 @@ public class EntityAccessorTest {
         pa.get(pojo, "stringValue");
 
         verify(pojo, times(1)).getStringValue();
+    }
+
+    @Test
+    public void testSetNonExistingProperty() {
+        PropertyAccessor pa = new PropertyAccessor(PropertyEntity.class);
+        PropertyEntity simplePOJO = new PropertyEntity();
+
+        try {
+            pa.set(simplePOJO, "nonExistingProperty", 1);
+            fail();
+        } catch (ORMEntityAccessException e) {
+        }
+
+        try {
+            pa.set(simplePOJO, "noSetterProperty", 1);
+            fail();
+        } catch (ORMEntityAccessException e) {
+        }
+
+        try {
+            pa.get(simplePOJO, "noGetterProperty");
+            fail();
+        } catch (ORMEntityAccessException e) {
+        }
     }
 
     @Test
@@ -132,13 +170,13 @@ public class EntityAccessorTest {
         PropertyAccessor pa = new PropertyAccessor(SimplePOJO.class);
         try {
             pa.newInstance("abstractCollection");
-            Assert.fail();
+            fail();
         } catch (ORMUnitInstantiationException e) {
         }
 
         try {
             pa.newInstance("nonexistingproperty");
-            Assert.fail();
+            fail();
         } catch (ORMUnitInstantiationException e) {
         }
 
@@ -235,7 +273,7 @@ public class EntityAccessorTest {
     }
 
     @Test
-    public void testExtractMapTypes(){
+    public void testExtractMapTypes() {
         FieldAccessor fa = new FieldAccessor(GenericTestClass.class);
 
         Class[] mapTIntegers = fa.getMapParameterTypes("mapTInteger");

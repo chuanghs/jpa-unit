@@ -13,6 +13,8 @@ import org.ormunit.entity.PropertyAccessEntity;
 import javax.persistence.EmbeddedId;
 import javax.persistence.EntityManager;
 
+import static junit.framework.Assert.assertEquals;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Tomasz Krzyzak
@@ -40,7 +42,7 @@ public class JPAORMProviderTest {
 
         fieldAccessor.set(fieldAccessEntity, "integerValue", 1);
 
-        Assert.assertEquals(1, fieldAccessEntity.getIntegerValue());
+        assertEquals(1, fieldAccessEntity.getIntegerValue());
 
 
     }
@@ -50,8 +52,8 @@ public class JPAORMProviderTest {
     public void testGetIdType() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
 
-        Assert.assertEquals(int.class, provider.getIdType(FieldAccessEntity.class));
-        Assert.assertEquals(Integer.class, provider.getIdType(PropertyAccessEntity.class));
+        assertEquals(int.class, provider.getIdType(FieldAccessEntity.class));
+        assertEquals(Integer.class, provider.getIdType(PropertyAccessEntity.class));
     }
 
 
@@ -62,13 +64,13 @@ public class JPAORMProviderTest {
     public void testGetIdTypeOfSubClass() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
         EntityAccessor fieldAccessor = provider.getAccessor(SubPropertyAccessEntity.class);
-        Assert.assertEquals(Integer.class, provider.getIdType(SubPropertyAccessEntity.class));
+        assertEquals(Integer.class, provider.getIdType(SubPropertyAccessEntity.class));
 
         SubPropertyAccessEntity entity = new SubPropertyAccessEntity();
         entity.setId(2);
         fieldAccessor.set(entity, "id", 1);
 
-        Assert.assertEquals((Integer) 1, entity.getId());
+        assertEquals((Integer) 1, entity.getId());
 
     }
 
@@ -80,6 +82,32 @@ public class JPAORMProviderTest {
     @Test
     public void testGetIdTypeEmbeddedId() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
-        Assert.assertEquals(PrimaryKey.class, provider.getIdType(EmbeddedIdEntity.class));
+        assertEquals(PrimaryKey.class, provider.getIdType(EmbeddedIdEntity.class));
+    }
+
+    @Test
+    public void testSetIdField() throws Exception {
+        JPAORMProvider provider = new JPAORMProvider(em);
+        FieldAccessEntity entity = new FieldAccessEntity();
+        provider.setId(entity, 1);
+        assertEquals(1, entity.getIntegerValue());
+    }
+
+    @Test
+    public void testGetIdField() throws Exception {
+        JPAORMProvider provider = new JPAORMProvider(em);
+        FieldAccessEntity entity = new FieldAccessEntity();
+        assertEquals(0, provider.getId(entity));
+        entity.setIntegerValue(-1);
+        assertEquals(entity.getIntegerValue(), provider.getId(entity));
+    }
+
+    @Test
+    public void testGetIdProperty() throws Exception {
+        JPAORMProvider provider = new JPAORMProvider(em);
+        PropertyAccessEntity entity = new PropertyAccessEntity();
+        Assert.assertNull(provider.getId(entity));
+        entity.setId(-1);
+        assertEquals(entity.getId(), provider.getId(entity));
     }
 }

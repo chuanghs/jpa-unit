@@ -1,6 +1,7 @@
 package org.ormunit.command;
 
 import org.ormunit.ORMProvider;
+import org.ormunit.ORMUnitTestSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -13,13 +14,13 @@ public class StatementCommand extends ORMUnitCommand {
     private String statement;
 
     public StatementCommand(String statement) {
-
         this.statement = statement;
     }
 
     @Override
-    public void visit(ORMProvider visitor) {
-        visitor.statement(statement);
+    public void visit(ORMUnitTestSet testSet) {
+        ORMProvider provider = testSet.getProvider();
+        provider.statement(statement);
     }
 
     @Override

@@ -85,15 +85,24 @@ public class HibernateORMProvider extends AORMProvider {
         return session.getSessionFactory().getClassMetadata(entityType).getIdentifierType().getReturnedClass();
     }
 
-    public void entity(Object entity) {
+    public Object getId(Object entity) throws Exception {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public void setId(Object entity, Object id) throws Exception {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public Object entity(Object entity) {
         session.saveOrUpdate(entity);
+        return entity;
     }
 
     public void statement(String statement) {
         session.createSQLQuery(statement).executeUpdate();
     }
 
-    public <T> T getReference(Class<T> entityClass, Object id) {
+    public <T> T getDBEntity(Class<T> entityClass, Object id) {
         return (T) session.get(entityClass, (Serializable) id);
     }
 

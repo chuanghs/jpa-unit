@@ -32,7 +32,7 @@ public class JPAHelper {
 
     public static final String derbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
     public static final String h2DriverClassName = "org.h2.Driver";
-    public static final String hsqlDriverClassName = "org.hsql.jdbcDriver";
+    public static final String hsqlDriverClassName = "org.hsqldb.jdbcDriver";
 
 
     private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");

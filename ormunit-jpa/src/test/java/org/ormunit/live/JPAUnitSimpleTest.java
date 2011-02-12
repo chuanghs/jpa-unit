@@ -41,7 +41,17 @@ public class JPAUnitSimpleTest extends JPAUnitTestCase {
     }
 
     @Test
+    public void testReadAllEntities2() {
+        List resultList = getEm().createQuery("select o from " + PropertyAccessEntity.class.getSimpleName() + " o").getResultList();
+        assertEquals(4, resultList.size());
+
+        resultList = getEm().createQuery("select o from " + FieldAccessEntity.class.getSimpleName() + " o").getResultList();
+        assertEquals(5, resultList.size());
+    }
+
+    @Test
     public void testReplaceReference() {
+        List resultList = getEm().createQuery("select o from " + FieldAccessEntity.class.getSimpleName() + " o").getResultList();
         FieldAccessEntity fae = getEm().getReference(FieldAccessEntity.class, 1);
         fae.setComplexType(null);
 
@@ -57,39 +67,12 @@ public class JPAUnitSimpleTest extends JPAUnitTestCase {
     }
 
     @Test
-    public void testReplaceReference2() {
+    public void testFindById() {
 
-        PropertyAccessEntity pae = getEm().getReference(PropertyAccessEntity.class, 4);
-        FieldAccessEntity fae = getEm().getReference(FieldAccessEntity.class, 1);
-        fae.setComplexType(pae);
+        FieldAccessEntity pae = getEm().getReference(FieldAccessEntity.class, 4);
 
-        getEm().persist(fae);
 
-        getEm().flush();
-        getEm().clear();
-
-        fae = getEm().getReference(FieldAccessEntity.class, 1);
-
-        assertEquals(pae, fae.getComplexType());
-
-    }
-
-    @Test
-    public void testPersist() {
-        PropertyAccessEntity pae = getEm().getReference(PropertyAccessEntity.class, 4);
-        FieldAccessEntity fae1 = new FieldAccessEntity();
-        fae1.setIntegerValue(6);
-        fae1.setComplexType(pae);
-        getEm().persist(fae1);
-
-        fae1 = new FieldAccessEntity();
-        fae1.setIntegerValue(7);
-        fae1.setComplexType(pae);
-        getEm().persist(fae1);
-
-        List resultList = getEm().createQuery("select o from " + FieldAccessEntity.class.getSimpleName() + " o").getResultList();
-
-        assertEquals(7, resultList.size());
+        assertNotNull(pae);
 
     }
 

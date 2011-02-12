@@ -59,8 +59,8 @@ public class JPAEntityNodeProcessorTest {
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(new FieldAccessor(entity.getClass()), "complexType", 1));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
+        references.add(new EntityReference("complexType", 1));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, new FieldAccessor(entity.getClass()), references)));
     }
 
     @Test
@@ -77,8 +77,8 @@ public class JPAEntityNodeProcessorTest {
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference(new FieldAccessor(entity.getClass()), "complexType", 1));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(entity, references)));
+        references.add(new EntityReference("complexType", 1));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, new FieldAccessor(entity.getClass()), references)));
     }
 
 }
