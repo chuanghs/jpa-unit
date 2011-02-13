@@ -4,7 +4,7 @@ import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
-import org.ormunit.node.INodeProcessor;
+import org.ormunit.node.ANodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -17,6 +17,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -129,17 +130,17 @@ public class ORMUnit {
                         continue;
 
                     // take nodeprocessor responsible for processing this type of node
-                    INodeProcessor nodeProcessor = result.getNodeProcessor(jpaUnitElement.getNodeName());
+                    ANodeProcessor nodeProcessor = result.getNodeProcessor(jpaUnitElement.getNodeName());
                     if (nodeProcessor != null) {
                         // process node
 
                         try {
-                            nodeProcessor.process(jpaUnitElement, result, this);
+                            nodeProcessor.process(jpaUnitElement, result);
                         } catch (ORMUnitNodeProcessingException e) {
                             throw new ORMUnitFileSyntaxException("error at node: " + i, e);
                         }
                     } else {
-                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + INodeProcessor.class.getCanonicalName() + " implementations";
+                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + ANodeProcessor.class.getCanonicalName() + " implementations";
                         if (log.isWarnEnabled()) {
                             log.warn(s);
                         }
@@ -164,8 +165,8 @@ public class ORMUnit {
             if (name.startsWith(Properties_NodeProcessor_Prefix)) {
                 String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
                 try {
-                    Class<?> clazz = Class.forName(properties.getProperty(name));
-                    testset.registerNodeProcessor(nodeType, (INodeProcessor) Class.forName(properties.getProperty(name)).newInstance());
+                    Constructor<?> constructor = Class.forName(properties.getProperty(name)).getConstructor(ORMUnit.class);
+                    testset.registerNodeProcessor(nodeType, (ANodeProcessor) constructor.newInstance(this));
                 } catch (Exception e) {
                     throw new ORMUnitConfigurationException(e);
                 }

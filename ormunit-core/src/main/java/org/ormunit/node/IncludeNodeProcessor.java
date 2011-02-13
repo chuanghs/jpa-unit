@@ -12,21 +12,28 @@ import org.w3c.dom.Node;
  * Date: 22.12.10
  * Time: 00:01
  */
-public class IncludeNodeProcessor implements INodeProcessor {
+public class IncludeNodeProcessor extends ANodeProcessor {
 
 
-    public void process(Node jpaUnitElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+
+
+    public IncludeNodeProcessor(ORMUnit ormUnit){
+        super(ormUnit);
+    }
+
+
+    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
         Node srcNode = jpaUnitElement.getAttributes().getNamedItem("src");
         if (srcNode != null) {
             try {
-                include(srcNode.getNodeValue().trim(), reader, result);
+                include(srcNode.getNodeValue().trim(), result);
             } catch (ORMUnitFileReadException e) {
                 throw new ORMUnitNodeProcessingException(e);
             }
         }
     }
 
-    public void include(String s, ORMUnit configurationReader, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
-        configurationReader.read(s, testSet);
+    public void include(String s, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
+        getOrmUnit().read(s, testSet);
     }
 }

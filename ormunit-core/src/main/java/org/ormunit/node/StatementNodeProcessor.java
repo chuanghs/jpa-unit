@@ -14,9 +14,15 @@ import org.w3c.dom.NodeList;
  * Date: 23.12.10
  * Time: 16:38
  */
-public class StatementNodeProcessor implements INodeProcessor {
+public class StatementNodeProcessor extends ANodeProcessor {
 
-    public void process(Node jpaUnitElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+
+
+    public StatementNodeProcessor(ORMUnit ormUnit){
+        super(ormUnit);
+    }
+
+    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
         NodeList statementChildren = jpaUnitElement.getChildNodes();
         if (statementChildren.getLength() > 1) {
             throw new ORMUnitNodeProcessingException("statement element is allowed only to have 1 child: CDATA or text");

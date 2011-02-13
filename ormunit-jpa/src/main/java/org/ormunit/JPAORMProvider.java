@@ -239,7 +239,7 @@ public class JPAORMProvider extends AORMProvider {
     }
 
 
-    public <T> T getDBEntity(Class<T> propertyClass, Object id) {
+    public <T> T getEntity(Class<T> propertyClass, Object id) {
         return getEntityManager().getReference(propertyClass, id);  //To change body of implemented methods use File | Settings | File Templates.
     }
 
@@ -364,8 +364,46 @@ public class JPAORMProvider extends AORMProvider {
         throw new RuntimeException("unknown Persistence Provider");
     }
 
+    private String extractSchemaName(Class<?> c) {
+        Table annotation = c.getAnnotation(Table.class);
+        if (annotation != null && !"".equals(annotation.schema()))
+            return annotation.schema();
+        return null;
+    }
+
+    public Class[] getManagedTypes() {
+        Set<Class> managedTypes = JPAHelper.getManagedTypes(getClass(), this.unitName);
+        return managedTypes!=null?managedTypes.toArray(new Class[managedTypes.size()]):new Class[]{};
+    }
+
     public void setUp() {
         if (selfManagedEM) {
+
+            Connection con = null;
+            try {
+
+                con = getConnection();
+                if (con != null) {
+                    for (Class<?> c : getManagedTypes()) {
+                        try {
+
+                            String x = extractSchemaName(c);
+
+                            if (x != null) {
+                                //log.info("creating schema: " + x);
+                                //con.prepareStatement("create schema " + x.toUpperCase()).executeUpdate();
+                            }
+
+                        } catch (Throwable e) {
+                            log.error(e.getMessage());
+                        }
+                    }
+                    con.close();
+                }
+            } catch (Exception e) {
+                log.error(e.getMessage());
+            }
+
             String fullUnitName = (ormUnit.getDefaultDataSourceName() != null ? ormUnit.getDefaultDataSourceName() : "") + unitName;
 
             // creating entitymanagerfactory for given connection properties and persistence unit name

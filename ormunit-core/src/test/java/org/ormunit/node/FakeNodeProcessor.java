@@ -11,8 +11,13 @@ import org.w3c.dom.Node;
  * Date: 18.12.10
  * Time: 17:03
  */
-public class FakeNodeProcessor implements  INodeProcessor{
-    public void process(Node jpaUnitElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+public class FakeNodeProcessor extends ANodeProcessor {
+
+    public FakeNodeProcessor(ORMUnit ormUnit) {
+        super(ormUnit);
+    }
+
+    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
 
     }
 }

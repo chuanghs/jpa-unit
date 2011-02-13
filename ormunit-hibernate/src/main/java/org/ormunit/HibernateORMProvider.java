@@ -102,8 +102,12 @@ public class HibernateORMProvider extends AORMProvider {
         session.createSQLQuery(statement).executeUpdate();
     }
 
-    public <T> T getDBEntity(Class<T> entityClass, Object id) {
+    public <T> T getEntity(Class<T> entityClass, Object id) {
         return (T) session.get(entityClass, (Serializable) id);
+    }
+
+    public Class[] getManagedTypes() {
+        return new Class[0];  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     public void setUp() {

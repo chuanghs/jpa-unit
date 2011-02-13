@@ -25,7 +25,7 @@ import java.util.Set;
  * Date: 23.12.10
  * Time: 16:27
  */
-public class EntityNodeProcessor implements INodeProcessor {
+public class EntityNodeProcessor extends ANodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(EntityNodeProcessor.class);
     public static final String ReferencePattern = "ref\\(.+\\)";
@@ -35,6 +35,7 @@ public class EntityNodeProcessor implements INodeProcessor {
 
 
     public EntityNodeProcessor(String className) {
+        super(null);
         this.className = className;
     }
 
@@ -42,7 +43,7 @@ public class EntityNodeProcessor implements INodeProcessor {
         return Class.forName(className);
     }
 
-    public synchronized void process(Node entityElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+    public synchronized void process(Node entityElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
         try {
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();
@@ -202,7 +203,7 @@ public class EntityNodeProcessor implements INodeProcessor {
     }
 
     private Object processEntity(ORMUnitTestSet testset, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
-        INodeProcessor nodeProcessor = testset.getNodeProcessor(valueNode.getNodeName());
+        ANodeProcessor nodeProcessor = testset.getNodeProcessor(valueNode.getNodeName());
 
         Object element = null;
         if (nodeProcessor instanceof EntityNodeProcessor) {
