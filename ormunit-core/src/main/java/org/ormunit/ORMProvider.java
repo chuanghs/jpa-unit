@@ -2,9 +2,6 @@ package org.ormunit;
 
 import org.ormunit.entity.EntityAccessor;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
-
 /**
  * Created by IntelliJ IDEA.
  * User: krzyzak
@@ -25,5 +22,7 @@ public interface ORMProvider {
 
     void statement(String statement);
 
-    <T> T getDBEntity(Class<T> entityClass, Object id);
+    <T> T getEntity(Class<T> entityClass, Object id);
+
+    Class[] getManagedTypes();
 }

@@ -42,10 +42,13 @@ public class CoreEntityNodeProcessorTest {
     @Mock
     ORMProvider ormProvider;
 
+    ORMUnit ormUnit;
+
     @Before
     public void setUp() throws IntrospectionException {
         when(ormProvider.getAccessor(eq(SimplePOJO.class))).thenReturn(new PropertyAccessor(SimplePOJO.class));
         when(ormProvider.getAccessor(eq(SimplePOJO2.class))).thenReturn(new PropertyAccessor(SimplePOJO2.class));
+        ormUnit = new ORMUnit(getClass());
     }
 
     @Test
@@ -65,7 +68,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
-        new ORMUnit(getClass()).read(bais, result);
+        ormUnit.read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -99,7 +102,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
-        new ORMUnit(getClass()).read(bais, result);
+        ormUnit.read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(1);
@@ -132,7 +135,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
-        new ORMUnit(getClass()).read(bais, result);
+        ormUnit.read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
         simplePOJO.setIntegerValue(2);
@@ -162,7 +165,7 @@ public class CoreEntityNodeProcessorTest {
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
 
-        new ORMUnit(getClass()).read(bais, result);
+        ormUnit.read(bais, result);
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
@@ -170,10 +173,10 @@ public class CoreEntityNodeProcessorTest {
         verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass()), references)));
 
 
-        when(ormProvider.getDBEntity(eq(SimplePOJO2.class), anyInt())).thenReturn(new SimplePOJO2());
+        when(ormProvider.getEntity(eq(SimplePOJO2.class), anyInt())).thenReturn(new SimplePOJO2());
         result.execute();
 
-        verify(ormProvider, times(1)).getDBEntity(eq(SimplePOJO2.class), anyInt());
+        verify(ormProvider, times(1)).getEntity(eq(SimplePOJO2.class), anyInt());
     }
 
     @Test
@@ -191,7 +194,7 @@ public class CoreEntityNodeProcessorTest {
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
 
-        new ORMUnit(getClass()).read(bais, result);
+        ormUnit.read(bais, result);
 
         EntityCommand entityCommand = new EntityCommand("some weird id", new SimplePOJO2(), ormProvider.getAccessor(SimplePOJO2.class), new HashSet<EntityReference>());
         verify(result).addCommand(Mockito.eq(entityCommand));
@@ -203,7 +206,7 @@ public class CoreEntityNodeProcessorTest {
         verify(result).addCommand(Mockito.eq(entityCommand1));
 
         result.execute();
-        verify(ormProvider, times(0)).getDBEntity(eq(SimplePOJO2.class), anyInt());
+        verify(ormProvider, times(0)).getEntity(eq(SimplePOJO2.class), anyInt());
 
     }
 
@@ -221,8 +224,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
-        ORMUnit configurationReader = spy(new ORMUnit(getClass()));
-        configurationReader.read(bais, result);
+        ormUnit.read(bais, result);
 
         verify(result, times(2)).getNodeProcessor("pojo2");
 
@@ -257,8 +259,7 @@ public class CoreEntityNodeProcessorTest {
                 "</ormunit>").getBytes());
 
         ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
-        ORMUnit configurationReader = spy(new ORMUnit(getClass()));
-        configurationReader.read(bais, result);
+        ormUnit.read(bais, result);
 
         verify(result, times(2)).getNodeProcessor("import");
         verify(result, times(2)).getNodeProcessor("pojo2");

@@ -61,7 +61,7 @@ public class EntityCommand extends ORMUnitCommand {
             Class propertyClass = getPropertyClass(ref.getPropertyName());
             Object reference = null;
             if (ref.getType() == EntityReference.Type.DB) {
-                reference = provider.getDBEntity(propertyClass, ref.getId());
+                reference = provider.getEntity(propertyClass, ref.getId());
             } else if (ref.getType() == EntityReference.Type.ORMUNIT) {
                 reference = getORMEntity(testSet, (String) ref.getId());
             }

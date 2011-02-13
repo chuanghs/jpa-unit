@@ -9,17 +9,13 @@ import org.ormunit.ORMUnitHelper;
 import org.ormunit.ORMUnitTestSet;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
-import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.EntityManager;
-import javax.persistence.Table;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.util.Properties;
-import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,7 +33,6 @@ public abstract class JPAUnitTestCase extends TestCase {
     private Properties properties;
     private JPAORMProvider provider;
     private ORMUnitTestSet testSet;
-    private String persistenceProvider;
 
 
     public JPAUnitTestCase(String unitName) {
@@ -54,11 +49,6 @@ public abstract class JPAUnitTestCase extends TestCase {
 
         if (isWithDB()) {
             testSet = new ORMUnitTestSet(provider);
-
-            // adding entityNodeProcessor for every entity class defined in persistence unit
-            for (Class<?> c : getManagedTypes()) {
-                testSet.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
-            }
 
             InputStream inputStream = null;
             if (this.ormUnitFileName != null) {
@@ -82,14 +72,6 @@ public abstract class JPAUnitTestCase extends TestCase {
         }
     }
 
-
-    private String extractSchemaName(Class<?> c) {
-        Table annotation = c.getAnnotation(Table.class);
-        if (annotation != null && !"".equals(annotation.schema()))
-            return annotation.schema();
-        return null;
-    }
-
     protected final boolean isWithDB() {
         return !"false".equals(properties.getProperty("test_with_db." + unitName));
     }
@@ -98,34 +80,13 @@ public abstract class JPAUnitTestCase extends TestCase {
     public void setUp() throws Exception {
         super.setUp();
         if (isWithDB()) {
-            Connection con = null;
-            try {
 
-                con = provider.getConnection();
-                if (con != null) {
-                    for (Class<?> c : getManagedTypes()) {
-                        try {
-
-                            String x = extractSchemaName(c);
-
-                            if (x != null) {
-                                //log.info("creating schema: " + x);
-                                //con.prepareStatement("create schema " + x.toUpperCase()).executeUpdate();
-                            }
-
-                        } catch (Throwable e) {
-                            log.error(e.getMessage());
-                        }
-                    }
-                    con.close();
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
             provider.setUp();
+
+            testSet.execute();
+
             provider.getEntityManager().flush();
             provider.getEntityManager().clear();
-            testSet.execute();
         }
     }
 
@@ -145,10 +106,6 @@ public abstract class JPAUnitTestCase extends TestCase {
 
     public EntityManager getEm() {
         return provider.getEntityManager();
-    }
-
-    private Set<Class> getManagedTypes() {
-        return JPAHelper.getManagedTypes(getClass(), this.unitName);
     }
 
 

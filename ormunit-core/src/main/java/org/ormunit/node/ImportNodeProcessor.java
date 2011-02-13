@@ -20,12 +20,17 @@ import java.util.WeakHashMap;
  * Date: 23.12.10
  * Time: 16:37
  */
-public class ImportNodeProcessor implements INodeProcessor {
+public class ImportNodeProcessor extends ANodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ImportNodeProcessor.class);
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";
 
     private final WeakHashMap<ORMUnitTestSet, WeakReference<Map<String, String>>> confImports = new WeakHashMap<ORMUnitTestSet, WeakReference<Map<String, String>>>();
+
+
+    public ImportNodeProcessor(ORMUnit ormUnit){
+        super(ormUnit);
+    }
 
     public void addImport(ORMUnitTestSet testSet, String className, String alias) {
 
@@ -50,7 +55,7 @@ public class ImportNodeProcessor implements INodeProcessor {
 
     }
 
-    public void process(Node jpaUnitElement, ORMUnitTestSet result, ORMUnit reader) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
         NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
         Node classNode = importAttributes.getNamedItem("class");
         Node aliasNode = importAttributes.getNamedItem("alias");
