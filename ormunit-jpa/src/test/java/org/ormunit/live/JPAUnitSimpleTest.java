@@ -28,7 +28,7 @@ public class JPAUnitSimpleTest extends JPAUnitTestCase {
     public void testTransaction() throws JAXBException {
         assertTrue(getEm().getTransaction().isActive());
 
-        assertEquals(2, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
+        assertEquals(3, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
     }
 
     @Test

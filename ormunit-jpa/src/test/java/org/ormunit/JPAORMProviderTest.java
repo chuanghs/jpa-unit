@@ -52,8 +52,8 @@ public class JPAORMProviderTest {
     public void testGetIdType() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
 
-        assertEquals(int.class, provider.getIdType(FieldAccessEntity.class));
         assertEquals(Integer.class, provider.getIdType(PropertyAccessEntity.class));
+        assertEquals(int.class, provider.getIdType(FieldAccessEntity.class));
     }
 
 

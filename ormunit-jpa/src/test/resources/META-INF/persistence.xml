@@ -8,6 +8,7 @@
 
         <class>org.ormunit.entity.PropertyAccessEntity</class>
         <class>org.ormunit.entity.FieldAccessEntity</class>
+        <class>org.ormunit.entity.PoliciesEntity</class>
         <properties>
             <!-- EclipseLink should create the database schema automatically -->
             <property name="eclipselink.ddl-generation" value="create-tables"/>
@@ -21,24 +22,10 @@
 
         <class>org.ormunit.entity.PropertyAccessEntity</class>
         <class>org.ormunit.entity.FieldAccessEntity</class>
+        <class>org.ormunit.entity.PoliciesEntity</class>
         <properties>
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-        </properties>
-
-    </persistence-unit>
-
-    <persistence-unit name="ormunit-so-unused" transaction-type="RESOURCE_LOCAL">
-
-        <class>org.ormunit.entity.Auction</class>
-        <class>org.ormunit.entity.AuctionParam</class>
-        <class>org.ormunit.entity.AuctionParamValue</class>
-
-
-        <properties>
-            <property name="eclipselink.ddl-generation" value="create-tables"/>
-            <property name="eclipselink.ddl-generation.output-mode" value="database"/>
-            <property name="eclipselink.logging.level" value="OFF"/>
         </properties>
 
     </persistence-unit>
