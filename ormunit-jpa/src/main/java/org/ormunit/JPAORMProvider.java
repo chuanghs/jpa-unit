@@ -75,14 +75,14 @@ public class JPAORMProvider extends AORMProvider {
                 driverClassName = JPAHelper.hsqlDriverClassName;
                 hibernateDialect = "org.hibernate.dialect.HSQLDialect";
                 url = JDBC_URL_HSQL;
-            } else if (derby) {
-                driverClassName = JPAHelper.derbyDriverClassName;
-                hibernateDialect = "org.hibernate.dialect.DerbyDialect";
-                url = JDBC_URL_DERBY;
             } else if (h2) {
                 driverClassName = JPAHelper.h2DriverClassName;
                 hibernateDialect = "org.hibernate.dialect.H2Dialect";
                 url = JDBC_URL_H2;
+            } else if (derby) {
+                driverClassName = JPAHelper.derbyDriverClassName;
+                hibernateDialect = "org.hibernate.dialect.DerbyDialect";
+                url = JDBC_URL_DERBY;
             } else {
 
             }
@@ -282,6 +282,8 @@ public class JPAORMProvider extends AORMProvider {
 
             for (PropertyDescriptor pd : propertyDescriptors) {
                 Method f = pd.getReadMethod();
+                if (f == null)
+                    continue;
                 f.setAccessible(true);
                 EmbeddedId embeddedId = f.getAnnotation(EmbeddedId.class);
                 if (embeddedId != null) {
@@ -373,13 +375,15 @@ public class JPAORMProvider extends AORMProvider {
 
     public Class[] getManagedTypes() {
         Set<Class> managedTypes = JPAHelper.getManagedTypes(getClass(), this.unitName);
-        return managedTypes!=null?managedTypes.toArray(new Class[managedTypes.size()]):new Class[]{};
+        return managedTypes != null ? managedTypes.toArray(new Class[managedTypes.size()]) : new Class[]{};
     }
+
+    Connection con = null;
 
     public void setUp() {
         if (selfManagedEM) {
 
-            Connection con = null;
+
             try {
 
                 con = getConnection();
@@ -391,14 +395,17 @@ public class JPAORMProvider extends AORMProvider {
 
                             if (x != null) {
                                 //log.info("creating schema: " + x);
-                                //con.prepareStatement("create schema " + x.toUpperCase()).executeUpdate();
+                                if (hsql)
+                                    con.prepareStatement("create schema " + x.toUpperCase() + " authorization DBA").executeUpdate();
+                                else
+                                    con.prepareStatement("create schema " + x.toUpperCase() + " authorization sa").executeUpdate();
                             }
 
                         } catch (Throwable e) {
                             log.error(e.getMessage());
                         }
                     }
-                    con.close();
+                    con.commit();
                 }
             } catch (Exception e) {
                 log.error(e.getMessage());
@@ -433,6 +440,11 @@ public class JPAORMProvider extends AORMProvider {
         if (selfManagedEM) {
             entityManager.close();
             entityManagerFactory.close();
+        }
+        try {
+            con.close();
+        } catch (SQLException e) {
+            log.error("", e);
         }
     }
 

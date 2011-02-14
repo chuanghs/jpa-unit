@@ -17,6 +17,9 @@ public class PropertyAccessEntity {
 
     private String someProperty;
 
+    private String justGetterProperty;
+    private String justSetterProperty;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     public Integer getId() {
@@ -57,5 +60,14 @@ public class PropertyAccessEntity {
         return "PropertyAccessEntity{" +
                 "id=" + id +
                 '}';
+    }
+    @Transient
+    public String getJustGetterProperty() {
+        return justGetterProperty;
+    }
+
+    @Transient
+    public void setJustSetterProperty(String justSetterProperty) {
+        this.justSetterProperty = justSetterProperty;
     }
 }
