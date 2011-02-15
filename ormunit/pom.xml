@@ -4,7 +4,7 @@
     <groupId>org.ormunit</groupId>
     <artifactId>ormunit</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.3-SNAPSHOT</version>
+    <version>0.9.3</version>
     <name>orm-unit</name>
 
 
@@ -57,7 +57,11 @@
             </plugin>
         </plugins>
     </build>
-    <scm>
-        <connection>scm:hg:file://f:/dev/dev/jpa-unit/kody</connection>
-    </scm>
+    <distributionManagement>
+        <repository>
+            <id>ormunit-maven</id>
+            <name>ORM-Unit Maven Repository</name>
+            <url>${url}</url>
+        </repository>
+    </distributionManagement>
 </project>
