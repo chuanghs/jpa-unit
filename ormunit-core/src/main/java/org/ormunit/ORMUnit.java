@@ -11,6 +11,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+import sun.management.FileSystem;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -49,13 +50,21 @@ public class ORMUnit {
 
     public ORMUnit(Class<?> workClass) {
         this(workClass, ORMUnitHelper.readOrmUnitProperties(workClass));
-
     }
 
+    public ORMUnit(String currentDir, Class<?> workClass) {
+        this(currentDir, workClass, ORMUnitHelper.readOrmUnitProperties(workClass));
+    }
+
+
     public ORMUnit(Class<?> aClass, Properties properties) {
+        this("/" + aClass.getPackage().getName().replace(".", "/"), aClass, properties);
+    }
+
+    public ORMUnit(String currentDir, Class<?> aClass, Properties properties) {
         this.workClass = aClass;
         this.properties = properties;
-        currentDir = "/" + workClass.getPackage().getName().replace(".", "/");
+        this.currentDir = currentDir;
 
         this.defaultDataSourceName = properties.getProperty(Properties_DatasourcesDefault);
 
@@ -66,7 +75,6 @@ public class ORMUnit {
                 this.dsProperties.put(s.trim(), extractDataSourceProperties(s.trim(), properties));
             }
         }
-
     }
 
     private Properties extractDataSourceProperties(String trim, Properties properties) {
@@ -108,8 +116,33 @@ public class ORMUnit {
 
     }
 
-    public ORMUnitTestSet read(InputStream stream, ORMProvider provider) throws ORMUnitFileReadException {
-        return this.read(stream, new ORMUnitTestSet(provider));
+    public ORMUnitTestSet read(String filePath, ORMUnitTestSet result) throws ORMUnitFileReadException {
+        String workDir = getCurrentDir();
+        try {
+            String[] parentChild = normalizePath(getCurrentDir(), filePath);
+
+            this.currentDir = parentChild[0];
+
+            InputStream stream = null;
+
+            try {
+                stream = getResourceAsStream(parentChild[0] + parentChild[1]);
+
+                read(stream, result);
+            } catch (Exception e) {
+                throw new ORMUnitFileReadException("file does not exist: " + parentChild[1] + "(workdir: " + parentChild[0] + ")", e);
+            } finally {
+                if (stream != null)
+                    try {
+                        stream.close();
+                    } catch (IOException e) {
+                        log.warn("", e);
+                    }
+            }
+        } finally {
+            this.currentDir = workDir;
+        }
+        return result;
     }
 
 
@@ -158,6 +191,37 @@ public class ORMUnit {
         return result;
     }
 
+
+    public String[] normalizePath(String parent, String child) {
+
+        child = child.replace("\\", "/").trim();
+        parent = parent.replace("\\", "/").trim();
+
+
+        String filePath = null;
+
+        if (child.startsWith("/")) {
+            filePath = child;
+        } else {
+            filePath = parent + "/" + child;
+        }
+        filePath = filePath.replace("//", "/");
+
+        int cdIndex = -1;
+        while ((cdIndex = filePath.indexOf("/../")) != -1) {
+            String begining = filePath.substring(0, cdIndex);
+            String end = filePath.substring(cdIndex + 4);
+
+            filePath = begining.substring(0, begining.lastIndexOf("/") + 1) + end;
+        }
+
+        filePath = filePath.replace("/./", "/");
+
+        int i = filePath.lastIndexOf("/");
+
+        return new String[]{filePath.substring(0, i + 1), filePath.substring(i + 1)};
+    }
+
     private void registerNodeProcessors(ORMUnitTestSet testset) {
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
@@ -172,48 +236,6 @@ public class ORMUnit {
                 }
             }
         }
-    }
-
-
-    public ORMUnitTestSet read(String filePath, ORMUnitTestSet result) throws ORMUnitFileReadException {
-        filePath = filePath.replace("\\", "/").trim();
-
-
-        String workDir = this.currentDir;
-        try {
-            String fileName = null;
-            int lastSlash = filePath.lastIndexOf("/");
-
-            if (lastSlash > 0) {
-                fileName = filePath.substring(lastSlash + 1);
-                this.currentDir = this.currentDir + "/" + filePath.substring(0, lastSlash);
-            } else if (lastSlash == 1) {
-                fileName = filePath.substring(lastSlash + 1);
-                this.currentDir = filePath.substring(0, lastSlash);
-            } else {
-                fileName = filePath;
-            }
-
-            InputStream stream = null;
-
-            try {
-                stream = getResourceAsStream(currentDir + "/" + fileName);
-
-                read(stream, result);
-            } catch (Exception e) {
-                throw new ORMUnitFileReadException("file does not exist: " + fileName + "(workdir: " + this.currentDir + ")", e);
-            } finally {
-                if (stream != null)
-                    try {
-                        stream.close();
-                    } catch (IOException e) {
-                        log.warn("", e);
-                    }
-            }
-        } finally {
-            this.currentDir = workDir;
-        }
-        return result;
     }
 
     public InputStream getResourceAsStream(String s) {

@@ -24,6 +24,12 @@ public class ORMUnitTestSet {
     private final List<ORMUnitCommand> commands = new LinkedList<ORMUnitCommand>();
 
     private final ORMProvider provider;
+    private ORMUnitTestSet parent;
+
+    public ORMUnitTestSet(ORMUnitTestSet parent) {
+        this(parent.getProvider());
+        this.parent = parent;
+    }
 
     public ORMUnitTestSet(ORMProvider provider) {
         this.provider = provider;
@@ -61,5 +67,16 @@ public class ORMUnitTestSet {
 
     public void registerNodeProcessor(String nodeType, ANodeProcessor aNodeProcessor) {
         nodeProcessorMap.put(nodeType, aNodeProcessor);
+    }
+
+    public ORMUnitTestSet getRootTestSet() {
+        if (this.parent==null)
+            return this;
+        else
+            return this.parent.getRootTestSet();
+    }
+
+    public ORMUnitTestSet getParentTestSet() {
+        return this.parent;
     }
 }
