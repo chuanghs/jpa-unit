@@ -59,11 +59,11 @@ public class PropertyAccessor extends AEntityAccessor {
         try {
             PropertyDescriptor pd = getPD(propertyName);
             if (pd == null) {
-                new ORMEntityAccessException("attribute: " + pd.getName() + " does not have corresponding property in class: " + clazz.getCanonicalName());
+                throw new ORMEntityAccessException("attribute: " + propertyName + " does not have corresponding property in class: " + clazz.getCanonicalName());
             }
             Method setter = pd.getWriteMethod();
             if (setter == null) {
-                new ORMEntityAccessException("there is no setter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
+                throw new ORMEntityAccessException("there is no setter for property: " + pd.getName() + " of class: " + clazz.getCanonicalName());
             }
 
             setter.invoke(entity, value);
