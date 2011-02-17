@@ -38,10 +38,6 @@ public class EntityCommand extends ORMUnitCommand {
         this.references = references;
     }
 
-    public String getOrmId() {
-        return ormId;
-    }
-
     public Class getPropertyClass(String propertyName) {
         return accessor.getType(propertyName);
     }
@@ -73,7 +69,7 @@ public class EntityCommand extends ORMUnitCommand {
         }
         provider.entity(this.entity);
         if (this.ormId != null) {
-            registerORMEntity(testSet, this.entity, this.ormId);
+            registerORMEntity(testSet.getRootTestSet(), this.entity, this.ormId);
         }
     }
 
@@ -106,7 +102,7 @@ public class EntityCommand extends ORMUnitCommand {
     @Override
     public String toString() {
         return "EntityWithRefsCommand{" +
-                "ormId=" + getOrmId() +
+                "ormId=" + ormId +
                 "entity=" + getEntity() +
                 ", references=" + references +
                 '}';
