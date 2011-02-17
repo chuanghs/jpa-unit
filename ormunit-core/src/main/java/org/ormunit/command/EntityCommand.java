@@ -63,7 +63,7 @@ public class EntityCommand extends ORMUnitCommand {
             if (ref.getType() == EntityReference.Type.DB) {
                 reference = provider.getEntity(propertyClass, ref.getId());
             } else if (ref.getType() == EntityReference.Type.ORMUNIT) {
-                reference = getORMEntity(testSet, (String) ref.getId());
+                reference = getORMEntity(testSet.getRootTestSet(), (String) ref.getId());
             }
 
             if (reference == null)
@@ -88,13 +88,12 @@ public class EntityCommand extends ORMUnitCommand {
 
         if (stringObjectMap != null && stringObjectMap.get(id)!=null) {
             return stringObjectMap.get(id);
-        } else {
-            return getORMEntity(testSet.getParentTestSet(), id);
         }
+        return null;
     }
 
     private void registerORMEntity(ORMUnitTestSet testSet, Object entity, String ormId) {
-        Map<String, Object> stringObjectMap = entities.get(testSet);
+        Map<String, Object> stringObjectMap = entities.get(testSet.getRootTestSet());
         if (stringObjectMap == null) {
             entities.put(testSet, stringObjectMap = new HashMap<String, Object>());
         }
