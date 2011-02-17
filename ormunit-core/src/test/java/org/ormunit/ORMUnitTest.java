@@ -124,56 +124,16 @@ public class ORMUnitTest {
         ormUnit.read(new ByteArrayInputStream(value), testSet);
     }
 
-    @Test
-    public void testInclude() throws ORMUnitFileReadException {
-        String workDir = "/" + ORMUnit.class.getPackage().getName().replace(".", "/");
-
-        IncludeNodeProcessor includeNodeProcessor = new IncludeNodeProcessor(ormUnit);
-
-        doReturn(new ByteArrayInputStream("<ormunit></ormunit>".getBytes())).when(ormUnit).getResourceAsStream(eq(workDir + "/someOtherFile.xml"));
-
-        includeNodeProcessor.include("someOtherFile.xml", testSet);
-
-
-        verify(ormUnit, times(1)).read(eq("someOtherFile.xml"), same(testSet));
-    }
-
-    @Test
-    public void testIncludeChangeWorkDir1() throws ORMUnitFileReadException {
-        //byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
-
-        String workDir = "/" + ORMUnit.class.getPackage().getName().replace(".", "/");
-
-        IncludeNodeProcessor includeNodeProcessor = new IncludeNodeProcessor(ormUnit);
-
-        doReturn(testSet).when(ormUnit).read(any(InputStream.class), same(testSet));
-
-        includeNodeProcessor.include("../someOtherFile.xml", testSet);
-
-        verify(ormUnit, times(1)).read(eq("../someOtherFile.xml"), same(testSet));
-        verify(ormUnit, times(1)).getResourceAsStream(eq(workDir + "/../someOtherFile.xml"));
-
-        assertEquals(workDir, ormUnit.getCurrentDir());
-    }
 
 
     @Test
-    public void testIncludeChangeWorkDirRecurrent() throws ORMUnitFileReadException {
-        byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
+    public void testNormalize(){
+        assertArrayEquals(new String[]{"/parent/path/", "file.xml"}, ormUnit.normalizePath("/parent/path", "file.xml"));
+        assertArrayEquals(new String[]{"/foo/", "file.xml"}, ormUnit.normalizePath("/parent/path", "/foo/file.xml"));
+        assertArrayEquals(new String[]{"/", "file.xml"}, ormUnit.normalizePath("/foo", "../file.xml"));
+        assertArrayEquals(new String[]{"/", "file.xml"}, ormUnit.normalizePath("/foo/", "../file.xml"));
 
-        String workDir = "/" + ORMUnit.class.getPackage().getName().replace(".", "/");
-
-
-//        doReturn(testSet).when(ormUnit).read(any(InputStream.class), same(testSet));
-        doReturn(new ByteArrayInputStream("<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes())).when(ormUnit).getResourceAsStream(workDir + "/../someOtherFile.xml");
-        doReturn(new ByteArrayInputStream("<ormunit></ormunit>".getBytes())).when(ormUnit).getResourceAsStream(workDir + "/../../someOtherFile.xml");
-
-        ormUnit.read(new ByteArrayInputStream(value), testSet);
-
-        verify(ormUnit, times(2)).read(eq("../someOtherFile.xml"), same(testSet));
-        verify(ormUnit, times(1)).getResourceAsStream(eq(workDir + "/../someOtherFile.xml"));
-        verify(ormUnit, times(1)).getResourceAsStream(eq(workDir + "/../../someOtherFile.xml"));
-
-        assertEquals(workDir, ormUnit.getCurrentDir());
+        assertArrayEquals(new String[]{"/foo/", "file.xml"}, ormUnit.normalizePath("/foo", "./file.xml"));
     }
+
 }

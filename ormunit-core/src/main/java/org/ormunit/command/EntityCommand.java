@@ -79,12 +79,18 @@ public class EntityCommand extends ORMUnitCommand {
 
     private static Map<ORMUnitTestSet, Map<String, Object>> entities = new HashMap<ORMUnitTestSet, Map<String, Object>>();
 
-    private Object getORMEntity(ORMUnitTestSet testSet, String id) {
-        Map<String, Object> stringObjectMap = entities.get(testSet);
-        if (stringObjectMap != null) {
-            return stringObjectMap.get(id);
+    private static Object getORMEntity(ORMUnitTestSet testSet, String id) {
+        if (testSet == null ){
+            return null;
         }
-        return null;
+
+        Map<String, Object> stringObjectMap = entities.get(testSet);
+
+        if (stringObjectMap != null && stringObjectMap.get(id)!=null) {
+            return stringObjectMap.get(id);
+        } else {
+            return getORMEntity(testSet.getParentTestSet(), id);
+        }
     }
 
     private void registerORMEntity(ORMUnitTestSet testSet, Object entity, String ormId) {
