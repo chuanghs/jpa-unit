@@ -1,15 +1,12 @@
 package org.ormunit;
 
 import org.ormunit.command.ORMUnitCommand;
-import org.ormunit.node.ANodeProcessor;
+import org.ormunit.node.NodeProcessor;
 import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,7 +32,7 @@ public class ORMUnitTestSet {
         this.provider = provider;
 
         // adding entityNodeProcessor for every entity class defined in persistence unit
-        Class[] managedTypes = provider.getManagedTypes();
+        Set<Class<?>> managedTypes = provider.getManagedTypes();
         if (managedTypes != null)
             for (Class<?> c : managedTypes) {
                 registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
@@ -59,13 +56,13 @@ public class ORMUnitTestSet {
     }
 
 
-    private Map<String, ANodeProcessor> nodeProcessorMap = new HashMap<String, ANodeProcessor>();
+    private Map<String, NodeProcessor> nodeProcessorMap = new HashMap<String, NodeProcessor>();
 
-    public ANodeProcessor getNodeProcessor(String nodeName) {
+    public NodeProcessor getNodeProcessor(String nodeName) {
         return this.nodeProcessorMap.get(nodeName);
     }
 
-    public void registerNodeProcessor(String nodeType, ANodeProcessor aNodeProcessor) {
+    public void registerNodeProcessor(String nodeType, NodeProcessor aNodeProcessor) {
         nodeProcessorMap.put(nodeType, aNodeProcessor);
     }
 

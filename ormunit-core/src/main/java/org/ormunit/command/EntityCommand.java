@@ -5,10 +5,7 @@ import org.ormunit.ORMUnitTestSet;
 import org.ormunit.entity.EntityAccessor;
 import org.ormunit.exception.ORMUnitConfigurationException;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -16,12 +13,13 @@ import java.util.Set;
  * Date: 28.12.10
  * Time: 16:07
  */
-public class EntityCommand extends ORMUnitCommand {
+public class EntityCommand implements ORMUnitCommand {
 
     private final String ormId;
     private final Object entity;
     private EntityAccessor accessor;
     private final Set<EntityReference> references;
+    private static Map<ORMUnitTestSet, Map<String, Object>> entities = new WeakHashMap<ORMUnitTestSet, Map<String, Object>>();
 
     public EntityCommand(Object entity, EntityAccessor accessor) {
         this(null, entity, accessor);
@@ -50,7 +48,6 @@ public class EntityCommand extends ORMUnitCommand {
         }
     }
 
-    @Override
     public void visit(ORMUnitTestSet testSet) {
         ORMProvider provider = testSet.getProvider();
         for (EntityReference ref : references) {
@@ -63,7 +60,7 @@ public class EntityCommand extends ORMUnitCommand {
             }
 
             if (reference == null)
-                throw new ORMUnitConfigurationException("Entity: " + propertyClass.getCanonicalName() + " with id: '" + ref.getId() + "' cannot be found for entity: " + entity.getClass().getCanonicalName());
+                throw new ORMUnitConfigurationException(String.format("Entity: %s with id: '%s' cannot be found for entity: %s", propertyClass.getCanonicalName(), ref.getId(), entity.getClass().getCanonicalName()));
 
             set(getEntity(), reference, ref.getPropertyName());
         }
@@ -72,8 +69,6 @@ public class EntityCommand extends ORMUnitCommand {
             registerORMEntity(testSet.getRootTestSet(), this.entity, this.ormId);
         }
     }
-
-    private static Map<ORMUnitTestSet, Map<String, Object>> entities = new HashMap<ORMUnitTestSet, Map<String, Object>>();
 
     private static Object getORMEntity(ORMUnitTestSet testSet, String id) {
         if (testSet == null ){
@@ -94,7 +89,7 @@ public class EntityCommand extends ORMUnitCommand {
             entities.put(testSet, stringObjectMap = new HashMap<String, Object>());
         }
         if (stringObjectMap.get(ormId)!=null)
-            throw new ORMUnitConfigurationException("Multiple entities with same ormId: "+ormId);
+            throw new ORMUnitConfigurationException(String.format("Multiple entities with same ormId: %s", ormId));
         stringObjectMap.put(ormId, entity);
     }
 

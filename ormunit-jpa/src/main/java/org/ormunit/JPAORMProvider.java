@@ -373,9 +373,8 @@ public class JPAORMProvider extends AORMProvider {
         return null;
     }
 
-    public Class[] getManagedTypes() {
-        Set<Class> managedTypes = JPAHelper.getManagedTypes(getClass(), this.unitName);
-        return managedTypes != null ? managedTypes.toArray(new Class[managedTypes.size()]) : new Class[]{};
+    public Set<Class<?>> getManagedTypes() {
+        return  JPAHelper.getManagedTypes(getClass(), this.unitName);
     }
 
     Connection con = null;

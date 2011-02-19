@@ -4,14 +4,13 @@ import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
-import org.ormunit.node.ANodeProcessor;
+import org.ormunit.node.NodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
-import sun.management.FileSystem;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -117,20 +116,16 @@ public class ORMUnit {
     }
 
     public ORMUnitTestSet read(String filePath, ORMUnitTestSet result) throws ORMUnitFileReadException {
-        String workDir = getCurrentDir();
+        String workDir = currentDir;
         try {
-            String[] parentChild = normalizePath(getCurrentDir(), filePath);
-
-            this.currentDir = parentChild[0];
-
             InputStream stream = null;
 
+            String[] parentChild = normalizePath(filePath);
+            this.currentDir = parentChild[0];
             try {
-                stream = getResourceAsStream(parentChild[0] + parentChild[1]);
-
-                read(stream, result);
+                read(stream = getResourceAsStream(parentChild[0] + parentChild[1]), result);
             } catch (Exception e) {
-                throw new ORMUnitFileReadException("file does not exist: " + parentChild[1] + "(workdir: " + parentChild[0] + ")", e);
+                throw new ORMUnitFileReadException(String.format("file does not exist: %s (workdir: %s)", parentChild[1], parentChild[0]), e);
             } finally {
                 if (stream != null)
                     try {
@@ -163,7 +158,7 @@ public class ORMUnit {
                         continue;
 
                     // take nodeprocessor responsible for processing this type of node
-                    ANodeProcessor nodeProcessor = result.getNodeProcessor(jpaUnitElement.getNodeName());
+                    NodeProcessor nodeProcessor = result.getNodeProcessor(jpaUnitElement.getNodeName());
                     if (nodeProcessor != null) {
                         // process node
 
@@ -173,7 +168,7 @@ public class ORMUnit {
                             throw new ORMUnitFileSyntaxException("error at node: " + i, e);
                         }
                     } else {
-                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + ANodeProcessor.class.getCanonicalName() + " implementations";
+                        String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + NodeProcessor.class.getCanonicalName() + " implementations";
                         if (log.isWarnEnabled()) {
                             log.warn(s);
                         }
@@ -192,7 +187,43 @@ public class ORMUnit {
     }
 
 
-    public String[] normalizePath(String parent, String child) {
+
+
+    private void registerNodeProcessors(ORMUnitTestSet testset) {
+        Enumeration<?> enumeration = properties.propertyNames();
+        while (enumeration.hasMoreElements()) {
+            String name = (String) enumeration.nextElement();
+            if (name.startsWith(Properties_NodeProcessor_Prefix)) {
+                String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
+                try {
+                    Constructor<?> constructor = Class.forName(properties.getProperty(name)).getConstructor(ORMUnit.class);
+                    testset.registerNodeProcessor(nodeType, (NodeProcessor) constructor.newInstance(this));
+                } catch (Exception e) {
+                    throw new ORMUnitConfigurationException(e);
+                }
+            }
+        }
+    }
+
+    public InputStream getResourceAsStream(String s) {
+        return this.workClass.getResourceAsStream(s);
+    }
+
+    public String getCurrentDir() {
+        return currentDir;
+    }
+
+
+    public Class<?> getWorkClass() {
+        return workClass;
+    }
+
+
+    public String[] normalizePath(String child) {
+        return normalizePath(this.currentDir, child);
+    }
+
+    public static String[] normalizePath(String parent, String child) {
 
         child = child.replace("\\", "/").trim();
         parent = parent.replace("\\", "/").trim();
@@ -221,35 +252,5 @@ public class ORMUnit {
 
         return new String[]{filePath.substring(0, i + 1), filePath.substring(i + 1)};
     }
-
-    private void registerNodeProcessors(ORMUnitTestSet testset) {
-        Enumeration<?> enumeration = properties.propertyNames();
-        while (enumeration.hasMoreElements()) {
-            String name = (String) enumeration.nextElement();
-            if (name.startsWith(Properties_NodeProcessor_Prefix)) {
-                String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
-                try {
-                    Constructor<?> constructor = Class.forName(properties.getProperty(name)).getConstructor(ORMUnit.class);
-                    testset.registerNodeProcessor(nodeType, (ANodeProcessor) constructor.newInstance(this));
-                } catch (Exception e) {
-                    throw new ORMUnitConfigurationException(e);
-                }
-            }
-        }
-    }
-
-    public InputStream getResourceAsStream(String s) {
-        return this.workClass.getResourceAsStream(s);
-    }
-
-    public String getCurrentDir() {
-        return currentDir;
-    }
-
-
-    public Class<?> getWorkClass() {
-        return workClass;
-    }
-
 
 }

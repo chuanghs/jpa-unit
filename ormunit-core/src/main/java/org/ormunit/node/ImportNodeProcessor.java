@@ -20,7 +20,7 @@ import java.util.WeakHashMap;
  * Date: 23.12.10
  * Time: 16:37
  */
-public class ImportNodeProcessor extends ANodeProcessor {
+public class ImportNodeProcessor extends NodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(ImportNodeProcessor.class);
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";

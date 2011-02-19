@@ -14,7 +14,7 @@ import org.w3c.dom.NodeList;
  * Date: 23.12.10
  * Time: 16:38
  */
-public class StatementNodeProcessor extends ANodeProcessor {
+public class StatementNodeProcessor extends NodeProcessor {
 
 
 

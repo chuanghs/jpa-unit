@@ -14,9 +14,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -86,11 +84,11 @@ public class HibernateORMProvider extends AORMProvider {
     }
 
     public Object getId(Object entity) throws Exception {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 
     public void setId(Object entity, Object id) throws Exception {
-        //To change body of implemented methods use File | Settings | File Templates.
+
     }
 
     public Object entity(Object entity) {
@@ -106,8 +104,8 @@ public class HibernateORMProvider extends AORMProvider {
         return (T) session.get(entityClass, (Serializable) id);
     }
 
-    public Class[] getManagedTypes() {
-        return new Class[0];  //To change body of implemented methods use File | Settings | File Templates.
+    public Set<Class<?>> getManagedTypes() {
+        return new HashSet<Class<?>>();
     }
 
     public void setUp() {

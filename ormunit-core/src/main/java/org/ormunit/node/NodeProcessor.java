@@ -11,11 +11,11 @@ import org.w3c.dom.Node;
  * Date: 23.12.10
  * Time: 16:12
  */
-public abstract class ANodeProcessor {
+public abstract class NodeProcessor {
 
     private final ORMUnit ormUnit;
 
-    public ANodeProcessor(ORMUnit ormUnit){
+    public NodeProcessor(ORMUnit ormUnit){
         this.ormUnit = ormUnit;
     }
 

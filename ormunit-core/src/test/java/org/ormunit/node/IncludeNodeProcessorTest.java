@@ -47,9 +47,6 @@ public class IncludeNodeProcessorTest {
 
     @Test
     public void testIncludeChangeWorkDir1() throws ORMUnitFileReadException {
-        //byte[] value = "<ormunit><include src=\"../someOtherFile.xml\"/></ormunit>".getBytes();
-
-
 
         ORMUnitTestSet rootTestSet = new ORMUnitTestSet(ormProvider);
         ORMUnitTestSet includedTestSet = new ORMUnitTestSet(rootTestSet);
@@ -66,7 +63,6 @@ public class IncludeNodeProcessorTest {
         verify(ormUnit, times(1)).read(eq("../someOtherFile.xml"), same(includedTestSet));
 
 
-        assertEquals(workDir, ormUnit.getCurrentDir());
     }
 
 
@@ -83,9 +79,6 @@ public class IncludeNodeProcessorTest {
     public void testIncludeChangeWorkDirRecurrent() throws ORMUnitFileReadException {
         byte[] value = "<ormunit><include src=\"../bar.xml\"/></ormunit>".getBytes();
 
-        String workDir = "/foo/bar";
-
-
         doReturn(new ByteArrayInputStream("<ormunit><include src=\"../foo.xml\"/></ormunit>".getBytes()))
                 .when(ormUnit).getResourceAsStream("/foo/bar.xml");
 
@@ -99,7 +92,6 @@ public class IncludeNodeProcessorTest {
         verify(ormUnit, times(1)).getResourceAsStream(eq("/foo/bar.xml"));
         verify(ormUnit, times(1)).getResourceAsStream(eq("/foo.xml"));
 
-        assertEquals(workDir, ormUnit.getCurrentDir());
     }
 
     @Test

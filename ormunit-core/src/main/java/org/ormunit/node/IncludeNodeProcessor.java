@@ -19,7 +19,7 @@ import java.util.WeakHashMap;
  * Date: 22.12.10
  * Time: 00:01
  */
-public class IncludeNodeProcessor extends ANodeProcessor {
+public class IncludeNodeProcessor extends NodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(IncludeNodeProcessor.class);
 
@@ -40,7 +40,7 @@ public class IncludeNodeProcessor extends ANodeProcessor {
     }
 
     public void include(String s, ORMUnitTestSet currentTestSet) throws ORMUnitFileReadException {
-        String[] strings = getOrmUnit().normalizePath(getOrmUnit().getCurrentDir(), s);
+        String[] strings = getOrmUnit().normalizePath(s);
         String s1 = strings[0] + strings[1];
 
         ORMUnitTestSet includedTestSet = createTestSetIfNotReadBefore(s1, currentTestSet);

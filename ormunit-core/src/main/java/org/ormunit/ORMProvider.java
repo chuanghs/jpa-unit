@@ -2,6 +2,8 @@ package org.ormunit;
 
 import org.ormunit.entity.EntityAccessor;
 
+import java.util.Set;
+
 /**
  * Created by IntelliJ IDEA.
  * User: krzyzak
@@ -22,7 +24,7 @@ public interface ORMProvider {
 
     void statement(String statement);
 
-    <T> T getEntity(Class<T> entityClass, Object id);
+    <T extends Object> T getEntity(Class<T> entityClass, Object id);
 
-    Class[] getManagedTypes();
+    Set<Class<?>> getManagedTypes();
 }

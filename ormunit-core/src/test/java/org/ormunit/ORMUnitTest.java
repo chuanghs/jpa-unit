@@ -9,13 +9,11 @@ import org.ormunit.command.StatementCommand;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
-import org.ormunit.node.ANodeProcessor;
+import org.ormunit.node.NodeProcessor;
 import org.ormunit.node.ImportNodeProcessor;
-import org.ormunit.node.IncludeNodeProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -105,8 +103,8 @@ public class ORMUnitTest {
 
         ormUnit.read(new ByteArrayInputStream(value), testSet);
 
-        verify(testSet, times(1)).registerNodeProcessor(eq("sc1"), any(ANodeProcessor.class));
-        verify(testSet, times(1)).registerNodeProcessor(eq("sc2"), any(ANodeProcessor.class));
+        verify(testSet, times(1)).registerNodeProcessor(eq("sc1"), any(NodeProcessor.class));
+        verify(testSet, times(1)).registerNodeProcessor(eq("sc2"), any(NodeProcessor.class));
     }
 
 

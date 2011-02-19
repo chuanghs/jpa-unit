@@ -9,7 +9,7 @@ import org.ormunit.ORMUnitTestSet;
  * Date: 28.12.10
  * Time: 16:05
  */
-public class StatementCommand extends ORMUnitCommand {
+public class StatementCommand implements ORMUnitCommand {
 
     private String statement;
 
@@ -17,7 +17,6 @@ public class StatementCommand extends ORMUnitCommand {
         this.statement = statement;
     }
 
-    @Override
     public void visit(ORMUnitTestSet testSet) {
         ORMProvider provider = testSet.getProvider();
         provider.statement(statement);

@@ -11,7 +11,7 @@ import org.w3c.dom.Node;
  * Date: 18.12.10
  * Time: 17:03
  */
-public class FakeNodeProcessor extends ANodeProcessor {
+public class FakeNodeProcessor extends NodeProcessor {
 
     public FakeNodeProcessor(ORMUnit ormUnit) {
         super(ormUnit);

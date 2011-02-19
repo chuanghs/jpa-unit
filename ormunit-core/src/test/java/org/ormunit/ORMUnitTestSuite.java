@@ -3,7 +3,7 @@ package org.ormunit;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.ormunit.entity.EntityAccessorTest;
-import org.ormunit.entity.EntityCommandTest;
+//import org.ormunit.entity.EntityCommandTest;
 import org.ormunit.node.CoreEntityNodeProcessorTest;
 import org.ormunit.node.ImportNodeProcessorTest;
 import org.ormunit.node.IncludeNodeProcessorTest;
@@ -27,7 +27,7 @@ import org.ormunit.node.SimplePOJOTest;
         IncludeNodeProcessorTest.class,
         ImportNodeProcessorTest.class,
         CoreEntityNodeProcessorTest.class,
-        EntityCommandTest.class,
+        //EntityCommandTest.class,
         ORMUnitTest.class,
         ORMUnitTestSetTest.class,
         ORMUnitDataSourceTest.class

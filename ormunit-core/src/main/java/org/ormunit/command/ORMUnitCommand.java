@@ -9,8 +9,8 @@ import org.ormunit.ORMUnitTestSet;
  * Date: 28.12.10
  * Time: 16:05
  */
-public abstract class ORMUnitCommand {
+public interface ORMUnitCommand {
 
-    public abstract void visit(ORMUnitTestSet testSet);
+    void visit(ORMUnitTestSet testSet);
 
 }

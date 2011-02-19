@@ -46,14 +46,14 @@ public class JPAHelper {
         return null;
     }
 
-    public static Set<Class> getManagedTypes(Class<?> caller, String unitName) {
+    public static Set<Class<?>> getManagedTypes(Class<?> caller, String unitName) {
         Persistence cast = null;
 
         Persistence.PersistenceUnit pu = getPersistenceUnit(caller, unitName);
 
         if (pu != null) {
 
-            Set<Class> classes = new HashSet<Class>();
+            Set<Class<?>> classes = new HashSet<Class<?>>();
             for (String cn : pu.getClazz()) {
                 try {
                     classes.add(Class.forName(cn));

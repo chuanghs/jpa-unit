@@ -46,7 +46,7 @@ public class FieldAccessor extends AEntityAccessor {
         if (f != null)
             return f.getType();
         else {
-            log.warn("no property: " + propertyName + " in class: " + clazz.getCanonicalName());
+            log.warn(String.format("no property: %s in class: %s ",propertyName, clazz.getCanonicalName()));
             return null;
         }
     }
@@ -55,7 +55,7 @@ public class FieldAccessor extends AEntityAccessor {
         try {
             Field pd = fields.get(propertyName);
             if (pd == null) {
-                new ORMEntityAccessException("attribute: " + propertyName + " does not have corresponding property in class: " + clazz.getCanonicalName());
+                new ORMEntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
             }
             pd.setAccessible(true);
             pd.set(entity, value);
@@ -67,7 +67,7 @@ public class FieldAccessor extends AEntityAccessor {
     public Object get(Object entity, String propertyName) {
         Field pd = fields.get(propertyName);
         if (pd == null) {
-            new ORMEntityAccessException("attribute: " + propertyName + " does not have corresponding property in class: " + clazz.getCanonicalName());
+            new ORMEntityAccessException(String.format("attribute: %s does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
         }
         pd.setAccessible(true);
         try {

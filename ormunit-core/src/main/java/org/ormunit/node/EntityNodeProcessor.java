@@ -1,7 +1,6 @@
 package org.ormunit.node;
 
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnit;
 import org.ormunit.ORMUnitHelper;
 import org.ormunit.ORMUnitTestSet;
 import org.ormunit.command.EntityCommand;
@@ -25,7 +24,7 @@ import java.util.Set;
  * Date: 23.12.10
  * Time: 16:27
  */
-public class EntityNodeProcessor extends ANodeProcessor {
+public class EntityNodeProcessor extends NodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(EntityNodeProcessor.class);
     public static final String ReferencePattern = "ref\\(.+\\)";
@@ -47,7 +46,7 @@ public class EntityNodeProcessor extends ANodeProcessor {
         try {
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();
-            String ormId = processEntity(result, entityElement, entity, references);
+            String ormId = processEntity(entityElement, entity, references, result);
 
             result.addCommand(new EntityCommand(ormId,
                     entity,
@@ -61,7 +60,7 @@ public class EntityNodeProcessor extends ANodeProcessor {
     }
 
 
-    public String processEntity(ORMUnitTestSet testSet, Node entityElement, Object entity, Set<EntityReference> references) throws ORMUnitFileReadException {
+    public String processEntity(Node entityElement, Object entity, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
         ORMProvider provider = testSet.getProvider();
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
         String ormId = null;
@@ -117,7 +116,7 @@ public class EntityNodeProcessor extends ANodeProcessor {
                     }
                 }
                 Object entity1 = introspector.newInstance(propertyName);
-                processEntity(testSet, propertyNode, entity1, references);
+                processEntity(propertyNode, entity1, references, testSet);
                 introspector.set(entity, propertyName, entity1);
             }
         }
@@ -203,7 +202,7 @@ public class EntityNodeProcessor extends ANodeProcessor {
     }
 
     private Object processEntity(ORMUnitTestSet testset, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
-        ANodeProcessor nodeProcessor = testset.getNodeProcessor(valueNode.getNodeName());
+        NodeProcessor nodeProcessor = testset.getNodeProcessor(valueNode.getNodeName());
 
         Object element = null;
         if (nodeProcessor instanceof EntityNodeProcessor) {
@@ -217,7 +216,7 @@ public class EntityNodeProcessor extends ANodeProcessor {
 
             try {
                 element = entityClass.newInstance();
-                processEntity(testset,valueNode,element,references);
+                processEntity(valueNode,element,references, testset);
             } catch (InstantiationException e) {
                 throw new ORMUnitFileReadException(e);
             } catch (IllegalAccessException e) {

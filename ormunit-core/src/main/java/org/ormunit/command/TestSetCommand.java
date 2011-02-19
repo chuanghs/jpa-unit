@@ -9,7 +9,7 @@ import org.ormunit.ORMUnitTestSet;
  * Date: 17.02.11
  * Time: 10:45
  */
-public class TestSetCommand extends ORMUnitCommand{
+public class TestSetCommand implements ORMUnitCommand{
 
     private ORMUnitTestSet testSet;
 
@@ -17,7 +17,6 @@ public class TestSetCommand extends ORMUnitCommand{
         this.testSet = testSet;
     }
 
-    @Override
     public void visit(ORMUnitTestSet testSet) {
         this.testSet.execute();
     }
