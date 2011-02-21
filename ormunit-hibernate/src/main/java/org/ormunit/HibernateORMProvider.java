@@ -1,8 +1,10 @@
 package org.ormunit;
 
+import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.ormunit.junit.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +16,9 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,35 +30,21 @@ public class HibernateORMProvider extends AORMProvider {
 
     private static final Logger log = LoggerFactory.getLogger(HibernateORMProvider.class);
 
-    private final boolean selfManagedSession;
     private Session session;
     private SessionFactory sessionFactory;
 
-    private ORMUnit ormUnit;
     private String unitName;
+    private ORMUnit ormUnit;
     private Properties persistenceContextProperties;
 
-    private static Map<String, SessionFactory> factoriesMap = new HashMap<String, SessionFactory>();
-
-
-    public HibernateORMProvider(Session session) {
-        this.session = session;
-        this.selfManagedSession = false;
-    }
 
     public HibernateORMProvider(ORMUnit ormUnit, String unitName) {
         this.ormUnit = ormUnit;
-        this.unitName = unitName;
-        this.persistenceContextProperties = ormUnit.getDefaultDataSourceProperties();
 
-        sessionFactory = factoriesMap.get(unitName);
-        if (sessionFactory == null) {
-            Configuration configure = new Configuration().configure(unitName);
-            sessionFactory = configure.buildSessionFactory();
-            factoriesMap.put(unitName, sessionFactory);
-        }
-        this.selfManagedSession = true;
-
+        this.sessionFactory = new Configuration()
+                .mergeProperties(ormUnit.getDefaultDataSourceProperties(HibernateHelper.hibernateConnection))
+                .configure(unitName)
+                .buildSessionFactory();
     }
 
     public boolean isPropertyAccessed(Class clazz) {
@@ -84,11 +74,11 @@ public class HibernateORMProvider extends AORMProvider {
     }
 
     public Object getId(Object entity) throws Exception {
-        return null;
+        return session.getIdentifier(entity);
     }
 
     public void setId(Object entity, Object id) throws Exception {
-
+        this.sessionFactory.getClassMetadata(entity.getClass()).setIdentifier(entity, (Serializable) id, EntityMode.POJO);
     }
 
     public Object entity(Object entity) {
@@ -109,22 +99,27 @@ public class HibernateORMProvider extends AORMProvider {
     }
 
     public void setUp() {
-        if (selfManagedSession){
-            this.session = sessionFactory.openSession();
-        }
+        this.session = sessionFactory.openSession();
         this.session.getTransaction().begin();
     }
 
     public void tearDown() {
         session.getTransaction().rollback();
-        if (selfManagedSession)
-            session.close();
+        session.close();
     }
 
     public Connection getConnection() throws SQLException {
         return DriverManager.getConnection(
-                persistenceContextProperties.getProperty("connection.url"),
-                persistenceContextProperties.getProperty("connection.username"),
-                persistenceContextProperties.getProperty("connection.password"));
+                persistenceContextProperties.getProperty("hibernate.connection.url"),
+                persistenceContextProperties.getProperty("hibernate.connection.username"),
+                persistenceContextProperties.getProperty("hibernate.connection.password"));
+    }
+
+
+    public Session getHibernateSession() {
+        if (this.session == null){
+            this.session = this.session.getSession(EntityMode.POJO);
+        }
+        return this.session;
     }
 }

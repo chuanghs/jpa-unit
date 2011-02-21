@@ -5,6 +5,7 @@ import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessor;
 
 import java.lang.ref.WeakReference;
+import java.util.Properties;
 import java.util.WeakHashMap;
 
 /**
@@ -29,6 +30,34 @@ public abstract class AORMProvider implements ORMProvider {
         }
         return inspectors.get(clazz).get();
     }
+
+    protected Object getDefault(Class<?> idType) {
+        if (boolean.class.equals(idType))
+            return false;
+        else if (int.class.equals(idType))
+            return 0;
+        else if (long.class.equals(idType))
+            return 0l;
+        else if (byte.class.equals(idType))
+            return (byte) 0;
+        else if (float.class.equals(idType))
+            return 0f;
+        else if (double.class.equals(idType))
+            return 0d;
+        else if (char.class.equals(idType))
+            return (char) 0;
+
+        return null;
+    }
+
+    protected Properties flatten(Properties persistenceContextProperties) {
+        Properties result = new Properties();
+        for (String s : persistenceContextProperties.stringPropertyNames()) {
+            result.setProperty(s, persistenceContextProperties.getProperty(s));
+        }
+        return result;
+    }
+
 
     protected boolean isFieldAccessed(Class<?> clazz){
         return false;
