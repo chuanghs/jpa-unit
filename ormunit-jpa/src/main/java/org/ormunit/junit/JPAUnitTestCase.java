@@ -43,8 +43,8 @@ public abstract class JPAUnitTestCase extends TestCase {
 
         this.properties = ORMUnitHelper.readOrmUnitProperties(getClass());
         this.ormUnit = new ORMUnit(getClass());
-        this.provider = createProvider(unitName);
         this.unitName = unitName;
+        this.provider = createProvider();
         this.ormUnitFileName = ormUnitFileName;
 
         if (isWithDB()) {
@@ -99,7 +99,7 @@ public abstract class JPAUnitTestCase extends TestCase {
     }
 
 
-    private JPAORMProvider createProvider(String unitName) {
+    private JPAORMProvider createProvider() {
         return new JPAORMProvider(ormUnit, unitName);
     }
 

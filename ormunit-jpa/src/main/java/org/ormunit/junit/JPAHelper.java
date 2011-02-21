@@ -1,7 +1,6 @@
 package org.ormunit.junit;
 
 import com.sun.java.xml.ns.persistence.Persistence;
-import org.ormunit.JPAORMProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -30,13 +29,82 @@ public class JPAHelper {
 
     private static final Logger log = LoggerFactory.getLogger(JPAHelper.class);
 
+    private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
+
     public static final String derbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
     public static final String h2DriverClassName = "org.h2.Driver";
     public static final String hsqlDriverClassName = "org.hsqldb.jdbcDriver";
 
+    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;drop=true";
+    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
+    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa";
 
-    private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
+    public static final String PersistenceProviderEclipseLink = "org.eclipse.persistence.jpa.PersistenceProvider";
+    public static final String PersistenceProviderHibernate = "org.hibernate.ejb.HibernatePersistence";
+    public static final String PersistenceProviderOpenJPA = "org.apache.openjpa.persistence.PersistenceProviderImpl";
 
+
+    private static Map<String, Properties> persistenceProviderProperties = new HashMap<String, Properties>();
+
+    private static String driverClassName = null;
+    private static String hibernateDialect = null;
+    private static String url = null;
+
+    static {
+
+
+        if (isHSQL()) {
+            driverClassName = hsqlDriverClassName;
+            hibernateDialect = "org.hibernate.dialect.HSQLDialect";
+            url = JDBC_URL_HSQL;
+        } else if (isH2()) {
+            driverClassName = h2DriverClassName;
+            hibernateDialect = "org.hibernate.dialect.H2Dialect";
+            url = JDBC_URL_H2;
+        } else if (isDerby()) {
+            driverClassName = derbyDriverClassName;
+            hibernateDialect = "org.hibernate.dialect.DerbyDialect";
+            url = JDBC_URL_DERBY;
+        }
+
+        Properties eclipseLinkConnection = new Properties();
+        Properties hibernateConnection = new Properties();
+        Properties openJPAConnection = new Properties();
+
+        persistenceProviderProperties.put(PersistenceProviderEclipseLink, eclipseLinkConnection);
+        persistenceProviderProperties.put(PersistenceProviderHibernate, hibernateConnection);
+        persistenceProviderProperties.put(PersistenceProviderOpenJPA, openJPAConnection);
+
+        if (isH2() || isHSQL() || isDerby()) {
+
+
+            hibernateConnection.setProperty("hibernate.connection.username", "sa");
+            hibernateConnection.setProperty("hibernate.connection.password", "");
+            hibernateConnection.setProperty("hibernate.connection.url", url);
+            hibernateConnection.setProperty("hibernate.connection.driver_class", driverClassName);
+            hibernateConnection.setProperty("hibernate.dialect", hibernateDialect);
+
+            openJPAConnection.setProperty("openjpa.ConnectionUserName", "sa");
+            openJPAConnection.setProperty("openjpa.ConnectionPassword", "");
+            openJPAConnection.setProperty("openjpa.ConnectionURL", url);
+            openJPAConnection.setProperty("openjpa.ConnectionDriverNam", driverClassName);
+
+
+            eclipseLinkConnection.setProperty("javax.persistence.jdbc.user", "sa");
+            eclipseLinkConnection.setProperty("javax.persistence.jdbc.password", "");
+            eclipseLinkConnection.setProperty("javax.persistence.jdbc.url", url);
+            eclipseLinkConnection.setProperty("javax.persistence.jdbc.driver", driverClassName);
+            eclipseLinkConnection.setProperty("eclipselink.ddl-generation", "create-tables");
+            eclipseLinkConnection.setProperty("eclipselink.ddl-generation.output-mode", "database");
+
+
+        }
+
+    }
+
+    public static Properties getPersistenceProviderDefaults(String persistenceProviderClassName) {
+        return persistenceProviderProperties.get(persistenceProviderClassName);
+    }
 
     public static String getPersistenceProvider(Class<?> caller, String unitName) {
         Persistence.PersistenceUnit persistenceUnit = getPersistenceUnit(caller, unitName);
