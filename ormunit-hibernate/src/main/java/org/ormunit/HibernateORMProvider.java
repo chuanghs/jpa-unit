@@ -3,6 +3,7 @@ package org.ormunit;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.ormunit.junit.HibernateHelper;
 import org.slf4j.Logger;
@@ -40,10 +41,10 @@ public class HibernateORMProvider extends AORMProvider {
 
     public HibernateORMProvider(ORMUnit ormUnit, String unitName) {
         this.ormUnit = ormUnit;
-
-        this.sessionFactory = new Configuration()
-                .mergeProperties(ormUnit.getDefaultDataSourceProperties(HibernateHelper.hibernateConnection))
-                .configure(unitName)
+        Configuration configuration = new Configuration();
+        this.sessionFactory = configuration
+                .mergeProperties(flatten(ormUnit.getDefaultDataSourceProperties(HibernateHelper.hibernateConnection)))
+                .configure(ormUnit.getWorkClass().getResource(unitName))
                 .buildSessionFactory();
     }
 
@@ -118,7 +119,7 @@ public class HibernateORMProvider extends AORMProvider {
 
     public Session getHibernateSession() {
         if (this.session == null){
-            this.session = this.session.getSession(EntityMode.POJO);
+            this.session = this.sessionFactory.openSession();
         }
         return this.session;
     }

@@ -49,9 +49,9 @@ public class HibernateUnitTestCase extends TestCase {
         this.ormUnit = new ORMUnit(getClass());
         this.hibernateMappingFileName = hibernateMappingFileName;
         this.ormUnitFileName = ormUnitFileName;
-        this.testSet = new ORMUnitTestSet(provider);
-
         this.provider = createProvider(hibernateMappingFileName);
+
+        this.testSet = new ORMUnitTestSet(provider);
 
         if (isWithDB()) {
             // adding entityNodeProcessor for every entity class defined in persistence unit
@@ -82,23 +82,19 @@ public class HibernateUnitTestCase extends TestCase {
     }
 
     private Class<Object>[] getManagedTypes() {
-        Map allClassMetadata = session.getSessionFactory().getAllClassMetadata();
+        Map allClassMetadata = getSession().getSessionFactory().getAllClassMetadata();
         Class<Object>[] result = new Class[allClassMetadata.size()];
         int i=0;
         Iterator iterator = allClassMetadata.entrySet().iterator();
         while (iterator.hasNext()){
             Map.Entry e = (Map.Entry) iterator.next();
-            result[i++] = (Class<Object>) e.getKey();
+            try {
+                result[i++] = (Class<Object>) Class.forName((String) e.getKey());
+            } catch (Exception e1) {
+                throw new ORMUnitConfigurationException(e1);
+            }
         }
         return result;
-    }
-
-
-    private String extractSchemaName(Class<?> c) {
-        Table annotation = c.getAnnotation(Table.class);
-        if (annotation != null && !"".equals(annotation.schema()))
-            return annotation.schema();
-        return null;
     }
 
     protected final boolean isWithDB() {
@@ -117,6 +113,10 @@ public class HibernateUnitTestCase extends TestCase {
             provider.getHibernateSession().flush();
             provider.getHibernateSession().clear();
         }
+    }
+
+    public Session getSession() {
+        return provider.getHibernateSession();
     }
 
     @After
