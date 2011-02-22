@@ -31,7 +31,7 @@ public class HibernateHelper {
     private static String hibernateDialect = null;
     private static String url = null;
 
-    public static Properties hibernateConnection;
+    public static Properties hibernateConnection = new Properties();
 
     static {
 
@@ -55,6 +55,7 @@ public class HibernateHelper {
         hibernateConnection.setProperty("hibernate.connection.url", url);
         hibernateConnection.setProperty("hibernate.connection.driver_class", driverClassName);
         hibernateConnection.setProperty("hibernate.dialect", hibernateDialect);
+        hibernateConnection.setProperty("dialect", hibernateDialect);
     }
 
 
