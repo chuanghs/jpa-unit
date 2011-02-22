@@ -18,6 +18,8 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static org.ormunit.ORMUnitHelper.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Tomasz Krzyzak
@@ -30,10 +32,6 @@ public class JPAHelper {
     private static final Logger log = LoggerFactory.getLogger(JPAHelper.class);
 
     private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
-
-    public static final String derbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
-    public static final String h2DriverClassName = "org.h2.Driver";
-    public static final String hsqlDriverClassName = "org.hsqldb.jdbcDriver";
 
     public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;drop=true";
     public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
@@ -211,27 +209,6 @@ public class JPAHelper {
             }
         }
         return names;
-    }
-
-    public static boolean isDerby() {
-        return isClassAvailable(derbyDriverClassName);
-    }
-
-    private static boolean isClassAvailable(String derbyDriverClassName) {
-        try {
-            Class.forName(derbyDriverClassName);
-            return true;
-        } catch (ClassNotFoundException e) {
-            return false;
-        }
-    }
-
-    public static boolean isHSQL() {
-        return isClassAvailable(hsqlDriverClassName);
-    }
-
-    public static boolean isH2() {
-        return isClassAvailable(h2DriverClassName);
     }
 
     public static Properties getProperties(Class<?> aClass, String unitName, Properties defaults) {

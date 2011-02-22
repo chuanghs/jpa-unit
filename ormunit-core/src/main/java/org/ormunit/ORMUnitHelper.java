@@ -22,10 +22,14 @@ public class ORMUnitHelper {
     public static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
+    public static final String derbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
+    public static final String h2DriverClassName = "org.h2.Driver";
+    public static final String hsqlDriverClassName = "org.hsqldb.jdbcDriver";
+
 
     public static Object convert(Class<?> propertyType, String value) throws ConvertionException {
         try {
-            if (propertyType.equals(Object.class)){
+            if (propertyType.equals(Object.class)) {
                 return value;
             } else if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
                 return Integer.parseInt(value);
@@ -57,6 +61,27 @@ public class ORMUnitHelper {
         }
         throw new ConvertionException("unsupported propertyType: " + propertyType.getCanonicalName());
 
+    }
+
+    public static boolean isDerby() {
+        return isClassAvailable(derbyDriverClassName);
+    }
+
+    private static boolean isClassAvailable(String derbyDriverClassName) {
+        try {
+            Class.forName(derbyDriverClassName);
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    public static boolean isHSQL() {
+        return isClassAvailable(hsqlDriverClassName);
+    }
+
+    public static boolean isH2() {
+        return isClassAvailable(h2DriverClassName);
     }
 
     public static Properties readOrmUnitProperties(Class<?> start) {
