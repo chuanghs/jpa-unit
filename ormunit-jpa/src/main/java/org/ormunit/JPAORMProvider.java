@@ -1,6 +1,7 @@
 package org.ormunit;
 
 import static org.ormunit.junit.JPAHelper.*;
+import static org.ormunit.ORMUnitHelper.*;
 
 import org.ormunit.junit.JPAHelper;
 import org.slf4j.Logger;
@@ -17,6 +18,8 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
+
+
 
 /**
  * Created by IntelliJ IDEA.
