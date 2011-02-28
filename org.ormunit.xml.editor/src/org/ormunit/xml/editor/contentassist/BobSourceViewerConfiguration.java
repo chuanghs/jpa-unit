@@ -8,8 +8,12 @@
 
 package org.ormunit.xml.editor.contentassist;
 
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.sse.core.text.IStructuredPartitions;
 import org.eclipse.wst.xml.core.text.IXMLPartitions;
 import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
@@ -50,7 +54,9 @@ public class BobSourceViewerConfiguration extends
 		 * 
 		 * System.arraycopy(contentAssistProcessors, 0, result, 1,
 		 * contentAssistProcessors.length); return result;
+		 * 
 		 */
+		
 		return new IContentAssistProcessor[] { new RobContentAssistProcessor() };
 
 	}
