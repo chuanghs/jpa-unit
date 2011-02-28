@@ -10,6 +10,8 @@ package org.ormunit.xml.editor.contentassist;
 
 import org.eclipse.jface.text.contentassist.IContentAssistProcessor;
 import org.eclipse.jface.text.source.ISourceViewer;
+import org.eclipse.wst.sse.core.text.IStructuredPartitions;
+import org.eclipse.wst.xml.core.text.IXMLPartitions;
 import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
 
 /**
@@ -36,13 +38,17 @@ public class BobSourceViewerConfiguration extends StructuredTextViewerConfigurat
 	 * would become unnecessary.
 	 */
 	protected IContentAssistProcessor[] getContentAssistProcessors(ISourceViewer sourceViewer, String partitionType) {
-		IContentAssistProcessor[] contentAssistProcessors = super.getContentAssistProcessors(sourceViewer, partitionType);
+		/*IContentAssistProcessor[] contentAssistProcessors = super.getContentAssistProcessors(sourceViewer, partitionType);
 		
 		IContentAssistProcessor[] result = new IContentAssistProcessor[contentAssistProcessors.length+1];
 		result[0] = new RobContentAssistProcessor();
 		
 		System.arraycopy(contentAssistProcessors, 0, result, 1, contentAssistProcessors.length);
-		return result;
+		return result;*/
+		if ((partitionType == IStructuredPartitions.DEFAULT_PARTITION) || (partitionType == IXMLPartitions.XML_DEFAULT)) {
+			return new IContentAssistProcessor[] { new RobContentAssistProcessor() };
+		}
+		return super.getContentAssistProcessors(sourceViewer, partitionType);
 	}
 
 }

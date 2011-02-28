@@ -18,22 +18,22 @@
          </action>
       </objectContribution>
    </extension>
- <extension point="org.eclipse.wst.sse.ui.editorConfiguration">
+<extension point="org.eclipse.wst.sse.ui.editorConfiguration">
       <!-- The content type ID created by that extension point automatically prefixes the plug-in ID -->
       <sourceViewerConfiguration
             class="org.ormunit.xml.editor.contentassist.BobSourceViewerConfiguration"
-            target="org.ormunit.xml.editor.contentassist.ormunit-typ">
+            target="org.ormunit.xml.editor.rob-type">
       </sourceViewerConfiguration>
    </extension>
    <extension
-         id="org.eclipsecon.tutorial371example.contentassist.contentType"
+         id="org.ormunit.xml.editor.contentType"
          point="org.eclipse.core.contenttype.contentTypes">
          <content-type
-               id="ormunit-typ"
+               id="rob-type"
                name="The content type of Rob"
                priority="normal"
                base-type="org.eclipse.core.runtime.xml"
-               file-extensions="xml">
+               file-extensions="rob">
          </content-type>
    </extension>
 </plugin>
