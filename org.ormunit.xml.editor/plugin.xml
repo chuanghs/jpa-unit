@@ -3,30 +3,6 @@
 <plugin>
 
    <extension
-         id="sampleBuilder"
-         name="Sample Project Builder"
-         point="org.eclipse.core.resources.builders">
-      <builder
-            hasNature="true">
-         <run
-               class="org.ormunit.xml.editor.builder.SampleBuilder">
-         </run>
-      </builder>
-   </extension>
-   <extension
-         id="sampleNature"
-         name="Sample Project Nature"
-         point="org.eclipse.core.resources.natures">
-      <runtime>
-         <run
-               class="org.ormunit.xml.editor.builder.SampleNature">
-         </run>
-      </runtime>
-      <builder
-            id="fdgsdfgsdfg.sampleBuilder">
-      </builder>
-   </extension>
-   <extension
          point="org.eclipse.ui.popupMenus">
       <objectContribution
             adaptable="true"
@@ -42,27 +18,22 @@
          </action>
       </objectContribution>
    </extension>
-   <extension
-         id="xmlProblem"
-         name="XML Problem"
-         point="org.eclipse.core.resources.markers">
-      <super
-            type="org.eclipse.core.resources.problemmarker">
-      </super>
-      <persistent
-            value="true">
-      </persistent>
+ <extension point="org.eclipse.wst.sse.ui.editorConfiguration">
+      <!-- The content type ID created by that extension point automatically prefixes the plug-in ID -->
+      <sourceViewerConfiguration
+            class="org.ormunit.xml.editor.contentassist.BobSourceViewerConfiguration"
+            target="org.ormunit.xml.editor.contentassist.ormunit-typ">
+      </sourceViewerConfiguration>
    </extension>
    <extension
-         point="org.eclipse.jdt.core.annotationProcessorManager">
+         id="org.eclipsecon.tutorial371example.contentassist.contentType"
+         point="org.eclipse.core.contenttype.contentTypes">
+         <content-type
+               id="ormunit-typ"
+               name="The content type of Rob"
+               priority="normal"
+               base-type="org.eclipse.core.runtime.xml"
+               file-extensions="xml">
+         </content-type>
    </extension>
-   <extension
-         point="org.eclipse.jdt.core.compilationParticipant">
-   </extension>
-   <extension
-         id="fdscgs"
-         name="sdgsdgsdgs"
-         point="org.eclipse.jdt.core.classpathContainerInitializer">
-   </extension>
-
 </plugin>
