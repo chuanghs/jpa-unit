@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+
+   <extension
+         id="sampleBuilder"
+         name="Sample Project Builder"
+         point="org.eclipse.core.resources.builders">
+      <builder
+            hasNature="true">
+         <run
+               class="org.ormunit.xml.editor.builder.SampleBuilder">
+         </run>
+      </builder>
+   </extension>
+   <extension
+         id="sampleNature"
+         name="Sample Project Nature"
+         point="org.eclipse.core.resources.natures">
+      <runtime>
+         <run
+               class="org.ormunit.xml.editor.builder.SampleNature">
+         </run>
+      </runtime>
+      <builder
+            id="fdgsdfgsdfg.sampleBuilder">
+      </builder>
+   </extension>
+   <extension
+         point="org.eclipse.ui.popupMenus">
+      <objectContribution
+            adaptable="true"
+            objectClass="org.eclipse.core.resources.IProject"
+            nameFilter="*"
+            id="fdgsdfgsdfg.contribution1">
+         <action
+               label="Add/Remove Sample Nature"
+               class="org.ormunit.xml.editor.builder.ToggleNatureAction"
+               menubarPath="additions"
+               enablesFor="+"
+               id="fdgsdfgsdfg.addRemoveNatureAction">
+         </action>
+      </objectContribution>
+   </extension>
+   <extension
+         id="xmlProblem"
+         name="XML Problem"
+         point="org.eclipse.core.resources.markers">
+      <super
+            type="org.eclipse.core.resources.problemmarker">
+      </super>
+      <persistent
+            value="true">
+      </persistent>
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.annotationProcessorManager">
+   </extension>
+   <extension
+         point="org.eclipse.jdt.core.compilationParticipant">
+   </extension>
+   <extension
+         id="fdscgs"
+         name="sdgsdgsdgs"
+         point="org.eclipse.jdt.core.classpathContainerInitializer">
+   </extension>
+
+</plugin>
