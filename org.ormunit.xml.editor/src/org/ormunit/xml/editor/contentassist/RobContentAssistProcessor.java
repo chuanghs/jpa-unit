@@ -8,12 +8,12 @@
 
 package org.ormunit.xml.editor.contentassist;
 
-import java.util.List;
+import java.util.Iterator;
 
 import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocumentRegion;
 import org.eclipse.wst.sse.core.internal.provisional.text.ITextRegion;
-import org.eclipse.wst.xml.core.internal.contentmodel.CMContent;
-import org.eclipse.wst.xml.core.internal.parser.regions.AttributeValueRegion;
+import org.eclipse.wst.xml.core.internal.parser.regions.AttributeNameRegion;
 import org.eclipse.wst.xml.ui.internal.contentassist.ContentAssistRequest;
 import org.eclipse.wst.xml.ui.internal.contentassist.XMLContentAssistProcessor;
 import org.w3c.dom.Node;
@@ -33,38 +33,116 @@ public class RobContentAssistProcessor extends XMLContentAssistProcessor {
 		super();
 	}
 
+	public void addEmptyDocumentProposals(ContentAssistRequest request) {
+		request.addProposal(new CompletionProposal("<ormunit>\n\n</ormunit>",
+				request.getReplacementBeginPosition(), request
+						.getReplacementLength(), 10, null, "<ormunit>", null,
+				"ORM-Unit document starting tag"));
+	}
+
 	public void addStartDocumentProposals(ContentAssistRequest request) {
 		request.addProposal(new CompletionProposal("<ormunit>\n\n</ormunit>",
 				request.getReplacementBeginPosition(), request
 						.getReplacementLength(), 10, null, "<ormunit>", null,
 				"ORM-Unit document starting tag"));
-
-		super.addAttributeNameProposals(request);
 	}
 
 	// ref(), ormref()
 	public void addAttributeValueProposals(ContentAssistRequest request) {
 		
-		AttributeValueRegion region = (AttributeValueRegion) request.getRegion();
-		System.out.println(region.getType());
-		
+		String path = "";
+
+		IStructuredDocumentRegion documentRegion = request.getDocumentRegion();
+
+		int attributeOffest = request.getStartOffset()
+				- documentRegion.getStartOffset();
+		Iterator<?> iterator = documentRegion.getRegions().iterator();
+		AttributeNameRegion anr = null;
+		while (iterator.hasNext()) {
+			ITextRegion next = (ITextRegion) iterator.next();
+
+			if (next instanceof AttributeNameRegion) {
+				anr = (AttributeNameRegion) next;
+			}
+
+			if (next.getStart() <= attributeOffest
+					&& next.getEnd() > attributeOffest) {
+				path = documentRegion.getFullText(anr);
+				break;
+			}
+		}
+
 		Node node = request.getNode();
-		while (node != null) {
-			System.out.println(node.getNodeName());
+		while (node != null && node.getParentNode() != null) {
+			path = node.getNodeName() + "." + path;
 			node = node.getParentNode();
+		}
+
+		if ("ormunit.include.src".equals(path)) {
+			
+		} else if ("ormunit.import.class".equals(path)) {
+
+		} else if ("ormunit.import.alias".equals(path)) {
+
 		}
 
 		super.addAttributeValueProposals(request);
 	}
 
 	// properties, <entry>,
+	public void addTagNameProposals(ContentAssistRequest request,
+			int childPosition) {
+
+		Node node = request.getNode();
+
+		if (node.getParentNode() != null
+				&& "ormunit".equals(node.getParentNode().getNodeName())) {
+			if ("#document".equals(node.getParentNode().getParentNode()
+					.getNodeName())) {
+				request.addProposal(new CompletionProposal(
+						"include src=\"\" />", request
+								.getReplacementBeginPosition(), request
+								.getReplacementLength(), 13, null, "include",
+						null,
+						"Just sets the attribute name to be \"sample\".  Nothing clever."));
+
+				request.addProposal(new CompletionProposal(
+						"import class=\"\"  />", request
+								.getReplacementBeginPosition(), request
+								.getReplacementLength(), 14, null, "import",
+						null,
+						"Just sets the attribute name to be \"sample\".  Nothing clever."));
+				return;
+			}
+		}
+
+		super.addTagInsertionProposals(request, childPosition);
+	}
+
 	public void addTagInsertionProposals(ContentAssistRequest request,
 			int childPosition) {
 
 		Node node = request.getNode();
-		while (node != null) {
-			System.out.println(node.getNodeName());
-			node = node.getParentNode();
+
+		if (node.getParentNode() != null
+				&& "ormunit".equals(node.getParentNode().getNodeName())) {
+			if ("#document".equals(node.getParentNode().getParentNode()
+					.getNodeName())) {
+				request.addProposal(new CompletionProposal(
+						"<include src=\"\" />", request
+								.getReplacementBeginPosition(), request
+								.getReplacementLength(), 14, null, "include",
+						null,
+						"Just sets the attribute name to be \"sample\".  Nothing clever."));
+
+				request.addProposal(new CompletionProposal(
+						"<import class=\"\"  />", request
+								.getReplacementBeginPosition(), request
+								.getReplacementLength(), 15, null, "import",
+						null,
+						"Just sets the attribute name to be \"sample\".  Nothing clever."));
+				return;
+			}
 		}
 
 		super.addTagInsertionProposals(request, childPosition);
@@ -74,17 +152,6 @@ public class RobContentAssistProcessor extends XMLContentAssistProcessor {
 	 * 
 	 */
 	protected void addAttributeNameProposals(ContentAssistRequest request) {
-
-		Node node = request.getNode();
-		while (node != null) {
-			System.out.println(node.getNodeName());
-			node = node.getParentNode();
-		}
-
-		request.addProposal(new CompletionProposal("sample", request
-				.getReplacementBeginPosition(), request.getReplacementLength(),
-				request.getReplacementLength(), null, "sample", null,
-				"Just sets the attribute name to be \"sample\".  Nothing clever."));
 
 		super.addAttributeNameProposals(request);
 	}
