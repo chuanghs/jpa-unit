@@ -10,7 +10,17 @@ package org.ormunit.xml.editor.contentassist;
 
 import java.util.Iterator;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IProject;
+import org.eclipse.core.resources.IResource;
+import org.eclipse.core.resources.ResourcesPlugin;
+import org.eclipse.core.runtime.Path;
+import org.eclipse.jdt.core.IJavaProject;
+import org.eclipse.jdt.core.JavaCore;
+import org.eclipse.jdt.internal.core.JavaModel;
 import org.eclipse.jface.text.contentassist.CompletionProposal;
+import org.eclipse.wst.sse.core.StructuredModelManager;
+import org.eclipse.wst.sse.core.internal.provisional.IStructuredModel;
 import org.eclipse.wst.sse.core.internal.provisional.text.IStructuredDocumentRegion;
 import org.eclipse.wst.sse.core.internal.provisional.text.ITextRegion;
 import org.eclipse.wst.xml.core.internal.parser.regions.AttributeNameRegion;
@@ -49,9 +59,8 @@ public class RobContentAssistProcessor extends XMLContentAssistProcessor {
 
 	// ref(), ormref()
 	public void addAttributeValueProposals(ContentAssistRequest request) {
-		
-		String path = "";
 
+		String path = "";
 		IStructuredDocumentRegion documentRegion = request.getDocumentRegion();
 
 		int attributeOffest = request.getStartOffset()
@@ -79,7 +88,30 @@ public class RobContentAssistProcessor extends XMLContentAssistProcessor {
 		}
 
 		if ("ormunit.include.src".equals(path)) {
-			
+			IStructuredModel existingModelForEdit = StructuredModelManager
+					.getModelManager().getExistingModelForEdit(
+							request.getDocumentRegion().getParentDocument());
+
+			IFile file = ResourcesPlugin.getWorkspace().getRoot()
+					.getFile(new Path(existingModelForEdit.getBaseLocation()));
+
+			IProject project = file.getProject();
+
+			String[] ormUnitXmlFiles = ORMUnitHelper
+					.getORMUnitXmlFiles(JavaCore.create(project));
+
+			for (String s : ormUnitXmlFiles) {
+				request.addProposal(new CompletionProposal(
+						"\""+s+"\"", 
+						request.getReplacementBeginPosition(), 
+						request.getReplacementLength(), 
+						s.length()+1, 
+						null, 
+						s.substring(s.lastIndexOf('/')),
+						null,
+						s));
+			}
+
 		} else if ("ormunit.import.class".equals(path)) {
 
 		} else if ("ormunit.import.alias".equals(path)) {
