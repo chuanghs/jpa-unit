@@ -17,7 +17,8 @@ import org.eclipse.wst.xml.ui.StructuredTextViewerConfigurationXML;
 /**
  * A source viewer configuration for Rob files, based on the XML configuration.
  */
-public class BobSourceViewerConfiguration extends StructuredTextViewerConfigurationXML {
+public class BobSourceViewerConfiguration extends
+		StructuredTextViewerConfigurationXML {
 
 	/**
 	 * 
@@ -37,18 +38,21 @@ public class BobSourceViewerConfiguration extends StructuredTextViewerConfigurat
 	 * assist "computers" like JDT, so the source viewer configuration class
 	 * would become unnecessary.
 	 */
-	protected IContentAssistProcessor[] getContentAssistProcessors(ISourceViewer sourceViewer, String partitionType) {
-		/*IContentAssistProcessor[] contentAssistProcessors = super.getContentAssistProcessors(sourceViewer, partitionType);
-		
-		IContentAssistProcessor[] result = new IContentAssistProcessor[contentAssistProcessors.length+1];
-		result[0] = new RobContentAssistProcessor();
-		
-		System.arraycopy(contentAssistProcessors, 0, result, 1, contentAssistProcessors.length);
-		return result;*/
-		if ((partitionType == IStructuredPartitions.DEFAULT_PARTITION) || (partitionType == IXMLPartitions.XML_DEFAULT)) {
-			return new IContentAssistProcessor[] { new RobContentAssistProcessor() };
-		}
-		return super.getContentAssistProcessors(sourceViewer, partitionType);
+	protected IContentAssistProcessor[] getContentAssistProcessors(
+			ISourceViewer sourceViewer, String partitionType) {
+		/*
+		 * IContentAssistProcessor[] contentAssistProcessors = super
+		 * .getContentAssistProcessors(sourceViewer, partitionType);
+		 * 
+		 * IContentAssistProcessor[] result = new
+		 * IContentAssistProcessor[contentAssistProcessors.length + 1];
+		 * result[0] = new RobContentAssistProcessor();
+		 * 
+		 * System.arraycopy(contentAssistProcessors, 0, result, 1,
+		 * contentAssistProcessors.length); return result;
+		 */
+		return new IContentAssistProcessor[] { new RobContentAssistProcessor() };
+
 	}
 
 }

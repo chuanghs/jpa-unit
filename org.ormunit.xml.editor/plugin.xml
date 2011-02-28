@@ -33,7 +33,7 @@
                name="The content type of Rob"
                priority="normal"
                base-type="org.eclipse.core.runtime.xml"
-               file-extensions="rob">
+               file-extensions="xml">
          </content-type>
    </extension>
 </plugin>
