@@ -8,6 +8,7 @@
 
 package org.ormunit.xml.editor.contentassist;
 
+import java.util.Collection;
 import java.util.Iterator;
 
 import org.eclipse.core.resources.IFile;
@@ -86,16 +87,18 @@ public class RobContentAssistProcessor extends XMLContentAssistProcessor {
 			path = node.getNodeName() + "." + path;
 			node = node.getParentNode();
 		}
+		
+		IStructuredModel existingModelForEdit = StructuredModelManager
+		.getModelManager().getExistingModelForEdit(
+				request.getDocumentRegion().getParentDocument());
+
+		IFile file = ResourcesPlugin.getWorkspace().getRoot()
+		.getFile(new Path(existingModelForEdit.getBaseLocation()));
+
+		IProject project = file.getProject();
 
 		if ("ormunit.include.src".equals(path)) {
-			IStructuredModel existingModelForEdit = StructuredModelManager
-					.getModelManager().getExistingModelForEdit(
-							request.getDocumentRegion().getParentDocument());
-
-			IFile file = ResourcesPlugin.getWorkspace().getRoot()
-					.getFile(new Path(existingModelForEdit.getBaseLocation()));
-
-			IProject project = file.getProject();
+			
 
 			String[] ormUnitXmlFiles = ORMUnitHelper
 					.getORMUnitXmlFiles(JavaCore.create(project));
@@ -113,9 +116,20 @@ public class RobContentAssistProcessor extends XMLContentAssistProcessor {
 			}
 
 		} else if ("ormunit.import.class".equals(path)) {
+			Collection<String> ormUnitXmlFiles = ORMUnitHelper
+					.getClassNames(JavaCore.create(project), request.getMatchString().substring(1));
 
-		} else if ("ormunit.import.alias".equals(path)) {
-
+			for (String s : ormUnitXmlFiles) {
+				request.addProposal(new CompletionProposal(
+						"\""+s+"\"", 
+						request.getReplacementBeginPosition(), 
+						request.getReplacementLength(), 
+						s.length()+1, 
+						null, 
+						s,
+						null,
+						s));
+			}
 		}
 
 		super.addAttributeValueProposals(request);
