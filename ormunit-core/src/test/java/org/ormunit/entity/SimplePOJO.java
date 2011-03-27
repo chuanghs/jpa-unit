@@ -12,7 +12,12 @@ import java.util.Map;
  * Date: 18.12.10
  * Time: 18:13
  */
-public class SimplePOJO {
+public class SimplePOJO extends BaseSimplePojo{
+
+    public static enum SimpleEnum {
+        Value1,
+        Value2
+    }
 
     private double doubleValue;
     private boolean booleanValue;
@@ -24,6 +29,8 @@ public class SimplePOJO {
 
     private SimplePOJO2 complexType;
     private int integerValue;
+
+    private SimpleEnum enumValue;
 
     private Collection<SimplePOJO2> collection;
 
@@ -165,6 +172,14 @@ public class SimplePOJO {
 
     public void setAbstractCollection(AbstractList<SimplePOJO2> abstractCollection) {
         this.abstractCollection = abstractCollection;
+    }
+
+    public SimpleEnum getEnumValue() {
+        return enumValue;
+    }
+
+    public void setEnumValue(SimpleEnum enumValue) {
+        this.enumValue = enumValue;
     }
 
     @Override

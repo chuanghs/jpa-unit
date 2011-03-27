@@ -64,7 +64,7 @@ public class CoreEntityNodeProcessorTest {
     public void testSimplePropertiesAttributes() throws ORMUnitFileReadException, ParseException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
-                "   <pojo integerValue=\"1\" doubleValue=\"1.23\" booleanValue=\"true\" stringValue=\"string\" timestampValue=\"2010-12-18 18:22:00\" dateValue=\"2010-12-18\" />" +
+                "   <pojo integerValue=\"1\" enumValue=\"Value1\" doubleValue=\"1.23\" booleanValue=\"true\" stringValue=\"string\" timestampValue=\"2010-12-18 18:22:00\" dateValue=\"2010-12-18\" />" +
                 "</ormunit>").getBytes());
 
         ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
