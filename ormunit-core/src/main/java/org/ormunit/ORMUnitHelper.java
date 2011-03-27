@@ -11,6 +11,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
+import static java.lang.Enum.*;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Tomasz Krzyzak
@@ -55,6 +57,8 @@ public class ORMUnitHelper {
                 return new Timestamp(tf.parse(value).getTime());
             } else if (propertyType.equals(String.class)) {
                 return value;
+            } else if (Enum.class.isAssignableFrom(propertyType)) {
+                return valueOf((Class<? extends Enum>)propertyType, value);
             }
         } catch (Exception pe) {
             throw new ConvertionException(pe);
