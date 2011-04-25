@@ -148,7 +148,7 @@ public class CoreEntityNodeProcessorTest {
 
 
         verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
-        verify(result, times(3)).getProvider();
+        verify(result, times(2)).getProvider();
 
         //verifyNoMoreInteractions(result);
     }

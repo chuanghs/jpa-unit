@@ -12,6 +12,8 @@ import org.ormunit.entity.PropertyAccessEntity;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.EntityManager;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 
 import static junit.framework.Assert.assertEquals;
 
@@ -79,10 +81,49 @@ public class JPAORMProviderTest {
         private PrimaryKey pk;
     }
 
+    @IdClass(PrimaryKey.class)
+    private class IdClassEntity {
+
+        @Id
+        private String stringValue;
+
+    }
+
     @Test
     public void testGetIdTypeEmbeddedId() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
         assertEquals(PrimaryKey.class, provider.getIdType(EmbeddedIdEntity.class));
+    }
+
+    @Test
+    public void testGetIdTypeIdClass() throws Exception {
+        JPAORMProvider provider = new JPAORMProvider(em);
+        assertEquals(PrimaryKey.class, provider.getIdType(IdClassEntity.class));
+    }
+
+    @Test
+    public void testGetIdIdClass() throws Exception {
+        JPAORMProvider provider = new JPAORMProvider(em);
+
+        IdClassEntity entity = new IdClassEntity();
+        entity.stringValue = "value";
+        PrimaryKey id = (PrimaryKey) provider.getId(entity);
+
+        assertEquals("value", id.getStringValue());
+    }
+
+    @Test
+    public void testSetIdIdClass() throws Exception {
+        JPAORMProvider provider = new JPAORMProvider(em);
+
+        IdClassEntity entity = new IdClassEntity();
+
+        PrimaryKey id = new PrimaryKey();
+        id.setStringValue("value");
+
+        provider.setId(entity, id);
+
+        assertEquals("value", entity.stringValue);
     }
 
     @Test

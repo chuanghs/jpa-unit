@@ -1,15 +1,11 @@
 package org.ormunit;
 
-import static org.ormunit.junit.JPAHelper.*;
-import static org.ormunit.ORMUnitHelper.*;
-
 import org.ormunit.junit.JPAHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.persistence.*;
 import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.lang.ref.WeakReference;
 import java.lang.reflect.Field;
@@ -17,8 +13,13 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.List;
+import java.util.Properties;
+import java.util.Set;
+import java.util.WeakHashMap;
 
+import static org.ormunit.ORMUnitHelper.isHSQL;
+import static org.ormunit.junit.JPAHelper.*;
 
 
 /**
@@ -40,7 +41,7 @@ public class JPAORMProvider extends AORMProvider {
     private boolean selfManagedEM = true;
     private EntityManagerFactory entityManagerFactory;
     private WeakHashMap<Class, WeakReference<Class>> idTypes = new WeakHashMap<Class, WeakReference<Class>>();
-
+    private BeanUtils utils = new BeanUtils();
 
 
     public JPAORMProvider(EntityManager entityManager) {
@@ -104,7 +105,7 @@ public class JPAORMProvider extends AORMProvider {
         return false;
     }
 
-    public boolean isFieldAccessed(Class clazz) {
+    public boolean isFieldAccessed(Class<?> clazz) {
         while (clazz != null) {
             for (Field m : clazz.getDeclaredFields()) {
                 if (m.getAnnotation(Id.class) != null || m.getAnnotation(EmbeddedId.class) != null)
@@ -112,20 +113,6 @@ public class JPAORMProvider extends AORMProvider {
             }
             clazz = clazz.getSuperclass();
         }
-        return false;
-    }
-
-
-
-    private boolean isIdGenerated(Object entity) throws IntrospectionException {
-        Field idField = getIdField(entity.getClass());
-        if (idField != null)
-            return idField.getAnnotation(GeneratedValue.class) != null;
-
-        PropertyDescriptor idProperty = getIdProperty(entity.getClass());
-        if (idProperty != null)
-            return idProperty.getReadMethod().getAnnotation(GeneratedValue.class) != null;
-
         return false;
     }
 
@@ -138,86 +125,65 @@ public class JPAORMProvider extends AORMProvider {
         return entityManager;
     }
 
-    private Field getIdField(Class<?> entityClass) {
-        Field result = null;
-        do {
-
-            for (Field f : entityClass.getDeclaredFields()) {
-                f.setAccessible(true);
-                EmbeddedId embeddedId = f.getAnnotation(EmbeddedId.class);
-                if (embeddedId != null) {
-                    if (result != null)
-                        throw new RuntimeException("Invalid entity: ambiguous identifier");
-                    result = f;
-                    continue;
-                }
-
-                Id id = f.getAnnotation(Id.class);
-                if (id != null) {
-                    if (result != null)
-                        throw new RuntimeException("Invalid entity: ambiguous identifier");
-                    result = f;
+    private boolean isIdGenerated(Object entity) throws IntrospectionException {
+        if (isPropertyAccessed(entity.getClass())) {
+            for (Field field : utils.getFieldsAnnotatedWith(entity.getClass(), Id.class)) {
+                if (field.getAnnotation(GeneratedValue.class) != null) {
+                    return true;
                 }
             }
-            entityClass = entityClass.getSuperclass();
-        } while (entityClass != null && result == null);
-        return result;
-    }
-
-    public PropertyDescriptor getIdProperty(Class<?> entityClass) throws IntrospectionException {
-        PropertyDescriptor result = null;
-        do {
-
-            PropertyDescriptor[] propertyDescriptors = Introspector.getBeanInfo(entityClass).getPropertyDescriptors();
-
-            for (PropertyDescriptor pd : propertyDescriptors) {
-                Method f = pd.getReadMethod();
-                if (f == null)
-                    continue;
-                f.setAccessible(true);
-                EmbeddedId embeddedId = f.getAnnotation(EmbeddedId.class);
-                if (embeddedId != null) {
-                    if (result != null)
-                        throw new RuntimeException("Invalid entity: ambiguous identifier");
-                    result = pd;
-                    continue;
-                }
-
-                Id id = f.getAnnotation(Id.class);
-                if (id != null) {
-                    if (result != null)
-                        throw new RuntimeException("Invalid entity: ambiguous identifier");
-                    result = pd;
+        } else if (isFieldAccessed(entity.getClass())) {
+            for (PropertyDescriptor pd : utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class)) {
+                if (pd.getReadMethod().getAnnotation(GeneratedValue.class) != null) {
+                    return true;
                 }
             }
-            entityClass = entityClass.getSuperclass();
-        } while (entityClass != null && result == null);
-        return result;
+        }
+        return false;
     }
 
     public Object getId(Object entity) throws Exception {
-        Field idField = getIdField(entity.getClass());
-        PropertyDescriptor idProperty = getIdProperty(entity.getClass());
-
+        IdClass idClass = entity.getClass().getAnnotation(IdClass.class);
         Object result = null;
-        if (idField != null) {
-            result = idField.get(entity);
-        } else if (idProperty != null) {
-            result = idProperty.getReadMethod().invoke(entity);
+        if (idClass != null) {
+            result = idClass.value().newInstance();
+            if (isPropertyAccessed(entity.getClass())) {
+                result = idClass.value().newInstance();
+                utils.copyPropertyValues(entity, result);
+            } else {
+                result = idClass.value().newInstance();
+                utils.copyFieldValues(entity, result);
+            }
+        } else {
+            if (isPropertyAccessed(entity.getClass())) {
+                Set<PropertyDescriptor> idProperties = utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class);
+                result = idProperties.iterator().next().getReadMethod().invoke(entity);
+            } else {
+                Set<Field> idFields = utils.getFieldsAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class);
+                Field next = idFields.iterator().next();
+                next.setAccessible(true);
+                result = next.get(entity);
+            }
         }
         return result;
     }
 
     public void setId(Object entity, Object id) throws Exception {
-        Field idField = getIdField(entity.getClass());
-        PropertyDescriptor idProperty = getIdProperty(entity.getClass());
-
-        Object result = null;
-        if (idField != null) {
-            idField.set(entity, id);
-        } else if (idProperty != null) {
-            idProperty.getWriteMethod().invoke(entity, id);
+        if (entity.getClass().getAnnotation(IdClass.class) != null) {
+            if (isPropertyAccessed(entity.getClass()))
+                utils.copyPropertyValues(id, entity);
+            else if (isFieldAccessed(entity.getClass()))
+                utils.copyFieldValues(id, entity);
+        } else {
+            if (isPropertyAccessed(entity.getClass())) {
+                utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class).iterator().next().getWriteMethod().invoke(entity, id);
+            } else if (isFieldAccessed(entity.getClass())) {
+                Field next = utils.getFieldsAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class).iterator().next();
+                next.setAccessible(true);
+                next.set(entity, id);
+            }
         }
+
     }
 
     public Class<?> getIdType(Class<?> entityClass) {
@@ -226,20 +192,11 @@ public class JPAORMProvider extends AORMProvider {
         if (idClass != null) {
             result = idClass.value();
         } else {
-            Field idField = getIdField(entityClass);
-            PropertyDescriptor idProperty = null;
-            try {
-                idProperty = getIdProperty(entityClass);
-            } catch (IntrospectionException e) {
-                throw new RuntimeException(e);
+            if (isPropertyAccessed(entityClass)) {
+                return utils.getPropertiesAnnotatedWith(entityClass, Id.class, EmbeddedId.class).iterator().next().getPropertyType();
+            } else if (isFieldAccessed(entityClass)) {
+                return utils.getFieldsAnnotatedWith(entityClass, Id.class, EmbeddedId.class).iterator().next().getType();
             }
-
-            if (idField != null && idProperty != null)
-                throw new RuntimeException("Invalid entity: ambiguous identifier");
-            else if (idField != null)
-                result = idField.getType();
-            else
-                result = idProperty.getPropertyType();
         }
         return result;
     }
@@ -264,7 +221,7 @@ public class JPAORMProvider extends AORMProvider {
     }
 
     public Set<Class<?>> getManagedTypes() {
-        return  JPAHelper.getManagedTypes(getClass(), this.unitName);
+        return JPAHelper.getManagedTypes(getClass(), this.unitName);
     }
 
     private Connection con = null;

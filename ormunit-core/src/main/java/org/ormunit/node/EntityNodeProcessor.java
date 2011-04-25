@@ -46,11 +46,14 @@ public class EntityNodeProcessor extends NodeProcessor {
         try {
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();
-            String ormId = processEntity(entityElement, entity, references, result);
+
+            entity = processEntity(entityElement, entity, references, result);
+            String ormId = extractOrmId(entityElement);
+            EntityAccessor accessor = result.getProvider().getAccessor(entity.getClass());
 
             result.addCommand(new EntityCommand(ormId,
                     entity,
-                    result.getProvider().getAccessor(entity.getClass()),
+                    accessor,
                     references));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -60,18 +63,16 @@ public class EntityNodeProcessor extends NodeProcessor {
     }
 
 
-    public String processEntity(Node entityElement, Object entity, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
+    public Object processEntity(Node entityElement, Object entity, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
         ORMProvider provider = testSet.getProvider();
         EntityAccessor introspector = provider.getAccessor(entity.getClass());
-        String ormId = null;
+
 
         NamedNodeMap attributes = entityElement.getAttributes();
 
         for (int i = 0; i < attributes.getLength(); i++) {
             Node attribute = attributes.item(i);
-            if ("ormId".equals(attribute.getNodeName())) {
-                ormId = attribute.getNodeValue();
-            } else {
+            if (!"ormId".equals(attribute.getNodeName())) {
                 set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
             }
         }
@@ -86,6 +87,7 @@ public class EntityNodeProcessor extends NodeProcessor {
             if (introspector.isSimpleType(propertyName)) {
                 String propertyValue = processSimpleType(provider, propertyNode, introspector, references);
                 set(provider, entity, propertyName, propertyValue, references);
+                continue;
             }
             Class type = introspector.getType(propertyName);
             if (type == null)
@@ -107,19 +109,39 @@ public class EntityNodeProcessor extends NodeProcessor {
             } else {
 
                 if (propertyNode.getChildNodes().getLength() == 1) {
-                    Node propertyValueNode = propertyNode.getChildNodes().item(0);
-                    String propertyValue;
-                    if (propertyValueNode != null && (propertyValueNode.getNodeType() == Node.CDATA_SECTION_NODE || propertyValueNode.getNodeType() == Node.TEXT_NODE)) {
-                        propertyValue = propertyValueNode.getNodeValue().trim();
+                    Node childEntityDeclarationNode = propertyNode.getChildNodes().item(0);
+                    if (childEntityDeclarationNode.getNodeType() == Node.ELEMENT_NODE) {
+                        Object childEntity = processEntity(testSet, childEntityDeclarationNode, references);
+                        testSet.addCommand(new EntityCommand(extractOrmId(childEntityDeclarationNode),
+                                childEntity,
+                                testSet.getProvider().getAccessor(entity.getClass()),
+                                references));
+
+                        introspector.set(entity, propertyName, childEntity);
+                    } else if (childEntityDeclarationNode.getNodeType() == Node.TEXT_NODE || childEntityDeclarationNode.getNodeType() == Node.CDATA_SECTION_NODE) {
+                        String propertyValue = childEntityDeclarationNode.getNodeValue().trim();
                         set(provider, entity, propertyName, propertyValue, references);
-                        continue;
+                    } else {
+                        throw new ORMUnitFileSyntaxException("Unknown node: " + childEntityDeclarationNode.getNodeName());
                     }
                 }
-                Object entity1 = introspector.newInstance(propertyName);
-                processEntity(propertyNode, entity1, references, testSet);
-                introspector.set(entity, propertyName, entity1);
             }
         }
+        return entity;
+    }
+
+    private String extractOrmId(Node entityElement) {
+        String ormId = null;
+        NamedNodeMap attributes = entityElement.getAttributes();
+
+        for (int i = 0; i < attributes.getLength(); i++) {
+            Node attribute = attributes.item(i);
+
+            if ("ormId".equals(attribute.getNodeName())) {
+                ormId = attribute.getNodeValue();
+            }
+        }
+
         return ormId;
     }
 
@@ -216,14 +238,14 @@ public class EntityNodeProcessor extends NodeProcessor {
 
             try {
                 element = entityClass.newInstance();
-                processEntity(valueNode,element,references, testset);
+                processEntity(valueNode, element, references, testset);
             } catch (InstantiationException e) {
                 throw new ORMUnitFileReadException(e);
             } catch (IllegalAccessException e) {
                 throw new ORMUnitFileReadException(e);
             }
         } else
-            throw new ORMUnitFileSyntaxException("");
+            throw new ORMUnitFileSyntaxException("Cannot find entitynodeprocess for node of type: " + valueNode.getNodeName());
 
         return element;
     }

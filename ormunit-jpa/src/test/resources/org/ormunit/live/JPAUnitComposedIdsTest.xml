@@ -1,0 +1,6 @@
+<ormunit>
+
+    <EntityWith2Ids id1="1" id2="2" />
+
+
+</ormunit>
