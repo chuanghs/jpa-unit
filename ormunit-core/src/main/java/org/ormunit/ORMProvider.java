@@ -12,7 +12,13 @@ import java.util.Set;
  */
 public interface ORMProvider {
 
+    Set<Class<?>> getManagedTypes();
+
+    <T extends Object> T getEntity(Class<T> entityClass, Object id);
+
     EntityAccessor getAccessor(Class<?> entityClass);
+
+
 
     Class getIdType(Class<?> entityClass);
 
@@ -20,11 +26,10 @@ public interface ORMProvider {
 
     void setId(Object entity, Object id) throws Exception;
 
-    Object entity(Object entity);
 
+
+    Object entity(Object entity);
     void statement(String statement);
 
-    <T extends Object> T getEntity(Class<T> entityClass, Object id);
 
-    Set<Class<?>> getManagedTypes();
 }

@@ -13,7 +13,7 @@ import java.util.*;
  */
 public abstract class AEntityAccessor implements EntityAccessor {
 
-    public boolean isSimpleType(Class<?> propertyType) {
+    public static boolean isSimpleType(Class<?> propertyType) {
         return simpleTypes.contains(propertyType);
     }
 

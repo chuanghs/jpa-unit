@@ -13,6 +13,15 @@ public class SimplePOJO2 {
 
     private int intValue;
 
+    public SimplePOJO2() {
+
+    }
+
+    public SimplePOJO2(String s, int i) {
+        this.stringValue = s;
+        this.intValue = i;
+    }
+
     public String getStringValue() {
         return stringValue;
     }

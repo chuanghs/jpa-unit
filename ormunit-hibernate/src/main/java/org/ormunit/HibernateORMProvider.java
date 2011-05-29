@@ -3,7 +3,6 @@ package org.ormunit;
 import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.cfg.AnnotationConfiguration;
 import org.hibernate.cfg.Configuration;
 import org.ormunit.junit.HibernateHelper;
 import org.slf4j.Logger;
