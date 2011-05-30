@@ -10,7 +10,6 @@ public class SimplePOJO2 {
 
     private String stringValue;
 
-
     private int intValue;
 
     public SimplePOJO2() {

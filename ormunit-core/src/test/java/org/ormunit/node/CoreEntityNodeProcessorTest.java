@@ -46,8 +46,8 @@ public class CoreEntityNodeProcessorTest {
 
     @Before
     public void setUp() throws IntrospectionException {
-        when(ormProvider.getAccessor(eq(SimplePOJO.class))).thenReturn(new PropertyAccessor(SimplePOJO.class));
-        when(ormProvider.getAccessor(eq(SimplePOJO2.class))).thenReturn(new PropertyAccessor(SimplePOJO2.class));
+        when(ormProvider.getAccessor(eq(SimplePOJO.class), (Class<?>) any())).thenReturn(new PropertyAccessor(SimplePOJO.class));
+        when(ormProvider.getAccessor(eq(SimplePOJO2.class), (Class<?>) any())).thenReturn(new PropertyAccessor(SimplePOJO2.class));
         ormUnit = new ORMUnit(getClass());
     }
 
@@ -80,7 +80,7 @@ public class CoreEntityNodeProcessorTest {
         simplePOJO.setTimestampValue(new Timestamp(date.getTime()));
         simplePOJO.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2010-12-18"));
 
-        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass(), null))));
         verify(result, times(2)).getProvider();
 
         //verifyNoMoreInteractions(result);
@@ -116,7 +116,7 @@ public class CoreEntityNodeProcessorTest {
         simplePOJO.setTimestampValue(new Timestamp(date.getTime()));
         simplePOJO.setDateValue(new SimpleDateFormat("yyyy-MM-dd").parse("2010-12-18"));
 
-        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass(), null))));
         verify(result, times(2)).getProvider();
         //verifyNoMoreInteractions(result);
     }
@@ -125,6 +125,7 @@ public class CoreEntityNodeProcessorTest {
     public void testComplexType() throws ORMUnitFileReadException, ParseException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO2\" /> " +
                 "   <pojo integerValue=\"2\"> " +
                 "       <doubleValue>1.23</doubleValue> " +
                 "       <complexType > " +
@@ -149,8 +150,8 @@ public class CoreEntityNodeProcessorTest {
         simplePOJO.setComplexType(complexType);
 
 
-        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass()))));
-        verify(result, times(2)).getProvider();
+        verify(result, times(1)).addCommand(eq(new EntityCommand(simplePOJO, ormProvider.getAccessor(simplePOJO.getClass(), null))));
+        //verify(result, times(4)).getProvider();
 
         //verifyNoMoreInteractions(result);
     }
@@ -172,7 +173,7 @@ public class CoreEntityNodeProcessorTest {
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
         references.add(new EntityReference("complexType", 1));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass()), references)));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass(), null), references)));
 
 
         when(ormProvider.getEntity(eq(SimplePOJO2.class), anyInt())).thenReturn(new SimplePOJO2());
@@ -182,12 +183,42 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithReferenceAsTag() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithSimpleReferenceAsTag() throws ORMUnitFileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo> " +
                 "       <complexType> " +
-                "           <reference stringValue=\"0\" intvalue=\"0\" /> " +
+                "           <reference>0</reference> " +
+                "       </complexType> " +
+                "   </pojo>" +
+                "</ormunit>").getBytes());
+
+        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+
+        when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(Integer.class);
+
+        ormUnit.read(bais, result);
+
+        SimplePOJO entity = new SimplePOJO();
+        Set<EntityReference> references = new HashSet<EntityReference>();
+        SimplePOJO2 simplePOJO2 = new SimplePOJO2("0", 0);
+        references.add(new EntityReference("complexType", simplePOJO2.getIntValue()));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass(), null), references)));
+
+
+        when(ormProvider.getEntity(eq(SimplePOJO2.class), eq(simplePOJO2.getIntValue()))).thenReturn(simplePOJO2);
+        result.execute();
+
+        verify(ormProvider, times(1)).getEntity(eq(SimplePOJO2.class), eq(simplePOJO2.getIntValue()));
+    }
+
+    @Test
+    public void testComplexTypeWithComplexReferenceAsTag() throws ORMUnitFileReadException, IntrospectionException {
+        ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
+                "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
+                "   <pojo> " +
+                "       <complexType> " +
+                "           <reference stringValue=\"0\" intValue=\"0\" /> " +
                 "       </complexType> " +
                 "   </pojo>" +
                 "</ormunit>").getBytes());
@@ -202,7 +233,7 @@ public class CoreEntityNodeProcessorTest {
         Set<EntityReference> references = new HashSet<EntityReference>();
         SimplePOJO2 id = new SimplePOJO2("0", 0);
         references.add(new EntityReference("complexType", id));
-        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass()), references)));
+        verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass(), null), references)));
 
 
         when(ormProvider.getEntity(eq(SimplePOJO2.class), eq(id))).thenReturn(id);
@@ -228,13 +259,13 @@ public class CoreEntityNodeProcessorTest {
 
         ormUnit.read(bais, result);
 
-        EntityCommand entityCommand = new EntityCommand("some weird id", new SimplePOJO2(), ormProvider.getAccessor(SimplePOJO2.class), new HashSet<EntityReference>());
+        EntityCommand entityCommand = new EntityCommand("some weird id", new SimplePOJO2(), ormProvider.getAccessor(SimplePOJO2.class, null), new HashSet<EntityReference>());
         verify(result).addCommand(Mockito.eq(entityCommand));
 
 
         HashSet<EntityReference> entityReferences = new HashSet<EntityReference>();
         entityReferences.add(new EntityReference("complexType", "some weird id", EntityReference.Type.ORMUNIT));
-        EntityCommand entityCommand1 = new EntityCommand(null, new SimplePOJO(), ormProvider.getAccessor(SimplePOJO.class), entityReferences);
+        EntityCommand entityCommand1 = new EntityCommand(null, new SimplePOJO(), ormProvider.getAccessor(SimplePOJO.class, null), entityReferences);
         verify(result).addCommand(Mockito.eq(entityCommand1));
 
         result.execute();
@@ -273,7 +304,7 @@ public class CoreEntityNodeProcessorTest {
         collection.add(pojo2);
         pojo.setCollection(collection);
 
-        verify(result, times(1)).addCommand(new EntityCommand(pojo, ormProvider.getAccessor(pojo.getClass())));
+        verify(result, times(1)).addCommand(new EntityCommand(pojo, ormProvider.getAccessor(pojo.getClass(), null)));
 
     }
 

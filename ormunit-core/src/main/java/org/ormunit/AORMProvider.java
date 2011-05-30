@@ -18,17 +18,12 @@ public abstract class AORMProvider implements ORMProvider {
 
     private final WeakHashMap<Class, WeakReference<EntityAccessor>> inspectors = new WeakHashMap<Class, WeakReference<EntityAccessor>>();
 
-     public EntityAccessor getAccessor(Class<?> clazz) {
-        if (inspectors.get(clazz) == null) {
-
-            if (isPropertyAccessed(clazz)) {
-                inspectors.put(clazz, new WeakReference<EntityAccessor>(new PropertyAccessor(clazz)));
-            } else if (isFieldAccessed(clazz)) {
-                inspectors.put(clazz, new WeakReference<EntityAccessor>(new FieldAccessor(clazz)));
-            } else
-                throw new RuntimeException("invalid entity class, its neither PropertyAccessed nor FieldAccessed entity");
+    protected Properties flatten(Properties persistenceContextProperties) {
+        Properties result = new Properties();
+        for (String s : persistenceContextProperties.stringPropertyNames()) {
+            result.setProperty(s, persistenceContextProperties.getProperty(s));
         }
-        return inspectors.get(clazz).get();
+        return result;
     }
 
     protected Object getDefault(Class<?> idType) {
@@ -50,20 +45,33 @@ public abstract class AORMProvider implements ORMProvider {
         return null;
     }
 
-    protected Properties flatten(Properties persistenceContextProperties) {
-        Properties result = new Properties();
-        for (String s : persistenceContextProperties.stringPropertyNames()) {
-            result.setProperty(s, persistenceContextProperties.getProperty(s));
+    public EntityAccessor getAccessor(Class<?> clazz, Class<?> defaultAcessClass) {
+        if (inspectors.get(clazz) == null) {
+
+            if (isPropertyAccessed(clazz)) {
+                inspectors.put(clazz, new WeakReference<EntityAccessor>(new PropertyAccessor(clazz)));
+            } else if (isFieldAccessed(clazz)) {
+                inspectors.put(clazz, new WeakReference<EntityAccessor>(new FieldAccessor(clazz)));
+            } else {
+                if (defaultAcessClass == null)
+                    throw new RuntimeException("invalid entity class, its neither PropertyAccessed nor FieldAccessed entity");
+                else {
+                    if (isPropertyAccessed(defaultAcessClass)) {
+                        inspectors.put(clazz, new WeakReference<EntityAccessor>(new PropertyAccessor(clazz)));
+                    } else if (isFieldAccessed(defaultAcessClass)) {
+                        inspectors.put(clazz, new WeakReference<EntityAccessor>(new FieldAccessor(clazz)));
+                    } else {
+                        throw new RuntimeException("invalid entity class, its neither PropertyAccessed nor FieldAccessed entity");
+                    }
+                }
+
+            }
         }
-        return result;
+        return inspectors.get(clazz).get();
     }
 
 
-    protected boolean isFieldAccessed(Class<?> clazz){
-        return false;
-    }
+    public abstract boolean isFieldAccessed(Class<?> clazz);
 
-    protected boolean isPropertyAccessed(Class<?> clazz){
-        return false;
-    }
+    public abstract boolean isPropertyAccessed(Class<?> clazz);
 }

@@ -3,14 +3,13 @@ package org.ormunit.live;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ormunit.entity.EntityWith2Ids;
-import org.ormunit.entity.FieldAccessEntity;
-import org.ormunit.entity.PropertyAccessEntity;
+import org.ormunit.entity.Employee;
+import org.ormunit.entity.EmployeeId;
+import org.ormunit.entity.PhoneNumber;
 import org.ormunit.junit.JPAHelper;
 import org.ormunit.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;
-import java.util.List;
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,29 +28,28 @@ public class JPAUnitComposedIdsTest extends JPAUnitTestCase {
     public void testTransaction() throws JAXBException {
         assertTrue(getEm().getTransaction().isActive());
 
-        assertEquals(5, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
+        assertEquals(3, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
     }
 
     @Test
     public void testReadAllEntities() {
-        EntityWith2Ids ids = new EntityWith2Ids();
-        ids.setId1(1);
-        ids.setId2(2);
+        EmployeeId ids = new EmployeeId("PL", 1);
 
 
-        assertNotNull(getEm().find(EntityWith2Ids.class, ids));
+        assertNotNull(getEm().find(Employee.class, ids));
+
     }
 
 
     @Test
-    public void testFindById() {
+    public void testReferences() {
+        PhoneNumber phoneNumber = getEm().find(PhoneNumber.class, 1);
 
-        FieldAccessEntity pae = getEm().getReference(FieldAccessEntity.class, 4);
+        assertNotNull(phoneNumber);
 
-
-        assertNotNull(pae);
+        assertEquals(1, phoneNumber.getContact().geteId().intValue());
+        assertEquals("PL", phoneNumber.getContact().getCountry());
 
     }
-
 
 }

@@ -16,7 +16,7 @@ public interface ORMProvider {
 
     <T extends Object> T getEntity(Class<T> entityClass, Object id);
 
-    EntityAccessor getAccessor(Class<?> entityClass);
+    EntityAccessor getAccessor(Class<?> entityClass, Class<?> defaultAcessClass);
 
 
 

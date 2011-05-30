@@ -16,6 +16,7 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 
 import static junit.framework.Assert.assertEquals;
+import static org.mockito.Matchers.isNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,7 +36,7 @@ public class JPAORMProviderTest {
     public void testGetAccessor() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
 
-        EntityAccessor fieldAccessor = provider.getAccessor(FieldAccessEntity.class);
+        EntityAccessor fieldAccessor = provider.getAccessor(FieldAccessEntity.class, (Class<?>) isNull());
 
 
         FieldAccessEntity fieldAccessEntity = new FieldAccessEntity();
@@ -65,7 +66,7 @@ public class JPAORMProviderTest {
     @Test
     public void testGetIdTypeOfSubClass() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
-        EntityAccessor fieldAccessor = provider.getAccessor(SubPropertyAccessEntity.class);
+        EntityAccessor fieldAccessor = provider.getAccessor(SubPropertyAccessEntity.class, (Class<?>) isNull());
         assertEquals(Integer.class, provider.getIdType(SubPropertyAccessEntity.class));
 
         SubPropertyAccessEntity entity = new SubPropertyAccessEntity();
