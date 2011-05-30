@@ -21,11 +21,9 @@
         <!--jta-data-source>java:/yourJTADataSource</jta-data-source -->
         <!--non-jta-data-source>java:/yourNonJTADataSource</non-jta-data-source -->
 
-        <class>org.ormunit.entity.Auction</class>
-        <class>org.ormunit.entity.AuctionParam</class>
-        <class>org.ormunit.entity.AuctionParamValue</class>
         <class>org.ormunit.entity.PrimaryKey</class>
-        <class>org.ormunit.entity.EntityWith2Ids</class>
+        <class>org.ormunit.entity.PhoneNumber</class>
+        <class>org.ormunit.entity.Employee</class>
 
         <properties>
             <!-- EclipseLink should create the database schema automatically -->

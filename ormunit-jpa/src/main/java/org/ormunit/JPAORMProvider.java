@@ -86,6 +86,7 @@ public class JPAORMProvider extends AORMProvider {
             }
 
             getEntityManager().persist(entity);
+            getEntityManager().flush();
 
             return getId(entity);
         } catch (Exception e) {
@@ -265,11 +266,15 @@ public class JPAORMProvider extends AORMProvider {
 
 
     public void tearDown() {
-        entityManager.clear();
-        entityManager.getTransaction().rollback();
-        if (selfManagedEM) {
-            entityManager.close();
-            entityManagerFactory.close();
+        if (entityManager != null) {
+            entityManager.clear();
+            entityManager.getTransaction().rollback();
+            if (selfManagedEM) {
+                entityManager.close();
+                entityManagerFactory.close();
+            }
+        } else {
+            log.warn("teardown is unnecessary because entityManager is null. Are there errors while creating EnittyManager?");
         }
         try {
             con.close();

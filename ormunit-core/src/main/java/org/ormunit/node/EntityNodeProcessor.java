@@ -5,6 +5,7 @@ import org.ormunit.ORMUnitHelper;
 import org.ormunit.ORMUnitTestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
+import org.ormunit.entity.AEntityAccessor;
 import org.ormunit.entity.EntityAccessor;
 import org.ormunit.exception.*;
 import org.slf4j.Logger;
@@ -29,6 +30,8 @@ public class EntityNodeProcessor extends NodeProcessor {
 
     private final String className;
 
+    private static ThreadLocal<Stack<Class<?>>> threadLocal = new ThreadLocal<Stack<Class<?>>>();
+
 
     public EntityNodeProcessor(String className) {
         super(null);
@@ -41,12 +44,13 @@ public class EntityNodeProcessor extends NodeProcessor {
 
     public synchronized void process(Node node, ORMUnitTestSet testSet) throws ORMUnitNodeProcessingException {
         try {
+            threadLocal.set(new Stack<Class<?>>());
             Object entity = getEntityClass().newInstance();
             Set<EntityReference> references = new HashSet<EntityReference>();
 
             entity = processEntity(node, entity, references, testSet);
             String ormId = extractOrmId(node);
-            EntityAccessor accessor = testSet.getProvider().getAccessor(entity.getClass());
+            EntityAccessor accessor = testSet.getProvider().getAccessor(entity.getClass(), null);
 
             testSet.addCommand(new EntityCommand(ormId,
                     entity,
@@ -62,97 +66,116 @@ public class EntityNodeProcessor extends NodeProcessor {
 
     public Object processEntity(Node entityElement, Object entity, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
         ORMProvider provider = testSet.getProvider();
-        EntityAccessor introspector = provider.getAccessor(entity.getClass());
+        EntityAccessor introspector = provider.getAccessor(entity.getClass(), threadLocal.get().isEmpty() ? null : threadLocal.get().peek());
 
+        threadLocal.get().push(entity.getClass());
+        try {
+            NamedNodeMap attributes = entityElement.getAttributes();
 
-        NamedNodeMap attributes = entityElement.getAttributes();
-
-        for (int i = 0; i < attributes.getLength(); i++) {
-            Node attribute = attributes.item(i);
-            if (!"ormId".equals(attribute.getNodeName())) {
-                set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
+            for (int i = 0; i < attributes.getLength(); i++) {
+                Node attribute = attributes.item(i);
+                if (!"ormId".equals(attribute.getNodeName())) {
+                    set(provider, entity, attribute.getNodeName(), attribute.getNodeValue(), references);
+                }
             }
-        }
 
 
-        for (Node propertyNode : getChildNodes(entityElement, Node.ELEMENT_NODE)) {
-            String propertyName = propertyNode.getNodeName();
-            Class propertyType = introspector.getType(propertyName);
-            if (propertyType == null)
-                throw new ORMUnitNodeProcessingException("no such property: " + propertyName + " in class: " + className);
+            for (Node propertyNode : getChildNodes(entityElement, Node.ELEMENT_NODE)) {
+                String propertyName = propertyNode.getNodeName();
+                Class propertyType = introspector.getType(propertyName);
+                if (propertyType == null)
+                    throw new ORMUnitNodeProcessingException("no such property: " + propertyName + " in class: " + className);
 
-            if (introspector.isSimpleType(propertyName)) {
-                String propertyValue = processSimpleType(provider, propertyNode, introspector, references);
-                set(provider, entity, propertyName, propertyValue, references);
-                continue;
-            } else if (Collection.class.isAssignableFrom(propertyType)) {
-                Collection c = processCollection(testSet, propertyNode, introspector, references);
-                if (introspector.get(entity, propertyName) != null) {
-                    ((Collection) introspector.get(entity, propertyName)).addAll(c);
-                } else {
-                    introspector.set(entity, propertyName, c);
-                }
-            } else if (Map.class.isAssignableFrom(propertyType)) {
-                Map map = processMap(testSet, propertyNode, introspector, references);
-                if (introspector.get(entity, propertyName) != null) {
-                    ((Map) introspector.get(entity, propertyName)).putAll(map);
-                } else {
-                    introspector.set(entity, propertyName, map);
-                }
-            } else {
-
-                Collection<Node> elemSubNodes = getChildNodes(propertyNode, Node.ELEMENT_NODE);
-                Collection<Node> txtSubNodes = getChildNodes(propertyNode, Node.TEXT_NODE, Node.CDATA_SECTION_NODE);
-                if (elemSubNodes.size() == 1) {
-                    Node referenceNode = elemSubNodes.iterator().next();
-
-                    if ("reference".equals(referenceNode.getNodeName())) {
-                        EntityReference entityReference = new EntityReference(propertyName, resolveAndProcessReference(referenceNode, propertyType, references, testSet));
-                        references.add(entityReference);
+                if (introspector.isSimpleType(propertyName)) {
+                    String propertyValue = processSimpleType(provider, propertyNode, introspector, references);
+                    set(provider, entity, propertyName, propertyValue, references);
+                    continue;
+                } else if (Collection.class.isAssignableFrom(propertyType)) {
+                    Collection c = processCollection(testSet, propertyNode, introspector, references);
+                    if (introspector.get(entity, propertyName) != null) {
+                        ((Collection) introspector.get(entity, propertyName)).addAll(c);
                     } else {
-                        Object childEntity = resolveAndProcessEntity(testSet, referenceNode, references);
-                        testSet.addCommand(new EntityCommand(extractOrmId(referenceNode),
-                                childEntity,
-                                testSet.getProvider().getAccessor(entity.getClass()),
-                                references));
+                        introspector.set(entity, propertyName, c);
+                    }
+                } else if (Map.class.isAssignableFrom(propertyType)) {
+                    Map map = processMap(testSet, propertyNode, introspector, references);
+                    if (introspector.get(entity, propertyName) != null) {
+                        ((Map) introspector.get(entity, propertyName)).putAll(map);
+                    } else {
+                        introspector.set(entity, propertyName, map);
+                    }
+                } else {
 
-                        introspector.set(entity, propertyName, childEntity);
+                    Collection<Node> elemSubNodes = getChildNodes(propertyNode, Node.ELEMENT_NODE);
+                    Collection<Node> txtSubNodes = getChildNodes(propertyNode, Node.TEXT_NODE, Node.CDATA_SECTION_NODE);
+                    if (elemSubNodes.size() == 1) {
+                        Node referenceNode = elemSubNodes.iterator().next();
+
+                        if ("reference".equals(referenceNode.getNodeName())) {
+                            EntityReference entityReference = new EntityReference(propertyName, resolveAndProcessReference(referenceNode, propertyType, references, testSet));
+                            references.add(entityReference);
+                        } else {
+                            Object childEntity = resolveAndProcessEntity(testSet, referenceNode, references);
+                            testSet.addCommand(new EntityCommand(extractOrmId(referenceNode),
+                                    childEntity,
+                                    testSet.getProvider().getAccessor(entity.getClass(), null),
+                                    references));
+
+                            introspector.set(entity, propertyName, childEntity);
+                        }
+                    }
+                    if (elemSubNodes.size() == 0) {
+                        Node childEntityDeclarationNode = txtSubNodes.iterator().next();
+
+                        String propertyValue = childEntityDeclarationNode.getNodeValue().trim();
+                        set(provider, entity, propertyName, propertyValue, references);
+
                     }
                 }
-                if (elemSubNodes.size() == 0) {
-                    Node childEntityDeclarationNode = txtSubNodes.iterator().next();
-
-                    String propertyValue = childEntityDeclarationNode.getNodeValue().trim();
-                    set(provider, entity, propertyName, propertyValue, references);
-
-                }
             }
+            return entity;
+        } finally {
+            threadLocal.get().pop();
         }
-        return entity;
     }
 
     /**
-     * processes given node and return id as result
+     * processes given node and return id as a result
      *
-     * @param referenceNode <reference /> node. there must be one subnode to each ID property
-     * @param type          type of enittiy that this reference points to
+     * @param referenceNode  <reference /> node. there must be one subnode to each ID property
+     * @param referencedType type of enittiy that this reference points to
      * @param references
-     * @param testSet       @return
+     * @param testSet        @return
      */
-    public Object resolveAndProcessReference(Node referenceNode, Class type, Set<EntityReference> references, ORMUnitTestSet testSet) {
+    public Object resolveAndProcessReference(Node referenceNode, Class referencedType, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileSyntaxException {
         ORMProvider provider = testSet.getProvider();
-        Class idType = provider.getIdType(type);
-        EntityAccessor accessor = provider.getAccessor(type);
-        if (accessor.isSimpleType(type)) {
-
-        } else {
+        Class idType = provider.getIdType(referencedType);
+        EntityAccessor accessor = provider.getAccessor(referencedType, null);
+        if (AEntityAccessor.isSimpleType(idType)) {  // true if id is of simple type
+            Collection<Node> validTypeChildNodes = getChildNodes(referenceNode, Node.TEXT_NODE, Node.CDATA_SECTION_NODE);
+            NodeList allChildNodes = referenceNode.getChildNodes();
+            if (validTypeChildNodes.size() == 1 && allChildNodes.getLength() == 1) {
+                try {
+                    return ORMUnitHelper.convert(idType, validTypeChildNodes.iterator().next().getNodeValue());
+                } catch (ConvertionException e) {
+                    throw new ORMUnitNodeProcessingException(e);
+                }
+            } else {
+                throw new ORMUnitFileSyntaxException("reference to: " + referencedType.getCanonicalName() + " can only be declared by simple value");
+            }
+        } else { // if id simple compound then process this node as simple POJO
+            Object referenceId = null;
             try {
-                processEntity(referenceNode, idType.newInstance(), references, testSet);
+                referenceId = idType.newInstance();
             } catch (Exception e) {
-                throw new ORMUnitFileSyntaxException("cannot extract id properties of id of: " + type.getCanonicalName(), e);
+                throw new ORMUnitFileSyntaxException("cannot instantiate id (" + idType.getCanonicalName() + ") of: " + referencedType.getCanonicalName()+". Is there default constructor?", e);
+            }
+            try {
+                return processEntity(referenceNode, referenceId, references, testSet);
+            } catch (ORMUnitFileReadException e) {
+                throw new ORMUnitFileSyntaxException("cannot extract id properties of id of: " + referencedType.getCanonicalName(), e);
             }
         }
-        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     private Collection<Node> getChildNodes(Node propertyNode, short... nodeTypes) {
@@ -282,7 +305,7 @@ public class EntityNodeProcessor extends NodeProcessor {
 
 
     private void set(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) {
-        EntityAccessor introspector = provider.getAccessor(entity.getClass());
+        EntityAccessor introspector = provider.getAccessor(entity.getClass(), null);
         try {
             Class type = introspector.getType(propertyName);
             if (type == null)
