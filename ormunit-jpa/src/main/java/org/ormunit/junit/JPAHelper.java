@@ -112,14 +112,23 @@ public class JPAHelper {
         return null;
     }
 
+    /**
+     * @param caller   class from which classloader will be used to load persistence.xml
+     * @param unitName persistence unit name of which managed types will be used
+     * @return set of Class objects representing all managed classes in given persistence unit
+     */
     public static Set<Class<?>> getManagedTypes(Class<?> caller, String unitName) {
         Persistence cast = null;
 
+        // get persistence.xml content in form of PersistenceUnit object
         Persistence.PersistenceUnit pu = getPersistenceUnit(caller, unitName);
 
+        // if there is such persistence unit....
         if (pu != null) {
 
             Set<Class<?>> classes = new HashSet<Class<?>>();
+
+            // ..iterate through classes listed in it
             for (String cn : pu.getClazz()) {
                 try {
                     classes.add(Class.forName(cn));
@@ -127,6 +136,9 @@ public class JPAHelper {
                     log.error(e.getMessage());
                 }
             }
+
+            // TODO: and then iterate through orm.xml files...
+            // TODO: and iterate through listed entities
             return classes;
 
         }
