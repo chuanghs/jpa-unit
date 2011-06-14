@@ -73,7 +73,7 @@ import java.util.List;
  * </pre>
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "", propOrder = {
+@XmlType(propOrder = {
         "persistenceUnit"
 })
 @XmlRootElement(name = "persistence")

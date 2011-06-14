@@ -1,14 +1,20 @@
 package org.ormunit.junit;
 
+import com.sun.java.xml.ns.persistence.Entity;
+import com.sun.java.xml.ns.persistence.EntityMappings;
 import com.sun.java.xml.ns.persistence.Persistence;
+import org.ormunit.exception.ORMUnitConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.persistence.Table;
 import javax.persistence.spi.PersistenceProvider;
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLInputFactory;
+import javax.xml.stream.XMLStreamException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,14 +39,9 @@ public class JPAHelper {
 
     private static final Pattern nonCommentPattern = Pattern.compile("^([^#]+)");
 
-    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;drop=true";
-    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
-    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa";
-
     public static final String PersistenceProviderEclipseLink = "org.eclipse.persistence.jpa.PersistenceProvider";
     public static final String PersistenceProviderHibernate = "org.hibernate.ejb.HibernatePersistence";
     public static final String PersistenceProviderOpenJPA = "org.apache.openjpa.persistence.PersistenceProviderImpl";
-
 
     private static Map<String, Properties> persistenceProviderProperties = new HashMap<String, Properties>();
 
@@ -129,27 +130,74 @@ public class JPAHelper {
             Set<Class<?>> classes = new HashSet<Class<?>>();
 
             // ..iterate through classes listed in it
-            for (String cn : pu.getClazz()) {
-                try {
-                    classes.add(Class.forName(cn));
-                } catch (ClassNotFoundException e) {
-                    log.error(e.getMessage());
+            if (pu.getClazz() != null)
+                for (String cn : pu.getClazz()) {
+                    classes.add(instatiateClass(cn));
                 }
-            }
-
-            // TODO: and then iterate through orm.xml files...
-            // TODO: and iterate through listed entities
+            // then iterate throught orm.xml files
+            if (pu.getMappingFile() != null)
+                for (String s : pu.getMappingFile()) {
+                    classes.addAll(getManagedTypesFromOrmFile(caller, s));
+                }
             return classes;
 
         }
         return null;
     }
 
+
+    private static Collection<Class<?>> getManagedTypesFromOrmFile(Class<?> caller, String ormFileName) {
+        Collection<Class<?>> result = new LinkedList<Class<?>>();
+        InputStream stream = null;
+        try {
+            JAXBContext context = JAXBContext.newInstance("com.sun.java.xml.ns.persistence");
+            stream = caller.getResourceAsStream(ormFileName);
+
+            if (stream != null) {
+                Unmarshaller unmarshaller = context.createUnmarshaller();
+
+                XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(stream);
+
+                EntityMappings cast = EntityMappings.class.cast(unmarshaller.unmarshal(xer));
+                if (cast.getEntity() != null) {
+                    for (Entity entity : cast.getEntity()) {
+                        result.add(instatiateClass(entity.getClazz()));
+                    }
+                }
+            }
+        } catch (XMLStreamException e) {
+            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", ormFileName));
+        } catch (JAXBException e) {
+            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", ormFileName));
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException e) {
+                    log.error("", e);
+                }
+            }
+        }
+        return result;
+    }
+
+    private static Class<?> instatiateClass(String cn) {
+        Class<?> c;
+        try {
+            c = Class.forName(cn);
+        } catch (ClassNotFoundException e) {
+            String format = String.format("Class %s cannot be found", cn);
+            log.error(format);
+            throw new ORMUnitConfigurationException(format);
+        }
+        return c;
+    }
+
     private static Persistence.PersistenceUnit getPersistenceUnit(Class<?> caller, String unitName) {
         InputStream stream = null;
         Persistence cast = null;
         try {
-            JAXBContext context = JAXBContext.newInstance("com.sun.java.xml.ns.persistence");
+            JAXBContext context = JAXBContext.newInstance(Persistence.class);
             stream = caller.getResourceAsStream("/META-INF/persistence.xml");
 
             if (stream != null) {
@@ -157,11 +205,10 @@ public class JPAHelper {
 
                 XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(stream);
 
-                cast = Persistence.class.cast(unmarshaller.unmarshal(xer));
+                cast = unmarshaller.unmarshal(xer, Persistence.class).getValue();
             }
         } catch (Exception e) {
-            log.error("", e);
-            e.printStackTrace();
+            throw new ORMUnitConfigurationException(e);
         } finally {
             if (stream != null) {
                 try {
@@ -227,10 +274,18 @@ public class JPAHelper {
         Properties result = new Properties(defaults);
 
         Persistence.PersistenceUnit.Properties properties = getPersistenceUnit(aClass, unitName).getProperties();
-        for (Persistence.PersistenceUnit.Properties.Property p : properties.getProperty()) {
-            result.setProperty(p.getName(), p.getValue());
-        }
+        if (properties != null)
+            for (Persistence.PersistenceUnit.Properties.Property p : properties.getProperty()) {
+                result.setProperty(p.getName(), p.getValue());
+            }
 
         return result;
+    }
+
+    public static String extractSchemaName(Class<?> c) {
+        Table annotation = c.getAnnotation(Table.class);
+        if (annotation != null && !"".equals(annotation.schema()))
+            return annotation.schema();
+        return null;
     }
 }

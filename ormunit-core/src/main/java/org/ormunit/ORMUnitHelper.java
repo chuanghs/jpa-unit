@@ -21,6 +21,10 @@ import static java.lang.Enum.*;
  */
 public class ORMUnitHelper {
 
+    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;drop=true";
+    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
+    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa";
+
     public static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
