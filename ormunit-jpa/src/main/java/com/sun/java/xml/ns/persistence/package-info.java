@@ -4,5 +4,7 @@
 // Any modifications to this file will be lost upon recompilation of the source schema. 
 // Generated on: 2011.06.08 at 10:39:21 PM CEST 
 //
+@XmlSchema(namespace = "http://java.sun.com/xml/ns/persistence", elementFormDefault = XmlNsForm.QUALIFIED) package com.sun.java.xml.ns.persistence;
 
-package com.sun.java.xml.ns.persistence;
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;

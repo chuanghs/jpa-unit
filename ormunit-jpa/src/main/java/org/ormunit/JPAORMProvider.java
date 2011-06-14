@@ -13,10 +13,7 @@ import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.List;
-import java.util.Properties;
-import java.util.Set;
-import java.util.WeakHashMap;
+import java.util.*;
 
 import static org.ormunit.ORMUnitHelper.isHSQL;
 import static org.ormunit.junit.JPAHelper.*;
@@ -205,54 +202,35 @@ public class JPAORMProvider extends AORMProvider {
 
     public Connection getConnection() throws SQLException {
         if (PersistenceProviderEclipseLink.equals(persistenceProvider)) {
-            return DriverManager.getConnection(persistenceContextProperties.getProperty("javax.persistence.jdbc.url"), persistenceContextProperties.getProperty("javax.persistence.jdbc.user"), persistenceContextProperties.getProperty("javax.persistence.jdbc.password"));
+            return DriverManager.getConnection(
+                    persistenceContextProperties.getProperty("javax.persistence.jdbc.url"),
+                    persistenceContextProperties.getProperty("javax.persistence.jdbc.user"),
+                    persistenceContextProperties.getProperty("javax.persistence.jdbc.password"));
         } else if (PersistenceProviderOpenJPA.equals(persistenceProvider)) {
-            return DriverManager.getConnection(persistenceContextProperties.getProperty("openjpa.ConnectionURL"), persistenceContextProperties.getProperty("openjpa.ConnectionUserName"), persistenceContextProperties.getProperty("openjpa.ConnectionPassword"));
+            return DriverManager.getConnection(
+                    persistenceContextProperties.getProperty("openjpa.ConnectionURL"),
+                    persistenceContextProperties.getProperty("openjpa.ConnectionUserName"),
+                    persistenceContextProperties.getProperty("openjpa.ConnectionPassword"));
         } else if (PersistenceProviderHibernate.equals(persistenceProvider)) {
-            return DriverManager.getConnection(persistenceContextProperties.getProperty("hibernate.connection.url"), persistenceContextProperties.getProperty("hibernate.connection.username"), persistenceContextProperties.getProperty("hibernate.connection.password"));
+            return DriverManager.getConnection(
+                    persistenceContextProperties.getProperty("hibernate.connection.url"),
+                    persistenceContextProperties.getProperty("hibernate.connection.username"),
+                    persistenceContextProperties.getProperty("hibernate.connection.password"));
         }
         throw new RuntimeException("unknown Persistence Provider");
     }
 
-    private String extractSchemaName(Class<?> c) {
-        Table annotation = c.getAnnotation(Table.class);
-        if (annotation != null && !"".equals(annotation.schema()))
-            return annotation.schema();
-        return null;
-    }
-
     public Set<Class<?>> getManagedTypes() {
-        return JPAHelper.getManagedTypes(getClass(), this.unitName);
+        if (this.unitName !=null)
+            return JPAHelper.getManagedTypes(getClass(), this.unitName);
+        return new HashSet<Class<?>>();
     }
 
     private Connection con = null;
 
     public void setUp() {
         if (selfManagedEM) {
-            try {
-                con = getConnection();
-                if (con != null) {
-                    for (Class<?> c : getManagedTypes()) {
-                        try {
-                            String x = extractSchemaName(c);
-                            if (x != null) {
-                                //log.info("creating schema: " + x);
-                                if (isHSQL())
-                                    con.prepareStatement("create schema " + x.toUpperCase() + " authorization DBA").executeUpdate();
-                                else
-                                    con.prepareStatement("create schema " + x.toUpperCase() + " authorization sa").executeUpdate();
-                            }
-
-                        } catch (Throwable e) {
-                            log.error(e.getMessage());
-                        }
-                    }
-                    con.commit();
-                }
-            } catch (Exception e) {
-                log.error(e.getMessage());
-            }
-
+            createSchemas();
             // creating entitymanagerfactory for given connection properties and persistence unit name
             entityManagerFactory = Persistence.createEntityManagerFactory(
                     unitName,
@@ -262,6 +240,28 @@ public class JPAORMProvider extends AORMProvider {
 
         entityManager.getTransaction().begin();
 
+    }
+
+    private void createSchemas() {
+        try {
+            Dialect dialect = getDialect();
+            con = getConnection();
+            if (con != null) {
+                for (Class<?> c : getManagedTypes()) {
+                    try {
+                        String x = extractSchemaName(c);
+                        if (x != null) {
+                            con.prepareStatement(dialect.getCreateSchemaStatement(x)).executeUpdate();
+                        }
+                    } catch (Throwable e) {
+                        log.error(e.getMessage());
+                    }
+                }
+                con.commit();
+            }
+        } catch (Exception e) {
+            log.error(e.getMessage());
+        }
     }
 
 
@@ -283,4 +283,11 @@ public class JPAORMProvider extends AORMProvider {
         }
     }
 
+    public Dialect getDialect() {
+        if (isHSQL()) {
+            return new HSQLDialect();
+        } else {
+            return new DefaultDialect();
+        }
+    }
 }
