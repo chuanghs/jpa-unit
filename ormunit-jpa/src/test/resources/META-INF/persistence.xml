@@ -10,7 +10,7 @@
         <class>org.ormunit.entity.PropertyAccessEntity</class>
         <class>org.ormunit.entity.FieldAccessEntity</class>
         <class>org.ormunit.entity.PoliciesEntity</class>
-        <properties>
+       <properties>
             <!-- EclipseLink should create the database schema automatically -->
             <property name="eclipselink.ddl-generation" value="create-tables"/>
             <property name="eclipselink.ddl-generation.output-mode" value="database"/>
