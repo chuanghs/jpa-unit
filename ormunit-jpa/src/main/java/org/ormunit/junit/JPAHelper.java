@@ -134,7 +134,7 @@ public class JPAHelper {
                 for (String cn : pu.getClazz()) {
                     classes.add(instatiateClass(cn));
                 }
-            // then iterate throught orm.xml files
+            // then iterate throught orm2.xml files
             if (pu.getMappingFile() != null)
                 for (String s : pu.getMappingFile()) {
                     classes.addAll(getManagedTypesFromOrmFile(caller, s));
@@ -150,7 +150,7 @@ public class JPAHelper {
         Collection<Class<?>> result = new LinkedList<Class<?>>();
         InputStream stream = null;
         try {
-            JAXBContext context = JAXBContext.newInstance("com.sun.java.xml.ns.persistence");
+            JAXBContext context = JAXBContext.newInstance(EntityMappings.class);
             stream = caller.getResourceAsStream(ormFileName);
 
             if (stream != null) {
@@ -158,10 +158,11 @@ public class JPAHelper {
 
                 XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(stream);
 
-                EntityMappings cast = EntityMappings.class.cast(unmarshaller.unmarshal(xer));
+                EntityMappings cast = unmarshaller.unmarshal(xer, EntityMappings.class).getValue();
+                String package_ = cast.getPackage() != null ? cast.getPackage() + "." : "";
                 if (cast.getEntity() != null) {
                     for (Entity entity : cast.getEntity()) {
-                        result.add(instatiateClass(entity.getClazz()));
+                        result.add(instatiateClass(package_ + entity.getClazz()));
                     }
                 }
             }
