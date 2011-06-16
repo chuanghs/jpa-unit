@@ -153,8 +153,11 @@ public class JPAHelper {
         Collection<Class<?>> result = new LinkedList<Class<?>>();
         InputStream stream = null;
         try {
+            ormFileName = ormFileName.replaceAll("\\\\", "/");
+            if ( '/' != ormFileName.charAt(0))
+                ormFileName = "/" + ormFileName;
             JAXBContext context = JAXBContext.newInstance(EntityMappings.class);
-            stream = caller.getResourceAsStream("/" + ormFileName);
+            stream = caller.getResourceAsStream(ormFileName);
 
             if (stream != null) {
                 Unmarshaller unmarshaller = context.createUnmarshaller();
