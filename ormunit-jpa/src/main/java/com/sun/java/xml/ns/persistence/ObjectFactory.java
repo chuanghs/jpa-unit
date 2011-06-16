@@ -8,6 +8,8 @@
 
 package com.sun.java.xml.ns.persistence;
 
+import com.sun.java.xml.ns.persistence.Persistence;
+
 import javax.xml.bind.annotation.XmlRegistry;
 
 
@@ -35,7 +37,7 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link Persistence.PersistenceUnit.Properties }
+     * Create an instance of {@link com.sun.java.xml.ns.persistence.Persistence.PersistenceUnit.Properties }
      */
     public Persistence.PersistenceUnit.Properties createPersistencePersistenceUnitProperties() {
         return new Persistence.PersistenceUnit.Properties();

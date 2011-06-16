@@ -1,8 +1,8 @@
 package org.ormunit.junit;
 
-import com.sun.java.xml.ns.persistence.Entity;
-import com.sun.java.xml.ns.persistence.EntityMappings;
 import com.sun.java.xml.ns.persistence.Persistence;
+import com.sun.java.xml.ns.persistence.orm.Entity;
+import com.sun.java.xml.ns.persistence.orm.EntityMappings;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,10 +135,13 @@ public class JPAHelper {
                     classes.add(instatiateClass(cn));
                 }
             // then iterate throught orm2.xml files
-            if (pu.getMappingFile() != null)
+            if (pu.getMappingFile() != null && pu.getMappingFile().size() > 0) {
                 for (String s : pu.getMappingFile()) {
                     classes.addAll(getManagedTypesFromOrmFile(caller, s));
                 }
+            } else {
+                classes.addAll(getManagedTypesFromOrmFile(caller, "/META-INF/orm.xml"));
+            }
             return classes;
 
         }
@@ -151,7 +154,7 @@ public class JPAHelper {
         InputStream stream = null;
         try {
             JAXBContext context = JAXBContext.newInstance(EntityMappings.class);
-            stream = caller.getResourceAsStream(ormFileName);
+            stream = caller.getResourceAsStream("/" + ormFileName);
 
             if (stream != null) {
                 Unmarshaller unmarshaller = context.createUnmarshaller();
