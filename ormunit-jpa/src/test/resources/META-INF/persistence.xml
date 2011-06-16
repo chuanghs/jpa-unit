@@ -10,6 +10,9 @@
         <class>org.ormunit.entity.PropertyAccessEntity</class>
         <class>org.ormunit.entity.FieldAccessEntity</class>
         <class>org.ormunit.entity.PoliciesEntity</class>
+
+        <mapping-file>META-INF/orm2.xml</mapping-file>
+
        <properties>
             <!-- EclipseLink should create the database schema automatically -->
             <property name="eclipselink.ddl-generation" value="create-tables"/>

@@ -28,7 +28,7 @@ public class JPAUnitComposedIdsTest extends JPAUnitTestCase {
     public void testTransaction() throws JAXBException {
         assertTrue(getEm().getTransaction().isActive());
 
-        assertEquals(3, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
+        assertEquals(4, JPAHelper.getManagedTypes(getClass(), "ormunit-jpa").size());
     }
 
     @Test
