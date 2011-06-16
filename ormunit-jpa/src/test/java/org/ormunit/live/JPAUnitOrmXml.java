@@ -10,10 +10,10 @@ import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 16.06.11
  * Time: 16:25
- * To change this template use File | Settings | File Templates.
+ *
  */
 @RunWith(JUnit4.class)
 public class JPAUnitOrmXml {

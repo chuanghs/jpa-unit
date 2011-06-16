@@ -1,15 +1,14 @@
 package org.ormunit;
 
+import com.sun.java.xml.ns.persistence.orm.AccessType;
 import org.ormunit.junit.JPAHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.*;
-import java.beans.IntrospectionException;
-import java.beans.PropertyDescriptor;
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Persistence;
 import java.lang.ref.WeakReference;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -39,6 +38,7 @@ public class JPAORMProvider extends AORMProvider {
     private EntityManagerFactory entityManagerFactory;
     private WeakHashMap<Class, WeakReference<Class>> idTypes = new WeakHashMap<Class, WeakReference<Class>>();
     private BeanUtils utils = new BeanUtils();
+    private AnnotationsClassInspector classInspector = new AnnotationsClassInspector();
 
 
     public JPAORMProvider(EntityManager entityManager) {
@@ -70,15 +70,17 @@ public class JPAORMProvider extends AORMProvider {
 
     }
 
+    public EntityManager getEntityManager() {
+        return entityManager;
+    }
+
     public void statement(String statement) {
         getEntityManager().createNativeQuery(statement).executeUpdate();
     }
 
-
     public Object entity(Object entity) {
-
         try {
-            if (isIdGenerated(entity)) {
+            if (classInspector.isIdGenerated(classInspector, entity, this)) {
                 setId(entity, getDefault(getIdType(entity.getClass())));
             }
 
@@ -92,111 +94,29 @@ public class JPAORMProvider extends AORMProvider {
         }
     }
 
-    public boolean isPropertyAccessed(Class clazz) {
-        while (clazz != null) {
-            for (Method m : clazz.getDeclaredMethods()) {
-                if (m.getAnnotation(Id.class) != null || m.getAnnotation(EmbeddedId.class) != null)
-                    return true;
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return false;
-    }
-
     public boolean isFieldAccessed(Class<?> clazz) {
-        while (clazz != null) {
-            for (Field m : clazz.getDeclaredFields()) {
-                if (m.getAnnotation(Id.class) != null || m.getAnnotation(EmbeddedId.class) != null)
-                    return true;
-            }
-            clazz = clazz.getSuperclass();
-        }
-        return false;
+        return classInspector.getAccessType(clazz) == AccessType.FIELD;
     }
 
+    public boolean isPropertyAccessed(Class clazz) {
+        return classInspector.getAccessType(clazz) == AccessType.PROPERTY;
+    }
 
     public <T> T getEntity(Class<T> propertyClass, Object id) {
         return getEntityManager().getReference(propertyClass, id);
     }
 
-    public EntityManager getEntityManager() {
-        return entityManager;
-    }
-
-    private boolean isIdGenerated(Object entity) throws IntrospectionException {
-        if (isPropertyAccessed(entity.getClass())) {
-            for (Field field : utils.getFieldsAnnotatedWith(entity.getClass(), Id.class)) {
-                if (field.getAnnotation(GeneratedValue.class) != null) {
-                    return true;
-                }
-            }
-        } else if (isFieldAccessed(entity.getClass())) {
-            for (PropertyDescriptor pd : utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class)) {
-                if (pd.getReadMethod().getAnnotation(GeneratedValue.class) != null) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
     public Object getId(Object entity) throws Exception {
-        IdClass idClass = entity.getClass().getAnnotation(IdClass.class);
-        Object result = null;
-        if (idClass != null) {
-            result = idClass.value().newInstance();
-            if (isPropertyAccessed(entity.getClass())) {
-                result = idClass.value().newInstance();
-                utils.copyPropertyValues(entity, result);
-            } else {
-                result = idClass.value().newInstance();
-                utils.copyFieldValues(entity, result);
-            }
-        } else {
-            if (isPropertyAccessed(entity.getClass())) {
-                Set<PropertyDescriptor> idProperties = utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class);
-                result = idProperties.iterator().next().getReadMethod().invoke(entity);
-            } else {
-                Set<Field> idFields = utils.getFieldsAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class);
-                Field next = idFields.iterator().next();
-                next.setAccessible(true);
-                result = next.get(entity);
-            }
-        }
-        return result;
+        return classInspector.getId(entity);
     }
 
     public void setId(Object entity, Object id) throws Exception {
-        if (entity.getClass().getAnnotation(IdClass.class) != null) {
-            if (isPropertyAccessed(entity.getClass()))
-                utils.copyPropertyValues(id, entity);
-            else if (isFieldAccessed(entity.getClass()))
-                utils.copyFieldValues(id, entity);
-        } else {
-            if (isPropertyAccessed(entity.getClass())) {
-                utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class).iterator().next().getWriteMethod().invoke(entity, id);
-            } else if (isFieldAccessed(entity.getClass())) {
-                Field next = utils.getFieldsAnnotatedWith(entity.getClass(), Id.class, EmbeddedId.class).iterator().next();
-                next.setAccessible(true);
-                next.set(entity, id);
-            }
-        }
+        classInspector.setId_Annotations(entity, id);
 
     }
 
     public Class<?> getIdType(Class<?> entityClass) {
-        Class<?> result = null;
-        IdClass idClass = entityClass.getAnnotation(IdClass.class);
-        if (idClass != null) {
-            result = idClass.value();
-        } else {
-            if (isPropertyAccessed(entityClass)) {
-                return utils.getPropertiesAnnotatedWith(entityClass, Id.class, EmbeddedId.class).iterator().next().getPropertyType();
-            } else if (isFieldAccessed(entityClass)) {
-                return utils.getFieldsAnnotatedWith(entityClass, Id.class, EmbeddedId.class).iterator().next().getType();
-            }
-        }
-        return result;
+        return classInspector.getIdClass2(entityClass);
     }
 
 
@@ -221,7 +141,7 @@ public class JPAORMProvider extends AORMProvider {
     }
 
     public Set<Class<?>> getManagedTypes() {
-        if (this.unitName !=null)
+        if (this.unitName != null)
             return JPAHelper.getManagedTypes(getClass(), this.unitName);
         return new HashSet<Class<?>>();
     }

@@ -15,7 +15,7 @@ import static org.mockito.Mockito.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 24.04.11
  * Time: 20:39
  */

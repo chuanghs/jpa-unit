@@ -4,10 +4,10 @@ import javax.persistence.Id;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 16.06.11
  * Time: 15:53
- * To change this template use File | Settings | File Templates.
+ *
  */
 public class ListedInORMXMLEntity {
 

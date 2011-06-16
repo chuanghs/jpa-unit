@@ -7,7 +7,7 @@ import javax.persistence.*;
  * User: krzyzak
  * Date: 30.12.10
  * Time: 10:48
- * To change this template use File | Settings | File Templates.
+ *
  */
 @Entity
 @Table(name = "propertyaccessentity", schema = "testschema")

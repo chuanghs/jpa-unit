@@ -2,7 +2,7 @@ package org.ormunit.entity;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 25.04.11
  * Time: 21:04
  */
