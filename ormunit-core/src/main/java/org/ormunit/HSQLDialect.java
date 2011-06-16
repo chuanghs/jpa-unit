@@ -2,10 +2,10 @@ package org.ormunit;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 14.06.11
  * Time: 23:09
- * To change this template use File | Settings | File Templates.
+ *
  */
 public class HSQLDialect implements Dialect {
     public String getCreateSchemaStatement(String schemaName) {

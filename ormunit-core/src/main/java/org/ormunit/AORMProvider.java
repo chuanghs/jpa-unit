@@ -10,7 +10,7 @@ import java.util.WeakHashMap;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 10.02.11
  * Time: 20:49
  */

@@ -4,7 +4,7 @@ import java.lang.reflect.Field;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 27.03.11
  * Time: 14:43
  */

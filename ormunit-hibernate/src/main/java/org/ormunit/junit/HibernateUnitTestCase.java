@@ -24,7 +24,7 @@ import java.util.Properties;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 10.02.11
  * Time: 21:03
  */

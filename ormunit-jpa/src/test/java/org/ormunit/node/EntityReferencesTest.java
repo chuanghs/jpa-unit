@@ -25,10 +25,10 @@ import static org.mockito.Mockito.*;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 21.04.11
  * Time: 20:34
- * To change this template use File | Settings | File Templates.
+ *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EntityReferencesTest {

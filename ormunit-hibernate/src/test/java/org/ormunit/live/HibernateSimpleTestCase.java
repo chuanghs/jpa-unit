@@ -9,7 +9,7 @@ import org.ormunit.junit.HibernateUnitTestCase;
 
 /**
  * Created by IntelliJ IDEA.
- * User: jan kowalski
+ * User: Tomasz Krzyżak
  * Date: 22.02.11
  * Time: 21:18
  */
