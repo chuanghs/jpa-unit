@@ -50,5 +50,14 @@
 
     </persistence-unit>
 
+    <persistence-unit name="ormunit-jpa-default-orm" transaction-type="RESOURCE_LOCAL">
+    </persistence-unit>
 
+    <persistence-unit name="ormunit-jpa-provided-orm" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>META-INF/orm2.xml</mapping-file>
+    </persistence-unit>
+
+    <persistence-unit name="ormunit-jpa-provided-orm-back-slashes" transaction-type="RESOURCE_LOCAL">
+        <mapping-file>\META-INF/orm2.xml</mapping-file>
+    </persistence-unit>
 </persistence>
