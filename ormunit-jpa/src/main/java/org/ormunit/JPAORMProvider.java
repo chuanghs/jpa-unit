@@ -1,7 +1,9 @@
 package org.ormunit;
 
 import com.sun.java.xml.ns.persistence.orm.AccessType;
-import org.ormunit.junit.JPAHelper;
+import org.ormunit.dialect.DefaultDialect;
+import org.ormunit.dialect.Dialect;
+import org.ormunit.dialect.HSQLDialect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,13 +11,15 @@ import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
 import java.lang.ref.WeakReference;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.*;
 
+import static org.ormunit.JPAHelper.*;
 import static org.ormunit.ORMUnitHelper.isHSQL;
-import static org.ormunit.junit.JPAHelper.*;
 
 
 /**
@@ -38,7 +42,7 @@ public class JPAORMProvider extends AORMProvider {
     private EntityManagerFactory entityManagerFactory;
     private WeakHashMap<Class, WeakReference<Class>> idTypes = new WeakHashMap<Class, WeakReference<Class>>();
     private BeanUtils utils = new BeanUtils();
-    private AnnotationsClassInspector classInspector = new AnnotationsClassInspector();
+    private JPAEntityInspector classInspector = new AnnotationsEntityInspector();
 
 
     public JPAORMProvider(EntityManager entityManager) {
@@ -95,28 +99,61 @@ public class JPAORMProvider extends AORMProvider {
     }
 
     public boolean isFieldAccessed(Class<?> clazz) {
-        return classInspector.getAccessType(clazz) == AccessType.FIELD;
+        return classInspector.getAccessTypeOfClass(clazz) == AccessType.FIELD;
     }
 
     public boolean isPropertyAccessed(Class clazz) {
-        return classInspector.getAccessType(clazz) == AccessType.PROPERTY;
+        return classInspector.getAccessTypeOfClass(clazz) == AccessType.PROPERTY;
     }
 
     public <T> T getEntity(Class<T> propertyClass, Object id) {
         return getEntityManager().getReference(propertyClass, id);
     }
 
-    public Object getId(Object entity) throws Exception {
-        return classInspector.getId(entity);
+    public Object getId(Object entity) throws InstantiationException, IllegalAccessException, InvocationTargetException {
+        Class<?> entityClass = entity.getClass();
+        Class idClassType = classInspector.getIdClassType(entityClass);
+        Object result = null;
+        if (idClassType != null) {
+            result = idClassType.newInstance();
+            if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+                result = utils.copyPropertyValues(entity, idClassType.newInstance());
+            } else {
+                result = utils.copyFieldValues(entity, idClassType.newInstance());
+            }
+        } else {
+            if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+                result = classInspector.getIdProperty(entityClass).getReadMethod().invoke(entity);
+            } else {
+                Field next = classInspector.getIdField(entityClass);
+                next.setAccessible(true);
+                result = next.get(entity);
+            }
+        }
+        return result;
     }
 
-    public void setId(Object entity, Object id) throws Exception {
-        classInspector.setId_Annotations(entity, id);
-
+    public void setId(Object entity, Object id) throws IllegalAccessException, InvocationTargetException {
+        Class<?> entityClass = entity.getClass();
+        Class idClassType = classInspector.getIdClassType(entityClass);
+        if (idClassType != null) {
+            if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY)
+                utils.copyPropertyValues(id, entity);
+            else if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.FIELD)
+                utils.copyFieldValues(id, entity);
+        } else {
+            if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+                classInspector.getIdProperty(entityClass).getWriteMethod().invoke(entity, id);
+            } else if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.FIELD) {
+                Field next = classInspector.getIdField(entityClass);
+                next.setAccessible(true);
+                next.set(entity, id);
+            }
+        }
     }
 
     public Class<?> getIdType(Class<?> entityClass) {
-        return classInspector.getIdClass2(entityClass);
+        return classInspector.getIdTypeOfClass(entityClass);
     }
 
 

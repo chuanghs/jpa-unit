@@ -8,8 +8,6 @@
 
 package com.sun.java.xml.ns.persistence;
 
-import com.sun.java.xml.ns.persistence.Persistence;
-
 import javax.xml.bind.annotation.XmlRegistry;
 
 

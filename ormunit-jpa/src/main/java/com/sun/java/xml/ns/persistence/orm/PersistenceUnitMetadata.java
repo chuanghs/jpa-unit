@@ -15,21 +15,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         Metadata that applies to the persistence unit and not just to 
- *         the mapping file in which it is contained. 
- * 
- *         If the xml-mapping-metadata-complete element is specified,
- *         the complete set of mapping metadata for the persistence unit 
- *         is contained in the XML mapping files for the persistence unit.
- * 
- *       
- * 
+ * Metadata that applies to the persistence unit and not just to
+ * the mapping file in which it is contained.
+ * <p/>
+ * If the xml-mapping-metadata-complete element is specified,
+ * the complete set of mapping metadata for the persistence unit
+ * is contained in the XML mapping files for the persistence unit.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for persistence-unit-metadata complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="persistence-unit-metadata">
  *   &lt;complexContent>
@@ -43,14 +41,12 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "persistence-unit-metadata", propOrder = {
-    "description",
-    "xmlMappingMetadataComplete",
-    "persistenceUnitDefaults"
+        "description",
+        "xmlMappingMetadataComplete",
+        "persistenceUnitDefaults"
 })
 public class PersistenceUnitMetadata {
 
@@ -62,11 +58,9 @@ public class PersistenceUnitMetadata {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -74,11 +68,9 @@ public class PersistenceUnitMetadata {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -86,11 +78,9 @@ public class PersistenceUnitMetadata {
 
     /**
      * Gets the value of the xmlMappingMetadataComplete property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getXmlMappingMetadataComplete() {
         return xmlMappingMetadataComplete;
@@ -98,11 +88,9 @@ public class PersistenceUnitMetadata {
 
     /**
      * Sets the value of the xmlMappingMetadataComplete property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setXmlMappingMetadataComplete(EmptyType value) {
         this.xmlMappingMetadataComplete = value;
@@ -110,11 +98,9 @@ public class PersistenceUnitMetadata {
 
     /**
      * Gets the value of the persistenceUnitDefaults property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PersistenceUnitDefaults }
-     *     
+     *
+     * @return possible object is
+     *         {@link PersistenceUnitDefaults }
      */
     public PersistenceUnitDefaults getPersistenceUnitDefaults() {
         return persistenceUnitDefaults;
@@ -122,11 +108,9 @@ public class PersistenceUnitMetadata {
 
     /**
      * Sets the value of the persistenceUnitDefaults property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PersistenceUnitDefaults }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PersistenceUnitDefaults }
      */
     public void setPersistenceUnitDefaults(PersistenceUnitDefaults value) {
         this.persistenceUnitDefaults = value;

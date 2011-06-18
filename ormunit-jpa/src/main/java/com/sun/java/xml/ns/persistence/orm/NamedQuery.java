@@ -8,32 +8,26 @@
 
 package com.sun.java.xml.ns.persistence.orm;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface NamedQuery {
- *           String name();
- *           String query();
- *           LockModeType lockMode() default NONE;
- *           QueryHint[] hints() default {};
- *         }
- * 
- *       
- * 
+ * @Target({TYPE}) @Retention(RUNTIME)
+ * public @interface NamedQuery {
+ * String name();
+ * String query();
+ * LockModeType lockMode() default NONE;
+ * QueryHint[] hints() default {};
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for named-query complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="named-query">
  *   &lt;complexContent>
@@ -49,15 +43,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "named-query", propOrder = {
-    "description",
-    "query",
-    "lockMode",
-    "hint"
+        "description",
+        "query",
+        "lockMode",
+        "hint"
 })
 public class NamedQuery {
 
@@ -72,11 +64,9 @@ public class NamedQuery {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -84,11 +74,9 @@ public class NamedQuery {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -96,11 +84,9 @@ public class NamedQuery {
 
     /**
      * Gets the value of the query property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getQuery() {
         return query;
@@ -108,11 +94,9 @@ public class NamedQuery {
 
     /**
      * Sets the value of the query property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setQuery(String value) {
         this.query = value;
@@ -120,11 +104,9 @@ public class NamedQuery {
 
     /**
      * Gets the value of the lockMode property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link LockModeType }
-     *     
+     *
+     * @return possible object is
+     *         {@link LockModeType }
      */
     public LockModeType getLockMode() {
         return lockMode;
@@ -132,11 +114,9 @@ public class NamedQuery {
 
     /**
      * Sets the value of the lockMode property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link LockModeType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link LockModeType }
      */
     public void setLockMode(LockModeType value) {
         this.lockMode = value;
@@ -144,25 +124,23 @@ public class NamedQuery {
 
     /**
      * Gets the value of the hint property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the hint property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getHint().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link QueryHint }
-     * 
-     * 
      */
     public List<QueryHint> getHint() {
         if (hint == null) {
@@ -173,11 +151,9 @@ public class NamedQuery {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -185,11 +161,9 @@ public class NamedQuery {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;

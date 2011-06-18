@@ -15,21 +15,19 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface PrimaryKeyJoinColumn {
- *           String name() default "";
- *           String referencedColumnName() default "";
- *           String columnDefinition() default "";
- *         }
- * 
- *       
- * 
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface PrimaryKeyJoinColumn {
+ * String name() default "";
+ * String referencedColumnName() default "";
+ * String columnDefinition() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for primary-key-join-column complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="primary-key-join-column">
  *   &lt;complexContent>
@@ -41,8 +39,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "primary-key-join-column")
@@ -57,11 +53,9 @@ public class PrimaryKeyJoinColumn {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -69,11 +63,9 @@ public class PrimaryKeyJoinColumn {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -81,11 +73,9 @@ public class PrimaryKeyJoinColumn {
 
     /**
      * Gets the value of the referencedColumnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getReferencedColumnName() {
         return referencedColumnName;
@@ -93,11 +83,9 @@ public class PrimaryKeyJoinColumn {
 
     /**
      * Sets the value of the referencedColumnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setReferencedColumnName(String value) {
         this.referencedColumnName = value;
@@ -105,11 +93,9 @@ public class PrimaryKeyJoinColumn {
 
     /**
      * Gets the value of the columnDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getColumnDefinition() {
         return columnDefinition;
@@ -117,11 +103,9 @@ public class PrimaryKeyJoinColumn {
 
     /**
      * Sets the value of the columnDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setColumnDefinition(String value) {
         this.columnDefinition = value;

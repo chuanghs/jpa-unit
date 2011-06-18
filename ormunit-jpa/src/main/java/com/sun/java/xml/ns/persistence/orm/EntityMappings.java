@@ -8,52 +8,45 @@
 
 package com.sun.java.xml.ns.persistence.orm;
 
-import java.util.ArrayList;
-import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- *         The entity-mappings element is the root element of a mapping
- *         file. It contains the following four types of elements:
- * 
- *         1. The persistence-unit-metadata element contains metadata
- *         for the entire persistence unit. It is undefined if this element
- *         occurs in multiple mapping files within the same persistence unit.
- *         
- *         2. The package, schema, catalog and access elements apply to all of
- *         the entity, mapped-superclass and embeddable elements defined in
- *         the same file in which they occur.
- * 
- *         3. The sequence-generator, table-generator, named-query,
- *         named-native-query and sql-result-set-mapping elements are global
- *         to the persistence unit. It is undefined to have more than one
- *         sequence-generator or table-generator of the same name in the same
- *         or different mapping files in a persistence unit. It is also 
- *         undefined to have more than one named-query, named-native-query, or
- *         result-set-mapping of the same name in the same or different mapping 
- *         files in a persistence unit.
- * 
- *         4. The entity, mapped-superclass and embeddable elements each define
- *         the mapping information for a managed persistent class. The mapping
- *         information contained in these elements may be complete or it may
- *         be partial.
- * 
- *         
- * 
+ * The entity-mappings element is the root element of a mapping
+ * file. It contains the following four types of elements:
+ * <p/>
+ * 1. The persistence-unit-metadata element contains metadata
+ * for the entire persistence unit. It is undefined if this element
+ * occurs in multiple mapping files within the same persistence unit.
+ * <p/>
+ * 2. The package, schema, catalog and access elements apply to all of
+ * the entity, mapped-superclass and embeddable elements defined in
+ * the same file in which they occur.
+ * <p/>
+ * 3. The sequence-generator, table-generator, named-query,
+ * named-native-query and sql-result-set-mapping elements are global
+ * to the persistence unit. It is undefined to have more than one
+ * sequence-generator or table-generator of the same name in the same
+ * or different mapping files in a persistence unit. It is also
+ * undefined to have more than one named-query, named-native-query, or
+ * result-set-mapping of the same name in the same or different mapping
+ * files in a persistence unit.
+ * <p/>
+ * 4. The entity, mapped-superclass and embeddable elements each define
+ * the mapping information for a managed persistent class. The mapping
+ * information contained in these elements may be complete or it may
+ * be partial.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for anonymous complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType>
  *   &lt;complexContent>
@@ -79,25 +72,23 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(propOrder = {
-    "description",
-    "persistenceUnitMetadata",
-    "_package",
-    "schema",
-    "catalog",
-    "access",
-    "sequenceGenerator",
-    "tableGenerator",
-    "namedQuery",
-    "namedNativeQuery",
-    "sqlResultSetMapping",
-    "mappedSuperclass",
-    "entity",
-    "embeddable"
+        "description",
+        "persistenceUnitMetadata",
+        "_package",
+        "schema",
+        "catalog",
+        "access",
+        "sequenceGenerator",
+        "tableGenerator",
+        "namedQuery",
+        "namedNativeQuery",
+        "sqlResultSetMapping",
+        "mappedSuperclass",
+        "entity",
+        "embeddable"
 })
 @XmlRootElement(name = "entity-mappings")
 public class EntityMappings {
@@ -130,11 +121,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -142,11 +131,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -154,11 +141,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the persistenceUnitMetadata property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PersistenceUnitMetadata }
-     *     
+     *
+     * @return possible object is
+     *         {@link PersistenceUnitMetadata }
      */
     public PersistenceUnitMetadata getPersistenceUnitMetadata() {
         return persistenceUnitMetadata;
@@ -166,11 +151,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the persistenceUnitMetadata property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PersistenceUnitMetadata }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PersistenceUnitMetadata }
      */
     public void setPersistenceUnitMetadata(PersistenceUnitMetadata value) {
         this.persistenceUnitMetadata = value;
@@ -178,11 +161,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the package property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getPackage() {
         return _package;
@@ -190,11 +171,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the package property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setPackage(String value) {
         this._package = value;
@@ -202,11 +181,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the schema property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getSchema() {
         return schema;
@@ -214,11 +191,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the schema property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setSchema(String value) {
         this.schema = value;
@@ -226,11 +201,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the catalog property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getCatalog() {
         return catalog;
@@ -238,11 +211,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the catalog property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setCatalog(String value) {
         this.catalog = value;
@@ -250,11 +221,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     *         {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -262,11 +231,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
     public void setAccess(AccessType value) {
         this.access = value;
@@ -274,25 +241,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the sequenceGenerator property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sequenceGenerator property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSequenceGenerator().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link SequenceGenerator }
-     * 
-     * 
      */
     public List<SequenceGenerator> getSequenceGenerator() {
         if (sequenceGenerator == null) {
@@ -303,25 +268,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the tableGenerator property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the tableGenerator property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTableGenerator().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link TableGenerator }
-     * 
-     * 
      */
     public List<TableGenerator> getTableGenerator() {
         if (tableGenerator == null) {
@@ -332,25 +295,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the namedQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedQuery().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedQuery }
-     * 
-     * 
      */
     public List<NamedQuery> getNamedQuery() {
         if (namedQuery == null) {
@@ -361,25 +322,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the namedNativeQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the namedNativeQuery property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getNamedNativeQuery().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link NamedNativeQuery }
-     * 
-     * 
      */
     public List<NamedNativeQuery> getNamedNativeQuery() {
         if (namedNativeQuery == null) {
@@ -390,25 +349,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the sqlResultSetMapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the sqlResultSetMapping property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getSqlResultSetMapping().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link SqlResultSetMapping }
-     * 
-     * 
      */
     public List<SqlResultSetMapping> getSqlResultSetMapping() {
         if (sqlResultSetMapping == null) {
@@ -419,25 +376,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the mappedSuperclass property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the mappedSuperclass property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getMappedSuperclass().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link MappedSuperclass }
-     * 
-     * 
      */
     public List<MappedSuperclass> getMappedSuperclass() {
         if (mappedSuperclass == null) {
@@ -448,25 +403,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the entity property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the entity property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEntity().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Entity }
-     * 
-     * 
      */
     public List<Entity> getEntity() {
         if (entity == null) {
@@ -477,25 +430,23 @@ public class EntityMappings {
 
     /**
      * Gets the value of the embeddable property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the embeddable property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEmbeddable().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Embeddable }
-     * 
-     * 
      */
     public List<Embeddable> getEmbeddable() {
         if (embeddable == null) {
@@ -506,11 +457,9 @@ public class EntityMappings {
 
     /**
      * Gets the value of the version property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getVersion() {
         if (version == null) {
@@ -522,11 +471,9 @@ public class EntityMappings {
 
     /**
      * Sets the value of the version property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setVersion(String value) {
         this.version = value;

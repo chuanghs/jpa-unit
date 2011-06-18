@@ -8,25 +8,19 @@
 
 package com.sun.java.xml.ns.persistence.orm;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
- * 
- * 
- *         Defines an entity listener to be invoked at lifecycle events
- *         for the entities that list this listener.
- * 
- *       
- * 
+ * Defines an entity listener to be invoked at lifecycle events
+ * for the entities that list this listener.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for entity-listener complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="entity-listener">
  *   &lt;complexContent>
@@ -46,19 +40,17 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-listener", propOrder = {
-    "description",
-    "prePersist",
-    "postPersist",
-    "preRemove",
-    "postRemove",
-    "preUpdate",
-    "postUpdate",
-    "postLoad"
+        "description",
+        "prePersist",
+        "postPersist",
+        "preRemove",
+        "postRemove",
+        "preUpdate",
+        "postUpdate",
+        "postLoad"
 })
 public class EntityListener {
 
@@ -82,11 +74,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -94,11 +84,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -106,11 +94,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the prePersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PrePersist }
-     *     
+     *
+     * @return possible object is
+     *         {@link PrePersist }
      */
     public PrePersist getPrePersist() {
         return prePersist;
@@ -118,11 +104,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the prePersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PrePersist }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PrePersist }
      */
     public void setPrePersist(PrePersist value) {
         this.prePersist = value;
@@ -130,11 +114,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the postPersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostPersist }
-     *     
+     *
+     * @return possible object is
+     *         {@link PostPersist }
      */
     public PostPersist getPostPersist() {
         return postPersist;
@@ -142,11 +124,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the postPersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostPersist }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostPersist }
      */
     public void setPostPersist(PostPersist value) {
         this.postPersist = value;
@@ -154,11 +134,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the preRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreRemove }
-     *     
+     *
+     * @return possible object is
+     *         {@link PreRemove }
      */
     public PreRemove getPreRemove() {
         return preRemove;
@@ -166,11 +144,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the preRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreRemove }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreRemove }
      */
     public void setPreRemove(PreRemove value) {
         this.preRemove = value;
@@ -178,11 +154,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the postRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostRemove }
-     *     
+     *
+     * @return possible object is
+     *         {@link PostRemove }
      */
     public PostRemove getPostRemove() {
         return postRemove;
@@ -190,11 +164,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the postRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostRemove }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostRemove }
      */
     public void setPostRemove(PostRemove value) {
         this.postRemove = value;
@@ -202,11 +174,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the preUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PreUpdate }
-     *     
+     *
+     * @return possible object is
+     *         {@link PreUpdate }
      */
     public PreUpdate getPreUpdate() {
         return preUpdate;
@@ -214,11 +184,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the preUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PreUpdate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PreUpdate }
      */
     public void setPreUpdate(PreUpdate value) {
         this.preUpdate = value;
@@ -226,11 +194,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the postUpdate property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostUpdate }
-     *     
+     *
+     * @return possible object is
+     *         {@link PostUpdate }
      */
     public PostUpdate getPostUpdate() {
         return postUpdate;
@@ -238,11 +204,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the postUpdate property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostUpdate }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostUpdate }
      */
     public void setPostUpdate(PostUpdate value) {
         this.postUpdate = value;
@@ -250,11 +214,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the postLoad property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link PostLoad }
-     *     
+     *
+     * @return possible object is
+     *         {@link PostLoad }
      */
     public PostLoad getPostLoad() {
         return postLoad;
@@ -262,11 +224,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the postLoad property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link PostLoad }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link PostLoad }
      */
     public void setPostLoad(PostLoad value) {
         this.postLoad = value;
@@ -274,11 +234,9 @@ public class EntityListener {
 
     /**
      * Gets the value of the clazz property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getClazz() {
         return clazz;
@@ -286,11 +244,9 @@ public class EntityListener {
 
     /**
      * Sets the value of the clazz property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setClazz(String value) {
         this.clazz = value;

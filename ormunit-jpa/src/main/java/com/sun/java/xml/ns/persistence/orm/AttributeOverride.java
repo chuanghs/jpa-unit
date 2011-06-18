@@ -8,28 +8,22 @@
 
 package com.sun.java.xml.ns.persistence.orm;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.*;
 
 
 /**
- * 
- * 
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface AttributeOverride {
- *           String name();
- *           Column column();
- *         }
- * 
- *       
- * 
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface AttributeOverride {
+ * String name();
+ * Column column();
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for attribute-override complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="attribute-override">
  *   &lt;complexContent>
@@ -43,13 +37,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "attribute-override", propOrder = {
-    "description",
-    "column"
+        "description",
+        "column"
 })
 public class AttributeOverride {
 
@@ -61,11 +53,9 @@ public class AttributeOverride {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -73,11 +63,9 @@ public class AttributeOverride {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -85,11 +73,9 @@ public class AttributeOverride {
 
     /**
      * Gets the value of the column property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Column }
-     *     
+     *
+     * @return possible object is
+     *         {@link Column }
      */
     public Column getColumn() {
         return column;
@@ -97,11 +83,9 @@ public class AttributeOverride {
 
     /**
      * Sets the value of the column property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Column }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Column }
      */
     public void setColumn(Column value) {
         this.column = value;
@@ -109,11 +93,9 @@ public class AttributeOverride {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -121,11 +103,9 @@ public class AttributeOverride {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;

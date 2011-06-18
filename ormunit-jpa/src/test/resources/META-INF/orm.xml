@@ -6,6 +6,10 @@
     <package>org.ormunit.entity</package>
 
     <entity class="ListedInORMXMLEntity">
-        <id name="id"/>
+
+        <attributes>
+            <id name="id"/>
+        </attributes>
+
     </entity>
 </entity-mappings>

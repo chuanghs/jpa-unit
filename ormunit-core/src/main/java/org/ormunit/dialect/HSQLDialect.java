@@ -1,4 +1,4 @@
-package org.ormunit;
+package org.ormunit.dialect;
 
 /**
  * Created by IntelliJ IDEA.

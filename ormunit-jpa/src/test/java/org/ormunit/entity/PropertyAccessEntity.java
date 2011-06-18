@@ -7,7 +7,6 @@ import javax.persistence.*;
  * User: krzyzak
  * Date: 30.12.10
  * Time: 10:48
- *
  */
 @Entity
 @Table(name = "propertyaccessentity", schema = "testschema")
@@ -61,6 +60,7 @@ public class PropertyAccessEntity {
                 "id=" + id +
                 '}';
     }
+
     @Transient
     public String getJustGetterProperty() {
         return justGetterProperty;

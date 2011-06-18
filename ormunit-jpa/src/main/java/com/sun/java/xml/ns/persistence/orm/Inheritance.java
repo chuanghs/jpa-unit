@@ -15,19 +15,17 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({TYPE}) @Retention(RUNTIME)
- *         public @interface Inheritance {
- *           InheritanceType strategy() default SINGLE_TABLE;
- *         }
- * 
- *       
- * 
+ * @Target({TYPE}) @Retention(RUNTIME)
+ * public @interface Inheritance {
+ * InheritanceType strategy() default SINGLE_TABLE;
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for inheritance complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="inheritance">
  *   &lt;complexContent>
@@ -37,8 +35,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "inheritance")
@@ -49,11 +45,9 @@ public class Inheritance {
 
     /**
      * Gets the value of the strategy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link InheritanceType }
-     *     
+     *
+     * @return possible object is
+     *         {@link InheritanceType }
      */
     public InheritanceType getStrategy() {
         return strategy;
@@ -61,11 +55,9 @@ public class Inheritance {
 
     /**
      * Sets the value of the strategy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link InheritanceType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link InheritanceType }
      */
     public void setStrategy(InheritanceType value) {
         this.strategy = value;

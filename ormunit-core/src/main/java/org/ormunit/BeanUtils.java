@@ -51,8 +51,9 @@ public class BeanUtils {
         return getProperty(pojoClass.getSuperclass(), propertyName);
     }
 
-    public void copyFieldValues(Object source, Object target) {
+    public Object copyFieldValues(Object source, Object target) {
         copyFieldValues(source, target, target.getClass());
+        return target;
     }
 
     public void copyFieldValues(Object source, Object target, Class<?> aClass) {
@@ -78,8 +79,9 @@ public class BeanUtils {
         }
     }
 
-    public void copyPropertyValues(Object source, Object target) {
+    public Object copyPropertyValues(Object source, Object target) {
         copyPropertyValues(source, target, target.getClass());
+        return target;
     }
 
     public void copyPropertyValues(Object source, Object target, Class<?> targetClass) {

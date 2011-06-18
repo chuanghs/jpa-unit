@@ -15,23 +15,21 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface OrderColumn {
- *           String name() default "";
- *           boolean nullable() default true;
- *           boolean insertable() default true;
- *           boolean updatable() default true;
- *           String columnDefinition() default "";
- *          }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface OrderColumn {
+ * String name() default "";
+ * boolean nullable() default true;
+ * boolean insertable() default true;
+ * boolean updatable() default true;
+ * String columnDefinition() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for order-column complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="order-column">
  *   &lt;complexContent>
@@ -45,8 +43,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "order-column")
@@ -65,11 +61,9 @@ public class OrderColumn {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -77,11 +71,9 @@ public class OrderColumn {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -89,11 +81,9 @@ public class OrderColumn {
 
     /**
      * Gets the value of the nullable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isNullable() {
         return nullable;
@@ -101,11 +91,9 @@ public class OrderColumn {
 
     /**
      * Sets the value of the nullable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setNullable(Boolean value) {
         this.nullable = value;
@@ -113,11 +101,9 @@ public class OrderColumn {
 
     /**
      * Gets the value of the insertable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isInsertable() {
         return insertable;
@@ -125,11 +111,9 @@ public class OrderColumn {
 
     /**
      * Sets the value of the insertable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setInsertable(Boolean value) {
         this.insertable = value;
@@ -137,11 +121,9 @@ public class OrderColumn {
 
     /**
      * Gets the value of the updatable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isUpdatable() {
         return updatable;
@@ -149,11 +131,9 @@ public class OrderColumn {
 
     /**
      * Sets the value of the updatable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setUpdatable(Boolean value) {
         this.updatable = value;
@@ -161,11 +141,9 @@ public class OrderColumn {
 
     /**
      * Gets the value of the columnDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getColumnDefinition() {
         return columnDefinition;
@@ -173,11 +151,9 @@ public class OrderColumn {
 
     /**
      * Sets the value of the columnDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setColumnDefinition(String value) {
         this.columnDefinition = value;

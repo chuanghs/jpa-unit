@@ -1,4 +1,4 @@
-package org.ormunit.junit;
+package org.ormunit;
 
 import com.sun.java.xml.ns.persistence.Persistence;
 import com.sun.java.xml.ns.persistence.orm.Entity;
@@ -48,6 +48,7 @@ public class JPAHelper {
     private static String driverClassName = null;
     private static String hibernateDialect = null;
     private static String url = null;
+    public static final String PERSISTENCE_XML_FILENAME = "META-INF/persistence.xml";
 
     static {
 
@@ -106,7 +107,7 @@ public class JPAHelper {
     }
 
     public static String getPersistenceProvider(Class<?> caller, String unitName) {
-        Persistence.PersistenceUnit persistenceUnit = getPersistenceUnit(caller, unitName);
+        Persistence.PersistenceUnit persistenceUnit = getPersistenceUnitFromFile(caller, unitName);
         if (persistenceUnit != null) {
             return persistenceUnit.getProvider();
         }
@@ -122,7 +123,7 @@ public class JPAHelper {
         Persistence cast = null;
 
         // get persistence.xml content in form of PersistenceUnit object
-        Persistence.PersistenceUnit pu = getPersistenceUnit(caller, unitName);
+        Persistence.PersistenceUnit pu = getPersistenceUnitFromFile(caller, unitName);
 
         // if there is such persistence unit....
         if (pu != null) {
@@ -151,31 +152,46 @@ public class JPAHelper {
 
     private static Collection<Class<?>> getManagedTypesFromOrmFile(Class<?> caller, String ormFileName) {
         Collection<Class<?>> result = new LinkedList<Class<?>>();
+        EntityMappings cast = readOrmFile(caller, ormFileName);
+        if (cast != null) {
+            String package_ = cast.getPackage() != null ? cast.getPackage() + "." : "";
+            if (cast.getEntity() != null) {
+                for (Entity entity : cast.getEntity()) {
+                    result.add(instatiateClass(package_ + entity.getClazz()));
+                }
+            }
+        }
+        return result;
+    }
+
+    public static EntityMappings readOrmFile(Class<?> caller, String ormFileName) {
+        return readXmlFile(caller, ormFileName, EntityMappings.class);
+    }
+
+    private static Persistence readPersistenceFile(Class<?> caller) {
+        return readXmlFile(caller, PERSISTENCE_XML_FILENAME, Persistence.class);
+    }
+
+    private static <T> T readXmlFile(Class<?> caller, String xmlFileName, Class<T> readType) {
         InputStream stream = null;
         try {
-            ormFileName = ormFileName.replaceAll("\\\\", "/");
-            if ( '/' != ormFileName.charAt(0))
-                ormFileName = "/" + ormFileName;
-            JAXBContext context = JAXBContext.newInstance(EntityMappings.class);
-            stream = caller.getResourceAsStream(ormFileName);
+            xmlFileName = normalizeJarEntryPath(xmlFileName);
+            stream = caller.getResourceAsStream(xmlFileName);
 
             if (stream != null) {
+
+                JAXBContext context = JAXBContext.newInstance(readType);
                 Unmarshaller unmarshaller = context.createUnmarshaller();
 
                 XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(stream);
-
-                EntityMappings cast = unmarshaller.unmarshal(xer, EntityMappings.class).getValue();
-                String package_ = cast.getPackage() != null ? cast.getPackage() + "." : "";
-                if (cast.getEntity() != null) {
-                    for (Entity entity : cast.getEntity()) {
-                        result.add(instatiateClass(package_ + entity.getClazz()));
-                    }
-                }
+                return unmarshaller.unmarshal(xer, readType).getValue();
+            } else {
+                throw new ORMUnitConfigurationException(String.format("File not found %s", xmlFileName));
             }
         } catch (XMLStreamException e) {
-            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", ormFileName));
+            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", xmlFileName));
         } catch (JAXBException e) {
-            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", ormFileName));
+            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", xmlFileName));
         } finally {
             if (stream != null) {
                 try {
@@ -185,7 +201,13 @@ public class JPAHelper {
                 }
             }
         }
-        return result;
+    }
+
+    private static String normalizeJarEntryPath(String ormFileName) {
+        ormFileName = ormFileName.replaceAll("\\\\", "/");
+        if ('/' != ormFileName.charAt(0))
+            ormFileName = "/" + ormFileName;
+        return ormFileName;
     }
 
     private static Class<?> instatiateClass(String cn) {
@@ -200,43 +222,16 @@ public class JPAHelper {
         return c;
     }
 
-    private static Persistence.PersistenceUnit getPersistenceUnit(Class<?> caller, String unitName) {
-        InputStream stream = null;
-        Persistence cast = null;
-        try {
-            JAXBContext context = JAXBContext.newInstance(Persistence.class);
-            stream = caller.getResourceAsStream("/META-INF/persistence.xml");
-
-            if (stream != null) {
-                Unmarshaller unmarshaller = context.createUnmarshaller();
-
-                XMLEventReader xer = XMLInputFactory.newInstance().createXMLEventReader(stream);
-
-                cast = unmarshaller.unmarshal(xer, Persistence.class).getValue();
-            }
-        } catch (Exception e) {
-            throw new ORMUnitConfigurationException(e);
-        } finally {
-            if (stream != null) {
-                try {
-                    stream.close();
-                } catch (IOException e) {
-                    log.error("", e);
-                }
-            }
-        }
-        Persistence.PersistenceUnit result = null;
-
-        for (Persistence.PersistenceUnit pu : cast.getPersistenceUnit()) {
+    public static Persistence.PersistenceUnit getPersistenceUnitFromFile(Class<?> caller, String unitName) {
+        Persistence persistenceFileRoot = readPersistenceFile(caller);
+        for (Persistence.PersistenceUnit pu : persistenceFileRoot.getPersistenceUnit()) {
             if (pu.getName().equals(unitName)) {
-                result = pu;
-                break;
+                return pu;
             }
         }
-
-
-        return result;
+        return null;
     }
+
 
     public static List<String> findAllProviders() {
         List<String> result = new LinkedList<String>();
@@ -280,7 +275,7 @@ public class JPAHelper {
     public static Properties getProperties(Class<?> aClass, String unitName, Properties defaults) {
         Properties result = new Properties(defaults);
 
-        Persistence.PersistenceUnit.Properties properties = getPersistenceUnit(aClass, unitName).getProperties();
+        Persistence.PersistenceUnit.Properties properties = getPersistenceUnitFromFile(aClass, unitName).getProperties();
         if (properties != null)
             for (Persistence.PersistenceUnit.Properties.Property p : properties.getProperty()) {
                 result.setProperty(p.getName(), p.getValue());

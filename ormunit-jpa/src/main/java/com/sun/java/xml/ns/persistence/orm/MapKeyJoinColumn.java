@@ -15,26 +15,24 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface MapKeyJoinColumn {
- *           String name() default "";
- *           String referencedColumnName() default "";
- *           boolean unique() default false;
- *           boolean nullable() default false;
- *           boolean insertable() default true;
- *           boolean updatable() default true;
- *           String columnDefinition() default "";
- *           String table() default "";
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface MapKeyJoinColumn {
+ * String name() default "";
+ * String referencedColumnName() default "";
+ * boolean unique() default false;
+ * boolean nullable() default false;
+ * boolean insertable() default true;
+ * boolean updatable() default true;
+ * String columnDefinition() default "";
+ * String table() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for map-key-join-column complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="map-key-join-column">
  *   &lt;complexContent>
@@ -51,8 +49,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "map-key-join-column")
@@ -77,11 +73,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -89,11 +83,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -101,11 +93,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the referencedColumnName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getReferencedColumnName() {
         return referencedColumnName;
@@ -113,11 +103,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the referencedColumnName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setReferencedColumnName(String value) {
         this.referencedColumnName = value;
@@ -125,11 +113,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the unique property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isUnique() {
         return unique;
@@ -137,11 +123,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the unique property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setUnique(Boolean value) {
         this.unique = value;
@@ -149,11 +133,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the nullable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isNullable() {
         return nullable;
@@ -161,11 +143,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the nullable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setNullable(Boolean value) {
         this.nullable = value;
@@ -173,11 +153,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the insertable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isInsertable() {
         return insertable;
@@ -185,11 +163,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the insertable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setInsertable(Boolean value) {
         this.insertable = value;
@@ -197,11 +173,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the updatable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isUpdatable() {
         return updatable;
@@ -209,11 +183,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the updatable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setUpdatable(Boolean value) {
         this.updatable = value;
@@ -221,11 +193,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the columnDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getColumnDefinition() {
         return columnDefinition;
@@ -233,11 +203,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the columnDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setColumnDefinition(String value) {
         this.columnDefinition = value;
@@ -245,11 +213,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Gets the value of the table property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getTable() {
         return table;
@@ -257,11 +223,9 @@ public class MapKeyJoinColumn {
 
     /**
      * Sets the value of the table property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setTable(String value) {
         this.table = value;

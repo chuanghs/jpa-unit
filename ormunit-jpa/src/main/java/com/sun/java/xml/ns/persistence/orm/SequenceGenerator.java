@@ -15,24 +15,22 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface SequenceGenerator {
- *           String name();
- *           String sequenceName() default "";
- *           String catalog() default "";
- *           String schema() default "";
- *           int initialValue() default 1;
- *           int allocationSize() default 50;
- *         }
- * 
- *       
- * 
+ * @Target({TYPE, METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface SequenceGenerator {
+ * String name();
+ * String sequenceName() default "";
+ * String catalog() default "";
+ * String schema() default "";
+ * int initialValue() default 1;
+ * int allocationSize() default 50;
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for sequence-generator complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="sequence-generator">
  *   &lt;complexContent>
@@ -50,12 +48,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "sequence-generator", propOrder = {
-    "description"
+        "description"
 })
 public class SequenceGenerator {
 
@@ -75,11 +71,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -87,11 +81,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -99,11 +91,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -111,11 +101,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -123,11 +111,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the sequenceName property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getSequenceName() {
         return sequenceName;
@@ -135,11 +121,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the sequenceName property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setSequenceName(String value) {
         this.sequenceName = value;
@@ -147,11 +131,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the catalog property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getCatalog() {
         return catalog;
@@ -159,11 +141,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the catalog property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setCatalog(String value) {
         this.catalog = value;
@@ -171,11 +151,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the schema property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getSchema() {
         return schema;
@@ -183,11 +161,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the schema property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setSchema(String value) {
         this.schema = value;
@@ -195,11 +171,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the initialValue property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     *         {@link Integer }
      */
     public Integer getInitialValue() {
         return initialValue;
@@ -207,11 +181,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the initialValue property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setInitialValue(Integer value) {
         this.initialValue = value;
@@ -219,11 +191,9 @@ public class SequenceGenerator {
 
     /**
      * Gets the value of the allocationSize property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     *         {@link Integer }
      */
     public Integer getAllocationSize() {
         return allocationSize;
@@ -231,11 +201,9 @@ public class SequenceGenerator {
 
     /**
      * Sets the value of the allocationSize property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setAllocationSize(Integer value) {
         this.allocationSize = value;

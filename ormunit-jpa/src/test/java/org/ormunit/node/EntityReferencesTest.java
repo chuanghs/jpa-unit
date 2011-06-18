@@ -18,7 +18,6 @@ import javax.persistence.EntityManager;
 import java.beans.IntrospectionException;
 import java.io.ByteArrayInputStream;
 import java.util.HashSet;
-import java.util.Set;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
@@ -28,7 +27,6 @@ import static org.mockito.Mockito.*;
  * User: Tomasz Krzyżak
  * Date: 21.04.11
  * Time: 20:34
- *
  */
 @RunWith(MockitoJUnitRunner.class)
 public class EntityReferencesTest {

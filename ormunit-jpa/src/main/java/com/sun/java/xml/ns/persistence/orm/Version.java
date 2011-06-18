@@ -15,17 +15,15 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Version {}
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface Version {}
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for version complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="version">
  *   &lt;complexContent>
@@ -40,13 +38,11 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "version", propOrder = {
-    "column",
-    "temporal"
+        "column",
+        "temporal"
 })
 public class Version {
 
@@ -59,11 +55,9 @@ public class Version {
 
     /**
      * Gets the value of the column property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Column }
-     *     
+     *
+     * @return possible object is
+     *         {@link Column }
      */
     public Column getColumn() {
         return column;
@@ -71,11 +65,9 @@ public class Version {
 
     /**
      * Sets the value of the column property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Column }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Column }
      */
     public void setColumn(Column value) {
         this.column = value;
@@ -83,11 +75,9 @@ public class Version {
 
     /**
      * Gets the value of the temporal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TemporalType }
-     *     
+     *
+     * @return possible object is
+     *         {@link TemporalType }
      */
     public TemporalType getTemporal() {
         return temporal;
@@ -95,11 +85,9 @@ public class Version {
 
     /**
      * Sets the value of the temporal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TemporalType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TemporalType }
      */
     public void setTemporal(TemporalType value) {
         this.temporal = value;
@@ -107,11 +95,9 @@ public class Version {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -119,11 +105,9 @@ public class Version {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -131,11 +115,9 @@ public class Version {
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     *         {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -143,11 +125,9 @@ public class Version {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
     public void setAccess(AccessType value) {
         this.access = value;

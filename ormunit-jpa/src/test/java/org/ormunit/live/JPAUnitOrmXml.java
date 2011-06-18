@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.ormunit.junit.JPAHelper;
+import org.ormunit.JPAHelper;
 
 import java.util.Set;
 
@@ -13,7 +13,6 @@ import java.util.Set;
  * User: Tomasz Krzyżak
  * Date: 16.06.11
  * Time: 16:25
- *
  */
 @RunWith(JUnit4.class)
 public class JPAUnitOrmXml {
