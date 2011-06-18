@@ -14,9 +14,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for generation-type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="generation-type">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}token">
@@ -27,7 +27,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "generation-type")
 @XmlEnum

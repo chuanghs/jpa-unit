@@ -8,29 +8,27 @@
 
 package com.sun.java.xml.ns.persistence.orm;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
- * 
- * 
- *         This element contains the entity field or property mappings.
- *         It may be sparsely populated to include only a subset of the
- *         fields or properties. If metadata-complete for the entity is true
- *         then the remainder of the attributes will be defaulted according
- *         to the default rules.
- * 
- *       
- * 
+ * This element contains the entity field or property mappings.
+ * It may be sparsely populated to include only a subset of the
+ * fields or properties. If metadata-complete for the entity is true
+ * then the remainder of the attributes will be defaulted according
+ * to the default rules.
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for attributes complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="attributes">
  *   &lt;complexContent>
@@ -55,23 +53,21 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "attributes", propOrder = {
-    "description",
-    "id",
-    "embeddedId",
-    "basic",
-    "version",
-    "manyToOne",
-    "oneToMany",
-    "oneToOne",
-    "manyToMany",
-    "elementCollection",
-    "embedded",
-    "_transient"
+        "description",
+        "id",
+        "embeddedId",
+        "basic",
+        "version",
+        "manyToOne",
+        "oneToMany",
+        "oneToOne",
+        "manyToMany",
+        "elementCollection",
+        "embedded",
+        "_transient"
 })
 public class Attributes {
 
@@ -97,11 +93,9 @@ public class Attributes {
 
     /**
      * Gets the value of the description property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDescription() {
         return description;
@@ -109,11 +103,9 @@ public class Attributes {
 
     /**
      * Sets the value of the description property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDescription(String value) {
         this.description = value;
@@ -121,25 +113,23 @@ public class Attributes {
 
     /**
      * Gets the value of the id property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the id property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
-     *    getId().add(newItem);
+     *    getIdValue().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Id }
-     * 
-     * 
      */
     public List<Id> getId() {
         if (id == null) {
@@ -150,11 +140,9 @@ public class Attributes {
 
     /**
      * Gets the value of the embeddedId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmbeddedId }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmbeddedId }
      */
     public EmbeddedId getEmbeddedId() {
         return embeddedId;
@@ -162,11 +150,9 @@ public class Attributes {
 
     /**
      * Sets the value of the embeddedId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmbeddedId }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmbeddedId }
      */
     public void setEmbeddedId(EmbeddedId value) {
         this.embeddedId = value;
@@ -174,25 +160,23 @@ public class Attributes {
 
     /**
      * Gets the value of the basic property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the basic property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getBasic().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Basic }
-     * 
-     * 
      */
     public List<Basic> getBasic() {
         if (basic == null) {
@@ -203,25 +187,23 @@ public class Attributes {
 
     /**
      * Gets the value of the version property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the version property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getVersion().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Version }
-     * 
-     * 
      */
     public List<Version> getVersion() {
         if (version == null) {
@@ -232,25 +214,23 @@ public class Attributes {
 
     /**
      * Gets the value of the manyToOne property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the manyToOne property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getManyToOne().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ManyToOne }
-     * 
-     * 
      */
     public List<ManyToOne> getManyToOne() {
         if (manyToOne == null) {
@@ -261,25 +241,23 @@ public class Attributes {
 
     /**
      * Gets the value of the oneToMany property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the oneToMany property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOneToMany().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link OneToMany }
-     * 
-     * 
      */
     public List<OneToMany> getOneToMany() {
         if (oneToMany == null) {
@@ -290,25 +268,23 @@ public class Attributes {
 
     /**
      * Gets the value of the oneToOne property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the oneToOne property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getOneToOne().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link OneToOne }
-     * 
-     * 
      */
     public List<OneToOne> getOneToOne() {
         if (oneToOne == null) {
@@ -319,25 +295,23 @@ public class Attributes {
 
     /**
      * Gets the value of the manyToMany property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the manyToMany property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getManyToMany().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ManyToMany }
-     * 
-     * 
      */
     public List<ManyToMany> getManyToMany() {
         if (manyToMany == null) {
@@ -348,25 +322,23 @@ public class Attributes {
 
     /**
      * Gets the value of the elementCollection property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the elementCollection property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getElementCollection().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ElementCollection }
-     * 
-     * 
      */
     public List<ElementCollection> getElementCollection() {
         if (elementCollection == null) {
@@ -377,25 +349,23 @@ public class Attributes {
 
     /**
      * Gets the value of the embedded property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the embedded property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getEmbedded().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Embedded }
-     * 
-     * 
      */
     public List<Embedded> getEmbedded() {
         if (embedded == null) {
@@ -406,25 +376,23 @@ public class Attributes {
 
     /**
      * Gets the value of the transient property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the transient property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getTransient().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link Transient }
-     * 
-     * 
      */
     public List<Transient> getTransient() {
         if (_transient == null) {

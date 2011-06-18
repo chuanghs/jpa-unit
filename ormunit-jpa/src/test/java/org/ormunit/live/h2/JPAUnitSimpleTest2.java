@@ -5,10 +5,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.entity.Auction;
-import org.ormunit.entity.AuctionParamValue;
-import org.ormunit.entity.FieldAccessEntity;
-import org.ormunit.entity.PropertyAccessEntity;
-import org.ormunit.junit.JPAHelper;
 import org.ormunit.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;
@@ -34,7 +30,6 @@ public class JPAUnitSimpleTest2 extends JPAUnitTestCase {
         List resultList = getEm().createQuery("select o from " + Auction.class.getSimpleName() + " o ").getResultList();
         Assert.assertEquals(1, resultList.size());
     }
-
 
 
 }

@@ -15,28 +15,26 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Column {
- *           String name() default "";
- *           boolean unique() default false;
- *           boolean nullable() default true;
- *           boolean insertable() default true;
- *           boolean updatable() default true;
- *           String columnDefinition() default "";
- *           String table() default "";
- *           int length() default 255;
- *           int precision() default 0; // decimal precision
- *           int scale() default 0; // decimal scale
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface Column {
+ * String name() default "";
+ * boolean unique() default false;
+ * boolean nullable() default true;
+ * boolean insertable() default true;
+ * boolean updatable() default true;
+ * String columnDefinition() default "";
+ * String table() default "";
+ * int length() default 255;
+ * int precision() default 0; // decimal precision
+ * int scale() default 0; // decimal scale
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for column complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="column">
  *   &lt;complexContent>
@@ -55,8 +53,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "column")
@@ -85,11 +81,9 @@ public class Column {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -97,11 +91,9 @@ public class Column {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -109,11 +101,9 @@ public class Column {
 
     /**
      * Gets the value of the unique property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isUnique() {
         return unique;
@@ -121,11 +111,9 @@ public class Column {
 
     /**
      * Sets the value of the unique property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setUnique(Boolean value) {
         this.unique = value;
@@ -133,11 +121,9 @@ public class Column {
 
     /**
      * Gets the value of the nullable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isNullable() {
         return nullable;
@@ -145,11 +131,9 @@ public class Column {
 
     /**
      * Sets the value of the nullable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setNullable(Boolean value) {
         this.nullable = value;
@@ -157,11 +141,9 @@ public class Column {
 
     /**
      * Gets the value of the insertable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isInsertable() {
         return insertable;
@@ -169,11 +151,9 @@ public class Column {
 
     /**
      * Sets the value of the insertable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setInsertable(Boolean value) {
         this.insertable = value;
@@ -181,11 +161,9 @@ public class Column {
 
     /**
      * Gets the value of the updatable property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isUpdatable() {
         return updatable;
@@ -193,11 +171,9 @@ public class Column {
 
     /**
      * Sets the value of the updatable property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setUpdatable(Boolean value) {
         this.updatable = value;
@@ -205,11 +181,9 @@ public class Column {
 
     /**
      * Gets the value of the columnDefinition property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getColumnDefinition() {
         return columnDefinition;
@@ -217,11 +191,9 @@ public class Column {
 
     /**
      * Sets the value of the columnDefinition property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setColumnDefinition(String value) {
         this.columnDefinition = value;
@@ -229,11 +201,9 @@ public class Column {
 
     /**
      * Gets the value of the table property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getTable() {
         return table;
@@ -241,11 +211,9 @@ public class Column {
 
     /**
      * Sets the value of the table property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setTable(String value) {
         this.table = value;
@@ -253,11 +221,9 @@ public class Column {
 
     /**
      * Gets the value of the length property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     *         {@link Integer }
      */
     public Integer getLength() {
         return length;
@@ -265,11 +231,9 @@ public class Column {
 
     /**
      * Sets the value of the length property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setLength(Integer value) {
         this.length = value;
@@ -277,11 +241,9 @@ public class Column {
 
     /**
      * Gets the value of the precision property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     *         {@link Integer }
      */
     public Integer getPrecision() {
         return precision;
@@ -289,11 +251,9 @@ public class Column {
 
     /**
      * Sets the value of the precision property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setPrecision(Integer value) {
         this.precision = value;
@@ -301,11 +261,9 @@ public class Column {
 
     /**
      * Gets the value of the scale property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     *         {@link Integer }
      */
     public Integer getScale() {
         return scale;
@@ -313,11 +271,9 @@ public class Column {
 
     /**
      * Sets the value of the scale property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setScale(Integer value) {
         this.scale = value;

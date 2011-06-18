@@ -8,31 +8,25 @@
 
 package com.sun.java.xml.ns.persistence.orm;
 
+import javax.xml.bind.annotation.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({}) @Retention(RUNTIME)
- *         public @interface EntityResult {
- *           Class entityClass();
- *           FieldResult[] fields() default {};
- *           String discriminatorColumn() default "";
- *         }
- * 
- *       
- * 
+ * @Target({}) @Retention(RUNTIME)
+ * public @interface EntityResult {
+ * Class entityClass();
+ * FieldResult[] fields() default {};
+ * String discriminatorColumn() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for entity-result complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="entity-result">
  *   &lt;complexContent>
@@ -46,12 +40,10 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "entity-result", propOrder = {
-    "fieldResult"
+        "fieldResult"
 })
 public class EntityResult {
 
@@ -64,25 +56,23 @@ public class EntityResult {
 
     /**
      * Gets the value of the fieldResult property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the fieldResult property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getFieldResult().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link FieldResult }
-     * 
-     * 
      */
     public List<FieldResult> getFieldResult() {
         if (fieldResult == null) {
@@ -93,11 +83,9 @@ public class EntityResult {
 
     /**
      * Gets the value of the entityClass property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getEntityClass() {
         return entityClass;
@@ -105,11 +93,9 @@ public class EntityResult {
 
     /**
      * Sets the value of the entityClass property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setEntityClass(String value) {
         this.entityClass = value;
@@ -117,11 +103,9 @@ public class EntityResult {
 
     /**
      * Gets the value of the discriminatorColumn property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getDiscriminatorColumn() {
         return discriminatorColumn;
@@ -129,11 +113,9 @@ public class EntityResult {
 
     /**
      * Sets the value of the discriminatorColumn property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setDiscriminatorColumn(String value) {
         this.discriminatorColumn = value;

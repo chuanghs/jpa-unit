@@ -15,16 +15,14 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH};
- * 
- *       
- * 
+ * public enum CascadeType { ALL, PERSIST, MERGE, REMOVE, REFRESH, DETACH};
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for cascade-type complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="cascade-type">
  *   &lt;complexContent>
@@ -41,17 +39,15 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "cascade-type", propOrder = {
-    "cascadeAll",
-    "cascadePersist",
-    "cascadeMerge",
-    "cascadeRemove",
-    "cascadeRefresh",
-    "cascadeDetach"
+        "cascadeAll",
+        "cascadePersist",
+        "cascadeMerge",
+        "cascadeRemove",
+        "cascadeRefresh",
+        "cascadeDetach"
 })
 public class CascadeType {
 
@@ -70,11 +66,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadeAll property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getCascadeAll() {
         return cascadeAll;
@@ -82,11 +76,9 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeAll property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setCascadeAll(EmptyType value) {
         this.cascadeAll = value;
@@ -94,11 +86,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadePersist property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getCascadePersist() {
         return cascadePersist;
@@ -106,11 +96,9 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadePersist property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setCascadePersist(EmptyType value) {
         this.cascadePersist = value;
@@ -118,11 +106,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadeMerge property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getCascadeMerge() {
         return cascadeMerge;
@@ -130,11 +116,9 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeMerge property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setCascadeMerge(EmptyType value) {
         this.cascadeMerge = value;
@@ -142,11 +126,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadeRemove property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getCascadeRemove() {
         return cascadeRemove;
@@ -154,11 +136,9 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeRemove property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setCascadeRemove(EmptyType value) {
         this.cascadeRemove = value;
@@ -166,11 +146,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadeRefresh property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getCascadeRefresh() {
         return cascadeRefresh;
@@ -178,11 +156,9 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeRefresh property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setCascadeRefresh(EmptyType value) {
         this.cascadeRefresh = value;
@@ -190,11 +166,9 @@ public class CascadeType {
 
     /**
      * Gets the value of the cascadeDetach property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EmptyType }
      */
     public EmptyType getCascadeDetach() {
         return cascadeDetach;
@@ -202,11 +176,9 @@ public class CascadeType {
 
     /**
      * Sets the value of the cascadeDetach property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EmptyType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EmptyType }
      */
     public void setCascadeDetach(EmptyType value) {
         this.cascadeDetach = value;

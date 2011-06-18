@@ -10,8 +10,8 @@ public class Auction {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
 
-    @OneToMany(mappedBy="auction")
-    @MapKey(name="auctionParam")
+    @OneToMany(mappedBy = "auction")
+    @MapKey(name = "auctionParam")
     private Map<AuctionParam, AuctionParamValue> values;
 
 }

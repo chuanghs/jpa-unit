@@ -15,20 +15,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface GeneratedValue {
- *           GenerationType strategy() default AUTO;
- *           String generator() default "";
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface GeneratedValue {
+ * GenerationType strategy() default AUTO;
+ * String generator() default "";
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for generated-value complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="generated-value">
  *   &lt;complexContent>
@@ -39,8 +37,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "generated-value")
@@ -53,11 +49,9 @@ public class GeneratedValue {
 
     /**
      * Gets the value of the strategy property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GenerationType }
-     *     
+     *
+     * @return possible object is
+     *         {@link GenerationType }
      */
     public GenerationType getStrategy() {
         return strategy;
@@ -65,11 +59,9 @@ public class GeneratedValue {
 
     /**
      * Sets the value of the strategy property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GenerationType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link GenerationType }
      */
     public void setStrategy(GenerationType value) {
         this.strategy = value;
@@ -77,11 +69,9 @@ public class GeneratedValue {
 
     /**
      * Gets the value of the generator property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getGenerator() {
         return generator;
@@ -89,11 +79,9 @@ public class GeneratedValue {
 
     /**
      * Sets the value of the generator property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setGenerator(String value) {
         this.generator = value;

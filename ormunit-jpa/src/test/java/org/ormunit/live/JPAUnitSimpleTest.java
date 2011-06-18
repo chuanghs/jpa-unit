@@ -3,9 +3,9 @@ package org.ormunit.live;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ormunit.JPAHelper;
 import org.ormunit.entity.FieldAccessEntity;
 import org.ormunit.entity.PropertyAccessEntity;
-import org.ormunit.junit.JPAHelper;
 import org.ormunit.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;

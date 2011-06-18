@@ -7,7 +7,6 @@ import javax.persistence.Id;
  * User: Tomasz Krzyżak
  * Date: 16.06.11
  * Time: 15:53
- *
  */
 public class ListedInORMXMLEntity {
 

@@ -15,20 +15,18 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * 
- * 
- *         @Target({METHOD, FIELD}) @Retention(RUNTIME)
- *         public @interface Basic {
- *           FetchType fetch() default EAGER;
- *           boolean optional() default true;
- *         }
- * 
- *       
- * 
+ * @Target({METHOD, FIELD}) @Retention(RUNTIME)
+ * public @interface Basic {
+ * FetchType fetch() default EAGER;
+ * boolean optional() default true;
+ * }
+ * <p/>
+ * <p/>
+ * <p/>
  * <p>Java class for basic complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="basic">
  *   &lt;complexContent>
@@ -49,15 +47,13 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "basic", propOrder = {
-    "column",
-    "lob",
-    "temporal",
-    "enumerated"
+        "column",
+        "lob",
+        "temporal",
+        "enumerated"
 })
 public class Basic {
 
@@ -76,11 +72,9 @@ public class Basic {
 
     /**
      * Gets the value of the column property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Column }
-     *     
+     *
+     * @return possible object is
+     *         {@link Column }
      */
     public Column getColumn() {
         return column;
@@ -88,11 +82,9 @@ public class Basic {
 
     /**
      * Sets the value of the column property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Column }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Column }
      */
     public void setColumn(Column value) {
         this.column = value;
@@ -100,11 +92,9 @@ public class Basic {
 
     /**
      * Gets the value of the lob property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Lob }
-     *     
+     *
+     * @return possible object is
+     *         {@link Lob }
      */
     public Lob getLob() {
         return lob;
@@ -112,11 +102,9 @@ public class Basic {
 
     /**
      * Sets the value of the lob property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Lob }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Lob }
      */
     public void setLob(Lob value) {
         this.lob = value;
@@ -124,11 +112,9 @@ public class Basic {
 
     /**
      * Gets the value of the temporal property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link TemporalType }
-     *     
+     *
+     * @return possible object is
+     *         {@link TemporalType }
      */
     public TemporalType getTemporal() {
         return temporal;
@@ -136,11 +122,9 @@ public class Basic {
 
     /**
      * Sets the value of the temporal property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link TemporalType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link TemporalType }
      */
     public void setTemporal(TemporalType value) {
         this.temporal = value;
@@ -148,11 +132,9 @@ public class Basic {
 
     /**
      * Gets the value of the enumerated property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link EnumType }
-     *     
+     *
+     * @return possible object is
+     *         {@link EnumType }
      */
     public EnumType getEnumerated() {
         return enumerated;
@@ -160,11 +142,9 @@ public class Basic {
 
     /**
      * Sets the value of the enumerated property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link EnumType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link EnumType }
      */
     public void setEnumerated(EnumType value) {
         this.enumerated = value;
@@ -172,11 +152,9 @@ public class Basic {
 
     /**
      * Gets the value of the name property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getName() {
         return name;
@@ -184,11 +162,9 @@ public class Basic {
 
     /**
      * Sets the value of the name property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setName(String value) {
         this.name = value;
@@ -196,11 +172,9 @@ public class Basic {
 
     /**
      * Gets the value of the fetch property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link FetchType }
-     *     
+     *
+     * @return possible object is
+     *         {@link FetchType }
      */
     public FetchType getFetch() {
         return fetch;
@@ -208,11 +182,9 @@ public class Basic {
 
     /**
      * Sets the value of the fetch property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link FetchType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link FetchType }
      */
     public void setFetch(FetchType value) {
         this.fetch = value;
@@ -220,11 +192,9 @@ public class Basic {
 
     /**
      * Gets the value of the optional property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Boolean }
-     *     
+     *
+     * @return possible object is
+     *         {@link Boolean }
      */
     public Boolean isOptional() {
         return optional;
@@ -232,11 +202,9 @@ public class Basic {
 
     /**
      * Sets the value of the optional property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Boolean }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Boolean }
      */
     public void setOptional(Boolean value) {
         this.optional = value;
@@ -244,11 +212,9 @@ public class Basic {
 
     /**
      * Gets the value of the access property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link AccessType }
-     *     
+     *
+     * @return possible object is
+     *         {@link AccessType }
      */
     public AccessType getAccess() {
         return access;
@@ -256,11 +222,9 @@ public class Basic {
 
     /**
      * Sets the value of the access property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link AccessType }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link AccessType }
      */
     public void setAccess(AccessType value) {
         this.access = value;

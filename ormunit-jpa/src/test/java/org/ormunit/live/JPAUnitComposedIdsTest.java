@@ -3,10 +3,10 @@ package org.ormunit.live;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ormunit.JPAHelper;
 import org.ormunit.entity.Employee;
 import org.ormunit.entity.EmployeeId;
 import org.ormunit.entity.PhoneNumber;
-import org.ormunit.junit.JPAHelper;
 import org.ormunit.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;
