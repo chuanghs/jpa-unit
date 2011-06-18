@@ -70,14 +70,14 @@ public class AnnotationsEntityInspector implements JPAEntityInspector {
         }
     }
 
-    public Class getIdClassType(Class<?> entityClass) {
+    public Class getIdClass(Class<?> entityClass) {
         IdClass idClassAnnotation = entityClass.getAnnotation(IdClass.class);
         if (idClassAnnotation != null)
             return idClassAnnotation.value();
         return null;
     }
 
-    public Class<?> getIdTypeOfClass(Class<?> entityClass) {
+    public Class<?> getIdTypeOfEntityClass(Class<?> entityClass) {
         Class<?> result = null;
         IdClass idClass = entityClass.getAnnotation(IdClass.class);
         if (idClass != null) {
@@ -92,14 +92,14 @@ public class AnnotationsEntityInspector implements JPAEntityInspector {
         return result;
     }
 
-    public boolean isIdGenerated(Object entity, Object o, JPAORMProvider jpaormProvider) throws IntrospectionException {
-        if (jpaormProvider.isPropertyAccessed(entity.getClass())) {
+    public boolean isIdGenerated(Class<?> entity)  {
+        if (getAccessTypeOfClass(entity) == AccessType.FIELD) {
             for (Field field : utils.getFieldsAnnotatedWith(entity.getClass(), Id.class)) {
                 if (field.getAnnotation(GeneratedValue.class) != null) {
                     return true;
                 }
             }
-        } else if (jpaormProvider.isFieldAccessed(entity.getClass())) {
+        } else if (getAccessTypeOfClass(entity) == AccessType.FIELD) {
             for (PropertyDescriptor pd : utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class)) {
                 if (pd.getReadMethod().getAnnotation(GeneratedValue.class) != null) {
                     return true;

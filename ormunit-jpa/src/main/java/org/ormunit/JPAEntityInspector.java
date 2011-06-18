@@ -1,12 +1,9 @@
 package org.ormunit;
 
 import com.sun.java.xml.ns.persistence.orm.AccessType;
-import org.mockito.cglib.beans.BeanMap;
 
-import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
-import java.lang.reflect.InvocationTargetException;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,13 +16,13 @@ public interface JPAEntityInspector {
 
     AccessType getAccessTypeOfClass(Class entityClass);
 
-    Class<?> getIdTypeOfClass(Class<?> entityClass);
-
-    boolean isIdGenerated(Object entity, Object o, JPAORMProvider jpaormProvider) throws IntrospectionException;
-
-    Class getIdClassType(Class<?> entityClass);
+    Class<?> getIdTypeOfEntityClass(Class<?> entityClass);
 
     PropertyDescriptor getIdProperty(Class<?> entityClass);
 
     Field getIdField(Class<?> entityClass);
+
+    boolean isIdGenerated(Class<?> entity);
+
+    Class getIdClass(Class<?> entityClass);
 }
