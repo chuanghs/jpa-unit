@@ -17,6 +17,10 @@ public class Employee {
     @OneToMany(mappedBy = "contact")
     private List<PhoneNumber> contactNumber;
 
+    public List<PhoneNumber> getContactNumber() {
+        return contactNumber;
+    }
+
     public String getCountry() {
         return country;
     }

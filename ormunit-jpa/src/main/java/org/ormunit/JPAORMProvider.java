@@ -84,7 +84,7 @@ public class JPAORMProvider extends AORMProvider {
 
     public Object entity(Object entity) {
         try {
-            if (classInspector.isIdGenerated(classInspector, entity, this)) {
+            if (classInspector.isIdGenerated(entity.getClass())) {
                 setId(entity, getDefault(getIdType(entity.getClass())));
             }
 
@@ -112,7 +112,7 @@ public class JPAORMProvider extends AORMProvider {
 
     public Object getId(Object entity) throws InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> entityClass = entity.getClass();
-        Class idClassType = classInspector.getIdClassType(entityClass);
+        Class idClassType = classInspector.getIdClass(entityClass);
         Object result = null;
         if (idClassType != null) {
             result = idClassType.newInstance();
@@ -135,7 +135,7 @@ public class JPAORMProvider extends AORMProvider {
 
     public void setId(Object entity, Object id) throws IllegalAccessException, InvocationTargetException {
         Class<?> entityClass = entity.getClass();
-        Class idClassType = classInspector.getIdClassType(entityClass);
+        Class idClassType = classInspector.getIdClass(entityClass);
         if (idClassType != null) {
             if (classInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY)
                 utils.copyPropertyValues(id, entity);
@@ -153,7 +153,7 @@ public class JPAORMProvider extends AORMProvider {
     }
 
     public Class<?> getIdType(Class<?> entityClass) {
-        return classInspector.getIdTypeOfClass(entityClass);
+        return classInspector.getIdTypeOfEntityClass(entityClass);
     }
 
 

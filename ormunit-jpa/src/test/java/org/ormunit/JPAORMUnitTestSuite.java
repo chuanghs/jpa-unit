@@ -18,6 +18,7 @@ import org.ormunit.node.JPAEntityNodeProcessorTest;
         JPAORMProviderTest.class,
         JPAEntityNodeProcessorTest.class,
         JPAUnitOrmXml.class,
+        ORMFileEntityInspectorTest.class,
         JPAUnitSimpleTest.class,
         JPAUnitComposedIdsTest.class
 })
