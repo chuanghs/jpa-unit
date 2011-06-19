@@ -26,7 +26,7 @@ import java.util.Set;
  * Date: 21.12.10
  * Time: 21:08
  */
-public class HibernateORMProvider extends AORMProvider {
+public class HibernateORMProvider extends ORMProviderAdapter {
 
     private static final Logger log = LoggerFactory.getLogger(HibernateORMProvider.class);
 
@@ -34,11 +34,11 @@ public class HibernateORMProvider extends AORMProvider {
     private SessionFactory sessionFactory;
 
     private String unitName;
-    private ORMUnit ormUnit;
+    private ORMUnitPropertiesReader ormUnit;
     private Properties persistenceContextProperties;
 
 
-    public HibernateORMProvider(ORMUnit ormUnit, String unitName) {
+    public HibernateORMProvider(ORMUnitPropertiesReader ormUnit, String unitName) {
         this.ormUnit = ormUnit;
         Configuration configuration = new Configuration();
         this.sessionFactory = configuration

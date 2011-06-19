@@ -1,7 +1,7 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnitTestSet;
-import org.ormunit.ORMUnit;
+import org.ormunit.TestSet;
+import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.slf4j.Logger;
@@ -25,14 +25,14 @@ public class ImportNodeProcessor extends NodeProcessor {
     private static final Logger log = LoggerFactory.getLogger(ImportNodeProcessor.class);
     public static final String ClassNamePattern = "[$a-zA-Z_]+[$a-zA-Z_0-9]*(\\.[$a-zA-Z_]+[$a-zA-Z_0-9]*)*";
 
-    private final WeakHashMap<ORMUnitTestSet, WeakReference<Map<String, String>>> confImports = new WeakHashMap<ORMUnitTestSet, WeakReference<Map<String, String>>>();
+    private final WeakHashMap<TestSet, WeakReference<Map<String, String>>> confImports = new WeakHashMap<TestSet, WeakReference<Map<String, String>>>();
 
 
-    public ImportNodeProcessor(ORMUnit ormUnit){
+    public ImportNodeProcessor(ORMUnitPropertiesReader ormUnit){
         super(ormUnit);
     }
 
-    public void addImport(ORMUnitTestSet testSet, String className, String alias) {
+    public void addImport(TestSet testSet, String className, String alias) {
 
         if (confImports.get(testSet) == null) {
             confImports.put(testSet, new WeakReference<Map<String, String>>(new HashMap<String, String>()));
@@ -55,7 +55,7 @@ public class ImportNodeProcessor extends NodeProcessor {
 
     }
 
-    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
         NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
         Node classNode = importAttributes.getNamedItem("class");
         Node aliasNode = importAttributes.getNamedItem("alias");

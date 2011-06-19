@@ -5,19 +5,17 @@ import org.hibernate.Session;
 import org.junit.After;
 import org.junit.Before;
 import org.ormunit.HibernateORMProvider;
-import org.ormunit.ORMUnit;
+import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.ORMUnitHelper;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.Table;
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.Connection;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
@@ -33,11 +31,11 @@ public class HibernateUnitTestCase extends TestCase {
     private static final Logger log = LoggerFactory.getLogger(HibernateUnitTestCase.class);
 
     private String ormUnitFileName;
-    private ORMUnit ormUnit;
+    private ORMUnitPropertiesReader ormUnit;
 
     private Properties properties;
     private HibernateORMProvider provider;
-    private ORMUnitTestSet testSet;
+    private TestSet testSet;
     private Session session;
     private String hibernateMappingFileName;
 
@@ -46,12 +44,12 @@ public class HibernateUnitTestCase extends TestCase {
 
 
         this.properties = ORMUnitHelper.readOrmUnitProperties(getClass());
-        this.ormUnit = new ORMUnit(getClass());
+        this.ormUnit = new ORMUnitPropertiesReader(getClass());
         this.hibernateMappingFileName = hibernateMappingFileName;
         this.ormUnitFileName = ormUnitFileName;
         this.provider = createProvider(hibernateMappingFileName);
 
-        this.testSet = new ORMUnitTestSet(provider);
+        this.testSet = new TestSet(provider);
 
         if (isWithDB()) {
             // adding entityNodeProcessor for every entity class defined in persistence unit

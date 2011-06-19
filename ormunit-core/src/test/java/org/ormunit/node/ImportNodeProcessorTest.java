@@ -5,8 +5,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Spy;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitFileSyntaxException;
@@ -30,14 +30,14 @@ public class ImportNodeProcessorTest {
 
 
     @Spy
-    ORMUnitTestSet testSet = new ORMUnitTestSet(mock(ORMProvider.class));
+    TestSet testSet = new TestSet(mock(ORMProvider.class));
 
     @Test(expected = ORMUnitConfigurationException.class)
     public void testImportInvalidClassName() throws ORMUnitFileReadException {
         byte[] value = ("<ormunit> " +
                 "<import class=\"1some.invalid.0ClassName\" alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
-        ORMUnit reader = spy(new ORMUnit(getClass()));
+        ORMUnitPropertiesReader reader = spy(new ORMUnitPropertiesReader(getClass()));
         reader.read(new ByteArrayInputStream(value), testSet);
     }
 
@@ -46,7 +46,7 @@ public class ImportNodeProcessorTest {
         byte[] value = ("<ormunit> " +
                 "<import alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
-        ORMUnit reader = spy(new ORMUnit(getClass()));
+        ORMUnitPropertiesReader reader = spy(new ORMUnitPropertiesReader(getClass()));
         reader.read(new ByteArrayInputStream(value), testSet);
     }
 
@@ -57,7 +57,7 @@ public class ImportNodeProcessorTest {
                 "<import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
 
 
-        ORMUnit reader = spy(new ORMUnit(getClass()));
+        ORMUnitPropertiesReader reader = spy(new ORMUnitPropertiesReader(getClass()));
         reader.read(new ByteArrayInputStream(value), testSet);
 
         verify(testSet, times(2)).getNodeProcessor(eq("import"));
@@ -74,7 +74,7 @@ public class ImportNodeProcessorTest {
                 "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
                 "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
                 "</ormunit>").getBytes();
-        new ORMUnit(getClass())
+        new ORMUnitPropertiesReader(getClass())
                 .read(new ByteArrayInputStream(value), testSet);
     }
 

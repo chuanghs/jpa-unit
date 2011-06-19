@@ -28,13 +28,13 @@ import static org.mockito.Mockito.*;
 public class ORMUnitTest {
 
 
-    ORMUnitTestSet testSet;
-    private ORMUnit ormUnit;
+    TestSet testSet;
+    private ORMUnitPropertiesReader ormUnit;
 
     @Before
     public void setUp() {
-        ormUnit = spy(new ORMUnit(getClass()));
-        testSet = spy(new ORMUnitTestSet(mock(ORMProvider.class)));
+        ormUnit = spy(new ORMUnitPropertiesReader(getClass()));
+        testSet = spy(new TestSet(mock(ORMProvider.class)));
 
     }
 
@@ -91,7 +91,7 @@ public class ORMUnitTest {
     public void testInvalidClassNames2() throws ORMUnitFileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"1com.example.SomeClass\" alias=\"sc1\"/></ormunit>".getBytes();
 
-        new ORMUnit(getClass())
+        new ORMUnitPropertiesReader(getClass())
                 .read(new ByteArrayInputStream(value), testSet);
 
     }

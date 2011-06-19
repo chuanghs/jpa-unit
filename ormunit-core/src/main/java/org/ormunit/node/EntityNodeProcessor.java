@@ -2,7 +2,7 @@ package org.ormunit.node;
 
 import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnitHelper;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.AEntityAccessor;
@@ -42,7 +42,7 @@ public class EntityNodeProcessor extends NodeProcessor {
         return Class.forName(className);
     }
 
-    public synchronized void process(Node node, ORMUnitTestSet testSet) throws ORMUnitNodeProcessingException {
+    public synchronized void process(Node node, TestSet testSet) throws ORMUnitNodeProcessingException {
         try {
             threadLocal.set(new Stack<Class<?>>());
             Object entity = getEntityClass().newInstance();
@@ -64,7 +64,7 @@ public class EntityNodeProcessor extends NodeProcessor {
     }
 
 
-    public Object processEntity(Node entityElement, Object entity, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileReadException {
+    public Object processEntity(Node entityElement, Object entity, Set<EntityReference> references, TestSet testSet) throws ORMUnitFileReadException {
         ORMProvider provider = testSet.getProvider();
         EntityAccessor introspector = provider.getAccessor(entity.getClass(), threadLocal.get().isEmpty() ? null : threadLocal.get().peek());
 
@@ -147,7 +147,7 @@ public class EntityNodeProcessor extends NodeProcessor {
      * @param references
      * @param testSet        @return
      */
-    public Object resolveAndProcessReference(Node referenceNode, Class referencedType, Set<EntityReference> references, ORMUnitTestSet testSet) throws ORMUnitFileSyntaxException {
+    public Object resolveAndProcessReference(Node referenceNode, Class referencedType, Set<EntityReference> references, TestSet testSet) throws ORMUnitFileSyntaxException {
         ORMProvider provider = testSet.getProvider();
         Class idType = provider.getIdType(referencedType);
         EntityAccessor accessor = provider.getAccessor(referencedType, null);
@@ -228,7 +228,7 @@ public class EntityNodeProcessor extends NodeProcessor {
         return propertyValue;
     }
 
-    private Map processMap(ORMUnitTestSet testSet, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
+    private Map processMap(TestSet testSet, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
         String propertyName = propertyNode.getNodeName();
         Map map = (Map) introspector.newInstance(propertyName);
         Class[] mapParameterTypes = introspector.getMapParameterTypes(propertyName); // {key, value}
@@ -258,7 +258,7 @@ public class EntityNodeProcessor extends NodeProcessor {
     }
 
 
-    private Collection processCollection(ORMUnitTestSet testSet, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
+    private Collection processCollection(TestSet testSet, Node propertyNode, EntityAccessor introspector, Set<EntityReference> references) throws ORMUnitFileReadException {
         String propertyName = propertyNode.getNodeName();
 
         Collection c = (Collection) introspector.newInstance(propertyName);
@@ -276,7 +276,7 @@ public class EntityNodeProcessor extends NodeProcessor {
 
     }
 
-    private Object resolveAndProcessEntity(ORMUnitTestSet testset, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
+    private Object resolveAndProcessEntity(TestSet testset, Node valueNode, Set<EntityReference> references) throws ORMUnitFileReadException {
         NodeProcessor nodeProcessor = testset.getNodeProcessor(valueNode.getNodeName());
 
         Object element = null;

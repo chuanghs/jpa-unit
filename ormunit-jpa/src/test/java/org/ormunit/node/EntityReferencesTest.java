@@ -5,8 +5,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.JPAORMProvider;
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.FieldAccessEntity;
@@ -45,8 +45,8 @@ public class EntityReferencesTest {
                 "   </FieldAccessEntity>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(new JPAORMProvider(em)));
-        new ORMUnit(getClass()).read(bais, result);
+        TestSet result = spy(new TestSet(new JPAORMProvider(em)));
+        new ORMUnitPropertiesReader(getClass()).read(bais, result);
 
         FieldAccessEntity entity = new FieldAccessEntity();
         entity.setIntegerValue(1);

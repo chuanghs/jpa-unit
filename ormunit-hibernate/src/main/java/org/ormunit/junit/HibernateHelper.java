@@ -23,9 +23,9 @@ public class HibernateHelper {
 
 
 
-    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;drop=true";
-    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
-    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa";
+    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-inspector;drop=true";
+    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-inspector;shutdown=true";
+    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-inspector";
 
     private static String driverClassName = null;
     private static String hibernateDialect = null;
@@ -37,15 +37,15 @@ public class HibernateHelper {
 
 
         if (isHSQL()) {
-            driverClassName = hsqlDriverClassName;
+            driverClassName = HSQLDriverClassName;
             hibernateDialect = "org.hibernate.dialect.HSQLDialect";
             url = JDBC_URL_HSQL;
         } else if (isH2()) {
-            driverClassName = h2DriverClassName;
+            driverClassName = H2DriverClassName;
             hibernateDialect = "org.hibernate.dialect.H2Dialect";
             url = JDBC_URL_H2;
         } else if (isDerby()) {
-            driverClassName = derbyDriverClassName;
+            driverClassName = DerbyDriverClassName;
             hibernateDialect = "org.hibernate.dialect.DerbyDialect";
             url = JDBC_URL_DERBY;
         }

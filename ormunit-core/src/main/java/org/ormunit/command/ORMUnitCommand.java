@@ -1,7 +1,6 @@
 package org.ormunit.command;
 
-import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,6 +10,6 @@ import org.ormunit.ORMUnitTestSet;
  */
 public interface ORMUnitCommand {
 
-    void visit(ORMUnitTestSet testSet);
+    void visit(TestSet testSet);
 
 }

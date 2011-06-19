@@ -1,7 +1,7 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnitTestSet;
-import org.ormunit.ORMUnit;
+import org.ormunit.TestSet;
+import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.command.StatementCommand;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.w3c.dom.NamedNodeMap;
@@ -18,11 +18,11 @@ public class StatementNodeProcessor extends NodeProcessor {
 
 
 
-    public StatementNodeProcessor(ORMUnit ormUnit){
+    public StatementNodeProcessor(ORMUnitPropertiesReader ormUnit){
         super(ormUnit);
     }
 
-    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
         NodeList statementChildren = jpaUnitElement.getChildNodes();
         if (statementChildren.getLength() > 1) {
             throw new ORMUnitNodeProcessingException("statement element is allowed only to have 1 child: CDATA or text");

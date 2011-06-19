@@ -1,7 +1,7 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
 import org.w3c.dom.Node;
 
@@ -13,16 +13,16 @@ import org.w3c.dom.Node;
  */
 public abstract class NodeProcessor {
 
-    private final ORMUnit ormUnit;
+    private final ORMUnitPropertiesReader ormUnit;
 
-    public NodeProcessor(ORMUnit ormUnit){
+    public NodeProcessor(ORMUnitPropertiesReader ormUnit){
         this.ormUnit = ormUnit;
     }
 
-    public ORMUnit getOrmUnit() {
+    public ORMUnitPropertiesReader getOrmUnit() {
         return ormUnit;
     }
 
-    public abstract void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException;
+    public abstract void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException;
 
 }

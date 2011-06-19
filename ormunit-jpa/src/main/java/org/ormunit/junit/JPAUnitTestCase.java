@@ -4,9 +4,9 @@ import junit.framework.TestCase;
 import org.junit.After;
 import org.junit.Before;
 import org.ormunit.JPAORMProvider;
-import org.ormunit.ORMUnit;
+import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.ORMUnitHelper;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 import org.ormunit.exception.ORMUnitConfigurationException;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.slf4j.Logger;
@@ -28,11 +28,11 @@ public abstract class JPAUnitTestCase extends TestCase {
     private static final Logger log = LoggerFactory.getLogger(JPAUnitTestCase.class);
     private String unitName;
     private String ormUnitFileName;
-    private ORMUnit ormUnit;
+    private ORMUnitPropertiesReader ormUnit;
 
     private Properties properties;
     private JPAORMProvider provider;
-    private ORMUnitTestSet testSet;
+    private TestSet testSet;
 
 
     public JPAUnitTestCase(String unitName) {
@@ -42,13 +42,13 @@ public abstract class JPAUnitTestCase extends TestCase {
     public JPAUnitTestCase(String unitName, String ormUnitFileName) {
 
         this.properties = ORMUnitHelper.readOrmUnitProperties(getClass());
-        this.ormUnit = new ORMUnit(getClass());
+        this.ormUnit = new ORMUnitPropertiesReader(getClass());
         this.unitName = unitName;
         this.provider = createProvider();
         this.ormUnitFileName = ormUnitFileName;
 
         if (isWithDB()) {
-            testSet = new ORMUnitTestSet(provider);
+            testSet = new TestSet(provider);
 
             InputStream inputStream = null;
             if (this.ormUnitFileName != null) {

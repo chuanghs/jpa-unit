@@ -11,7 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
 
-import static java.lang.Enum.*;
+import static java.lang.Enum.valueOf;
 
 /**
  * Created by IntelliJ IDEA.
@@ -25,12 +25,12 @@ public class ORMUnitHelper {
     public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
     public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa";
 
+    public static final String DerbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
+    public static final String H2DriverClassName = "org.h2.Driver";
+    public static final String HSQLDriverClassName = "org.hsqldb.jdbcDriver";
+
     public static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
     public static DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-    public static final String derbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
-    public static final String h2DriverClassName = "org.h2.Driver";
-    public static final String hsqlDriverClassName = "org.hsqldb.jdbcDriver";
 
 
     public static Object convert(Class<?> propertyType, String value) throws ConvertionException {
@@ -62,7 +62,7 @@ public class ORMUnitHelper {
             } else if (propertyType.equals(String.class)) {
                 return value;
             } else if (Enum.class.isAssignableFrom(propertyType)) {
-                return valueOf((Class<? extends Enum>)propertyType, value);
+                return valueOf((Class<? extends Enum>) propertyType, value);
             }
         } catch (Exception pe) {
             throw new ConvertionException(pe);
@@ -71,8 +71,38 @@ public class ORMUnitHelper {
 
     }
 
+    public static String getDefaultDriverClassName() {
+        if (isHSQL()) {
+            return HSQLDriverClassName;
+        } else if (isH2()) {
+            return H2DriverClassName;
+        } else if (isDerby()) {
+            return DerbyDriverClassName;
+        }
+        return null;
+    }
+
+    public static String getDefaultConnectionURL() {
+        if (isHSQL()) {
+            return JDBC_URL_HSQL;
+        } else if (isH2()) {
+            return JDBC_URL_H2;
+        } else if (isDerby()) {
+            return JDBC_URL_DERBY;
+        }
+        return null;
+    }
+
     public static boolean isDerby() {
-        return isClassAvailable(derbyDriverClassName);
+        return isClassAvailable(DerbyDriverClassName);
+    }
+
+    public static boolean isHSQL() {
+        return isClassAvailable(HSQLDriverClassName);
+    }
+
+    public static boolean isH2() {
+        return isClassAvailable(H2DriverClassName);
     }
 
     private static boolean isClassAvailable(String derbyDriverClassName) {
@@ -82,14 +112,6 @@ public class ORMUnitHelper {
         } catch (ClassNotFoundException e) {
             return false;
         }
-    }
-
-    public static boolean isHSQL() {
-        return isClassAvailable(hsqlDriverClassName);
-    }
-
-    public static boolean isH2() {
-        return isClassAvailable(h2DriverClassName);
     }
 
     public static Properties readOrmUnitProperties(Class<?> start) {
@@ -105,7 +127,7 @@ public class ORMUnitHelper {
         Properties result = new Properties();
         try {
             do {
-                InputStream propertiesStream = start.getResourceAsStream(path + ORMUnit.PropertiesFileName);
+                InputStream propertiesStream = start.getResourceAsStream(path + ORMUnitPropertiesReader.PropertiesFileName);
                 result = new Properties(defaults);
 
                 if (propertiesStream != null)
@@ -122,7 +144,7 @@ public class ORMUnitHelper {
     }
 
     public static Properties readDefaults(Properties d) {
-        InputStream resourceAsStream = ORMUnitTestSet.class.getResourceAsStream("/" + ORMUnit.DefaultPropertiesFileName);
+        InputStream resourceAsStream = TestSet.class.getResourceAsStream("/" + ORMUnitPropertiesReader.DefaultPropertiesFileName);
         Properties properties = new Properties(d);
         try {
             properties.load(resourceAsStream);

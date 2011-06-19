@@ -1,7 +1,7 @@
 package org.ormunit.command;
 
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 import org.ormunit.entity.EntityAccessor;
 import org.ormunit.exception.ORMUnitConfigurationException;
 
@@ -19,7 +19,7 @@ public class EntityCommand implements ORMUnitCommand {
     private final Object entity;
     private EntityAccessor accessor;
     private final Set<EntityReference> references;
-    private static Map<ORMUnitTestSet, Map<String, Object>> entities = new WeakHashMap<ORMUnitTestSet, Map<String, Object>>();
+    private static Map<TestSet, Map<String, Object>> entities = new WeakHashMap<TestSet, Map<String, Object>>();
 
     public EntityCommand(Object entity, EntityAccessor accessor) {
         this(null, entity, accessor);
@@ -48,7 +48,7 @@ public class EntityCommand implements ORMUnitCommand {
         }
     }
 
-    public void visit(ORMUnitTestSet testSet) {
+    public void visit(TestSet testSet) {
         ORMProvider provider = testSet.getProvider();
         for (EntityReference ref : references) {
             Class propertyClass = getPropertyClass(ref.getPropertyName());
@@ -70,7 +70,7 @@ public class EntityCommand implements ORMUnitCommand {
         }
     }
 
-    private static Object getORMEntity(ORMUnitTestSet testSet, String id) {
+    private static Object getORMEntity(TestSet testSet, String id) {
         if (testSet == null ){
             return null;
         }
@@ -83,7 +83,7 @@ public class EntityCommand implements ORMUnitCommand {
         return null;
     }
 
-    private void registerORMEntity(ORMUnitTestSet testSet, Object entity, String ormId) {
+    private void registerORMEntity(TestSet testSet, Object entity, String ormId) {
         Map<String, Object> stringObjectMap = entities.get(testSet.getRootTestSet());
         if (stringObjectMap == null) {
             entities.put(testSet, stringObjectMap = new HashMap<String, Object>());

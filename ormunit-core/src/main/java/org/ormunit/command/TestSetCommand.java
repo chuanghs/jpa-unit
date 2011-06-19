@@ -1,7 +1,6 @@
 package org.ormunit.command;
 
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,13 +10,13 @@ import org.ormunit.ORMUnitTestSet;
  */
 public class TestSetCommand implements ORMUnitCommand{
 
-    private ORMUnitTestSet testSet;
+    private TestSet testSet;
 
-    public TestSetCommand(ORMUnitTestSet testSet){
+    public TestSetCommand(TestSet testSet){
         this.testSet = testSet;
     }
 
-    public void visit(ORMUnitTestSet testSet) {
+    public void visit(TestSet testSet) {
         this.testSet.execute();
     }
 }

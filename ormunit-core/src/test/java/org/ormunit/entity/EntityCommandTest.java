@@ -5,7 +5,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.InOrder;
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.command.TestSetCommand;
@@ -42,7 +42,7 @@ public class EntityCommandTest {
 
         ORMProvider provider = mock(ORMProvider.class);
 
-        ORMUnitTestSet testSet = new ORMUnitTestSet(provider);
+        TestSet testSet = new TestSet(provider);
         testSet.addCommand(entityCommand1);
         testSet.addCommand(entityCommand2);
 
@@ -73,9 +73,9 @@ public class EntityCommandTest {
 
 
 
-        ORMUnitTestSet rootTestSet = new ORMUnitTestSet(provider);
+        TestSet rootTestSet = new TestSet(provider);
 
-        ORMUnitTestSet includedTestSet = new ORMUnitTestSet(rootTestSet);
+        TestSet includedTestSet = new TestSet(rootTestSet);
         includedTestSet.addCommand(entityCommand1);
         rootTestSet.addCommand(new TestSetCommand(includedTestSet));
 
