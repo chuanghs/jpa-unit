@@ -1,7 +1,7 @@
 package org.ormunit.node;
 
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.command.TestSetCommand;
 import org.ormunit.exception.ORMUnitFileReadException;
 import org.ormunit.exception.ORMUnitNodeProcessingException;
@@ -23,12 +23,12 @@ public class IncludeNodeProcessor extends NodeProcessor {
 
     private static final Logger log = LoggerFactory.getLogger(IncludeNodeProcessor.class);
 
-    public IncludeNodeProcessor(ORMUnit ormUnit) {
+    public IncludeNodeProcessor(ORMUnitPropertiesReader ormUnit) {
         super(ormUnit);
     }
 
 
-    public void process(Node jpaUnitElement, ORMUnitTestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
         Node srcNode = jpaUnitElement.getAttributes().getNamedItem("src");
         if (srcNode != null) {
             try {
@@ -39,11 +39,11 @@ public class IncludeNodeProcessor extends NodeProcessor {
         }
     }
 
-    public void include(String s, ORMUnitTestSet currentTestSet) throws ORMUnitFileReadException {
+    public void include(String s, TestSet currentTestSet) throws ORMUnitFileReadException {
         String[] strings = getOrmUnit().normalizePath(s);
         String s1 = strings[0] + strings[1];
 
-        ORMUnitTestSet includedTestSet = createTestSetIfNotReadBefore(s1, currentTestSet);
+        TestSet includedTestSet = createTestSetIfNotReadBefore(s1, currentTestSet);
         if (includedTestSet != null) {
 
             includedTestSet = getOrmUnit().read(s, includedTestSet);
@@ -54,16 +54,16 @@ public class IncludeNodeProcessor extends NodeProcessor {
         }
     }
 
-    static private WeakHashMap<ORMUnitTestSet, Map<String, ORMUnitTestSet>> readTestSets = new WeakHashMap<ORMUnitTestSet, Map<String, ORMUnitTestSet>>();
+    static private WeakHashMap<TestSet, Map<String, TestSet>> readTestSets = new WeakHashMap<TestSet, Map<String, TestSet>>();
 
-    public ORMUnitTestSet createTestSetIfNotReadBefore(String includeFileName, ORMUnitTestSet parent) {
-        Map<String, ORMUnitTestSet> stringORMUnitTestSetMap = readTestSets.get(parent.getRootTestSet());
+    public TestSet createTestSetIfNotReadBefore(String includeFileName, TestSet parent) {
+        Map<String, TestSet> stringORMUnitTestSetMap = readTestSets.get(parent.getRootTestSet());
         if (stringORMUnitTestSetMap == null) {
-            readTestSets.put(parent.getRootTestSet(), stringORMUnitTestSetMap = new HashMap<String, ORMUnitTestSet>());
+            readTestSets.put(parent.getRootTestSet(), stringORMUnitTestSetMap = new HashMap<String, TestSet>());
         }
-        ORMUnitTestSet result = stringORMUnitTestSetMap.get(includeFileName);
+        TestSet result = stringORMUnitTestSetMap.get(includeFileName);
         if (result == null) {
-            stringORMUnitTestSetMap.put(includeFileName, result = new ORMUnitTestSet(parent));
+            stringORMUnitTestSetMap.put(includeFileName, result = new TestSet(parent));
         } else {
             result = null;
         }

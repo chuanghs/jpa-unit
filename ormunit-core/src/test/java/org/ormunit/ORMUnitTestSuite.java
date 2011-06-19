@@ -30,7 +30,7 @@ import org.ormunit.node.SimplePOJOTest;
         CoreEntityNodeProcessorTest.class,
         //EntityCommandTest.class,
         ORMUnitTest.class,
-        ORMUnitTestSetTest.class,
+        TestSetTest.class,
         ORMUnitDataSourceTest.class
 })
 public class ORMUnitTestSuite {

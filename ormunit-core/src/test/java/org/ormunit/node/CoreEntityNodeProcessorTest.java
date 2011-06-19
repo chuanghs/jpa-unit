@@ -8,8 +8,8 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.PropertyAccessor;
@@ -42,13 +42,13 @@ public class CoreEntityNodeProcessorTest {
     @Mock
     ORMProvider ormProvider;
 
-    ORMUnit ormUnit;
+    ORMUnitPropertiesReader ormUnit;
 
     @Before
     public void setUp() throws IntrospectionException {
         when(ormProvider.getAccessor(eq(SimplePOJO.class), (Class<?>) any())).thenReturn(new PropertyAccessor(SimplePOJO.class));
         when(ormProvider.getAccessor(eq(SimplePOJO2.class), (Class<?>) any())).thenReturn(new PropertyAccessor(SimplePOJO2.class));
-        ormUnit = new ORMUnit(getClass());
+        ormUnit = new ORMUnitPropertiesReader(getClass());
     }
 
     @Test
@@ -67,7 +67,7 @@ public class CoreEntityNodeProcessorTest {
                 "   <pojo integerValue=\"1\" enumValue=\"Value1\" doubleValue=\"1.23\" booleanValue=\"true\" stringValue=\"string\" timestampValue=\"2010-12-18 18:22:00\" dateValue=\"2010-12-18\" />" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
         ormUnit.read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
@@ -101,7 +101,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
         ormUnit.read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
@@ -137,7 +137,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
         ormUnit.read(bais, result);
 
         SimplePOJO simplePOJO = new SimplePOJO();
@@ -164,7 +164,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
 
@@ -193,7 +193,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(Integer.class);
 
@@ -223,7 +223,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(SimplePOJO2.class);
 
@@ -252,7 +252,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
 
 
         when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
@@ -286,7 +286,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
         ormUnit.read(bais, result);
 
         verify(result, times(2)).getNodeProcessor("pojo2");
@@ -321,7 +321,7 @@ public class CoreEntityNodeProcessorTest {
                 "   </pojo>" +
                 "</ormunit>").getBytes());
 
-        ORMUnitTestSet result = spy(new ORMUnitTestSet(ormProvider));
+        TestSet result = spy(new TestSet(ormProvider));
         ormUnit.read(bais, result);
 
         verify(result, times(2)).getNodeProcessor("import");

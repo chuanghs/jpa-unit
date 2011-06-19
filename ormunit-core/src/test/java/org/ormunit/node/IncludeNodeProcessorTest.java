@@ -5,8 +5,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.ormunit.ORMProvider;
-import org.ormunit.ORMUnit;
-import org.ormunit.ORMUnitTestSet;
+import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.command.TestSetCommand;
 import org.ormunit.exception.ORMUnitFileReadException;
 
@@ -33,23 +33,23 @@ public class IncludeNodeProcessorTest {
 
     private static final String workDir = "/foo/bar";
 
-    private ORMUnitTestSet testSet;
-    private ORMUnit ormUnit;
+    private TestSet testSet;
+    private ORMUnitPropertiesReader ormUnit;
     private ORMProvider ormProvider;
 
     @Before
     public void setUp() {
-        ormUnit = spy(new ORMUnit(workDir, getClass()));
+        ormUnit = spy(new ORMUnitPropertiesReader(workDir, getClass()));
         ormProvider = mock(ORMProvider.class);
-        testSet = spy(new ORMUnitTestSet(ormProvider));
+        testSet = spy(new TestSet(ormProvider));
 
     }
 
     @Test
     public void testIncludeChangeWorkDir1() throws ORMUnitFileReadException {
 
-        ORMUnitTestSet rootTestSet = new ORMUnitTestSet(ormProvider);
-        ORMUnitTestSet includedTestSet = new ORMUnitTestSet(rootTestSet);
+        TestSet rootTestSet = new TestSet(ormProvider);
+        TestSet includedTestSet = new TestSet(rootTestSet);
         IncludeNodeProcessor includeNodeProcessor = spy(new IncludeNodeProcessor(ormUnit));
 
 
@@ -87,8 +87,8 @@ public class IncludeNodeProcessorTest {
 
         ormUnit.read(new ByteArrayInputStream(value), testSet);
 
-        verify(ormUnit, times(1)).read(eq("../bar.xml"), any(ORMUnitTestSet.class));
-        verify(ormUnit, times(1)).read(eq("../foo.xml"), any(ORMUnitTestSet.class));
+        verify(ormUnit, times(1)).read(eq("../bar.xml"), any(TestSet.class));
+        verify(ormUnit, times(1)).read(eq("../foo.xml"), any(TestSet.class));
         verify(ormUnit, times(1)).getResourceAsStream(eq("/foo/bar.xml"));
         verify(ormUnit, times(1)).getResourceAsStream(eq("/foo.xml"));
 
@@ -105,7 +105,7 @@ public class IncludeNodeProcessorTest {
 
 
         verify(includeNodeProcessor).createTestSetIfNotReadBefore(eq(workDir + "/someOtherFile.xml"), same(testSet));
-        verify(ormUnit, times(1)).read(eq("someOtherFile.xml"), any(ORMUnitTestSet.class));
+        verify(ormUnit, times(1)).read(eq("someOtherFile.xml"), any(TestSet.class));
 
         verify(testSet).addCommand(any(TestSetCommand.class));
     }

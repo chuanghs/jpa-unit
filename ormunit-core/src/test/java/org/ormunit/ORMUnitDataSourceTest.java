@@ -39,7 +39,7 @@ public class ORMUnitDataSourceTest {
         Properties properties = new Properties();
         properties.load(inputStream);
 
-        ORMUnit ormUnit = new ORMUnit(getClass(), properties);
+        ORMUnitPropertiesReader ormUnit = new ORMUnitPropertiesReader(getClass(), properties);
 
         properties = ormUnit.getDefaultDataSourceProperties();
 
@@ -58,7 +58,7 @@ public class ORMUnitDataSourceTest {
         Properties properties = new Properties();
         properties.load(inputStream);
 
-        ORMUnit ormUnit = new ORMUnit(getClass(), properties);
+        ORMUnitPropertiesReader ormUnit = new ORMUnitPropertiesReader(getClass(), properties);
 
         try {
             properties = ormUnit.getDefaultDataSourceProperties();

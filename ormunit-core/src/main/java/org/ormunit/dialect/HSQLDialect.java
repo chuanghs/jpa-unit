@@ -9,6 +9,10 @@ package org.ormunit.dialect;
  */
 public class HSQLDialect implements Dialect {
     public String getCreateSchemaStatement(String schemaName) {
-        return "create schema " + schemaName.toUpperCase() + " authorization DBA";
+        return "create schema " + schemaName + " AUTHORIZATION  DBA  ";
+    }
+
+    public String getDefaultPrincipal() {
+        return "SA";
     }
 }
