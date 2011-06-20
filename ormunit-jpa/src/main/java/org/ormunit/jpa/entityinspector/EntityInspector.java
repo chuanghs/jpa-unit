@@ -1,4 +1,4 @@
-package org.ormunit.inspector;
+package org.ormunit.jpa.entityinspector;
 
 import com.sun.java.xml.ns.persistence.orm.AccessType;
 
@@ -18,7 +18,7 @@ public interface EntityInspector {
 
     AccessType getAccessTypeOfClass(Class entityClass);
 
-    Class<?> getIdTypeOfEntityClass(Class<?> entityClass);
+    Class<?> getIdType(Class<?> entityClass);
 
     PropertyDescriptor getIdProperty(Class<?> entityClass);
 
@@ -26,5 +26,5 @@ public interface EntityInspector {
 
     boolean isIdGenerated(Class<?> entityClass);
 
-    Class getIdClass(Class<?> entityClass);
+    Class getIdClassValue(Class<?> entityClass);
 }

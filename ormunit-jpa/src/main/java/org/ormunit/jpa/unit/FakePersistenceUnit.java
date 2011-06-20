@@ -1,11 +1,11 @@
-package org.ormunit.unit;
+package org.ormunit.jpa.unit;
 
-import org.ormunit.inspector.AnnotationsEntityInspector;
-import org.ormunit.inspector.EntityInspector;
-import org.ormunit.provider.EclipseLinkProperties;
-import org.ormunit.provider.HibernatJPAProperties;
-import org.ormunit.provider.OpenJPAProperties;
-import org.ormunit.provider.ProviderProperties;
+import org.ormunit.jpa.entityinspector.AnnotationsEntityInspector;
+import org.ormunit.jpa.entityinspector.EntityInspector;
+import org.ormunit.jpa.providerproperties.EclipseLinkProperties;
+import org.ormunit.jpa.providerproperties.HibernatJPAProperties;
+import org.ormunit.jpa.providerproperties.OpenJPAProperties;
+import org.ormunit.jpa.providerproperties.ProviderProperties;
 
 import java.util.HashSet;
 import java.util.List;
@@ -39,7 +39,7 @@ public class FakePersistenceUnit implements PersistenceUnit {
     }
 
     public String getUnitName() {
-        return null;
+        throw new IllegalStateException("FakePersistenceUnit is created when em is provided, so there no knowledge of persistence unit.");
     }
 
     public ProviderProperties createProviderProperties(Properties defaultDataSourceProperties) {

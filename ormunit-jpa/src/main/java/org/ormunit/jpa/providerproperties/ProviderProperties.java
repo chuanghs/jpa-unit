@@ -1,4 +1,4 @@
-package org.ormunit.provider;
+package org.ormunit.jpa.providerproperties;
 
 import org.ormunit.dialect.Dialect;
 

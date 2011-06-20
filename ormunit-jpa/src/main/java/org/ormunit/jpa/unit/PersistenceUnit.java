@@ -1,7 +1,7 @@
-package org.ormunit.unit;
+package org.ormunit.jpa.unit;
 
-import org.ormunit.inspector.EntityInspector;
-import org.ormunit.provider.ProviderProperties;
+import org.ormunit.jpa.entityinspector.EntityInspector;
+import org.ormunit.jpa.providerproperties.ProviderProperties;
 
 import java.util.Properties;
 import java.util.Set;

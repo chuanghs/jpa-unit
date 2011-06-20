@@ -1,4 +1,4 @@
-package org.ormunit.inspector;
+package org.ormunit.jpa.entityinspector;
 
 import com.sun.java.xml.ns.persistence.orm.AccessType;
 
@@ -28,8 +28,8 @@ public class DelegatingEntityInspector implements EntityInspector {
         return delegateTo.getAccessTypeOfClass(entityClass);
     }
 
-    public Class<?> getIdTypeOfEntityClass(Class<?> entityClass) {
-        return delegateTo.getIdTypeOfEntityClass(entityClass);
+    public Class<?> getIdType(Class<?> entityClass) {
+        return delegateTo.getIdType(entityClass);
     }
 
     public PropertyDescriptor getIdProperty(Class<?> entityClass) {
@@ -44,7 +44,7 @@ public class DelegatingEntityInspector implements EntityInspector {
         return delegateTo.isIdGenerated(entityClass);
     }
 
-    public Class getIdClass(Class<?> entityClass) {
-        return delegateTo.getIdClass(entityClass);
+    public Class getIdClassValue(Class<?> entityClass) {
+        return delegateTo.getIdClassValue(entityClass);
     }
 }

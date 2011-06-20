@@ -1,8 +1,8 @@
-package org.ormunit.provider;
+package org.ormunit.jpa.providerproperties;
 
 import org.ormunit.ORMUnitHelper;
 import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.unit.PersistenceUnit;
+import org.ormunit.jpa.unit.PersistenceUnit;
 import org.slf4j.Logger;
 
 import java.util.Properties;
