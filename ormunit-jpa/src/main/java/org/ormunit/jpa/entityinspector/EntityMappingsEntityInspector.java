@@ -1,4 +1,4 @@
-package org.ormunit.inspector;
+package org.ormunit.jpa.entityinspector;
 
 import com.sun.java.xml.ns.persistence.orm.*;
 import org.ormunit.BeanUtils;
@@ -8,6 +8,7 @@ import org.ormunit.exception.ORMUnitInstantiationException;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.util.List;
+
 /**
  * Created by IntelliJ IDEA.
  * User: Tomasz Krzyzal (tomasz.krzyzak@gmail.com )
@@ -27,33 +28,39 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
 
     public String getSchemaName(Class<?> entityClass) {
         Entity entityEntry = getEntityEntry(entityClass);
-        if (entityClass != null && entityEntry.getTable() != null) {
-            entityEntry.getTable().getSchema();
+        if (entityEntry != null && entityEntry.getTable() != null) {
+            return entityEntry.getTable().getSchema();
         }
         return super.getSchemaName(entityClass);
     }
 
     public AccessType getAccessTypeOfClass(Class entityClass) {
-        Entity requestedEntityEntry = getEntityEntry(entityClass);
-        if (requestedEntityEntry != null && requestedEntityEntry.getAccess() != null) {
-            return requestedEntityEntry.getAccess();
+        Entity entityEntry = getEntityEntry(entityClass);
+        if (entityEntry != null && entityEntry.getAccess() != null) {
+            return entityEntry.getAccess();
         }
         return super.getAccessTypeOfClass(entityClass);
     }
 
-    public Class<?> getIdTypeOfEntityClass(Class<?> entityClass) {
-        Entity requestedEntityEntry = getEntityEntry(entityClass);
-        if (requestedEntityEntry != null && requestedEntityEntry.getIdClass() != null) {
-            try {
-                return Class.forName(requestedEntityEntry.getIdClass().getClazz());
-            } catch (ClassNotFoundException e) {
-                throw new ORMUnitInstantiationException(String.format("Cannot instantiate idclass: %s (based on orm file) of %s",
-                        requestedEntityEntry.getIdClass().getClazz(),
-                        entityClass.getCanonicalName()));
-            }
+    public Class<?> getIdType(Class<?> entityClass) {
+        Class idClass = getIdClassValue(entityClass);
+        if (idClass != null) {
+            return idClass;
         }
-        return super.getIdTypeOfEntityClass(entityClass);
+        if (getAccessTypeOfClass(entityClass) == AccessType.FIELD) {
+            Field idField = getIdField(entityClass);
+            if (idField != null)
+                return idField.getType();
+        } else if (getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+            PropertyDescriptor idProperty = getIdProperty(entityClass);
+            if (idProperty != null)
+                return idProperty.getPropertyType();
+        }
+
+        return super.getIdType(entityClass);
     }
+
+
 
     public boolean isIdGenerated(Class<?> entityClass) {
         Id idEntry = getIdEntry(entityClass);
@@ -62,24 +69,12 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         return super.isIdGenerated(entityClass);
     }
 
-    public Class getIdClass(Class<?> entityClass) {
-        Class<?> idTypeOfEntityClass = getIdTypeOfEntityClass(entityClass);
-        if (idTypeOfEntityClass != null) {
-            return idTypeOfEntityClass;
-        } else {
-            if (getAccessTypeOfClass(entityClass) == AccessType.FIELD) {
-                Field idField = getIdField(entityClass);
-                if (idField != null) {
-                    return idField.getType();
-                }
-            } else {
-                PropertyDescriptor idProperty = getIdProperty(entityClass);
-                if (idProperty != null) {
-                    return idProperty.getPropertyType();
-                }
-            }
+    public Class getIdClassValue(Class<?> entityClass) {
+        IdClass idClassEntry = getIdClassEntry(entityClass);
+        if (idClassEntry != null) {
+           return instantiateIdTypeOf(entityClass, idClassEntry.getClazz());
         }
-        return super.getIdClass(entityClass);
+        return super.getIdClassValue(entityClass);
     }
 
     public PropertyDescriptor getIdProperty(Class<?> entityClass) {
@@ -99,6 +94,16 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
 
     }
 
+    private Class<?> instantiateIdTypeOf(Class<?> entityClass, String idTypeName) {
+        try {
+            return Class.forName(idTypeName);
+        } catch (ClassNotFoundException e) {
+            throw new ORMUnitInstantiationException(String.format("Cannot instantiate idclass: %s (based on orm file) of %s",
+                    idTypeName,
+                    entityClass.getCanonicalName()));
+        }
+    }
+
     private Entity getEntityEntry(Class entityClass) {
         List<Entity> entities = this.entityMappings.getEntity();
         if (entities != null) {
@@ -107,6 +112,14 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
                     return entity;
                 }
             }
+        }
+        return null;
+    }
+
+    private IdClass getIdClassEntry(Class<?> entityClass) {
+        Entity entityEntry = getEntityEntry(entityClass);
+        if (entityEntry != null) {
+            return entityEntry.getIdClass();
         }
         return null;
     }

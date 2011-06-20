@@ -1,15 +1,16 @@
-package org.ormunit.unit;
+package org.ormunit.jpa.unit;
 
 import com.sun.java.xml.ns.persistence.Persistence;
 import com.sun.java.xml.ns.persistence.orm.Entity;
 import com.sun.java.xml.ns.persistence.orm.EntityMappings;
 import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.inspector.AnnotationsEntityInspector;
-import org.ormunit.inspector.EntityInspector;
-import org.ormunit.provider.EclipseLinkProperties;
-import org.ormunit.provider.HibernatJPAProperties;
-import org.ormunit.provider.OpenJPAProperties;
-import org.ormunit.provider.ProviderProperties;
+import org.ormunit.jpa.entityinspector.AnnotationsEntityInspector;
+import org.ormunit.jpa.entityinspector.EntityInspector;
+import org.ormunit.jpa.entityinspector.EntityMappingsEntityInspector;
+import org.ormunit.jpa.providerproperties.EclipseLinkProperties;
+import org.ormunit.jpa.providerproperties.HibernatJPAProperties;
+import org.ormunit.jpa.providerproperties.OpenJPAProperties;
+import org.ormunit.jpa.providerproperties.ProviderProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -272,7 +273,12 @@ public class XmlPersistenceUnit implements PersistenceUnit {
     }
 
     public EntityInspector createClassInspector() {
-        // TODO: change to entity inspector which operates both on annotations and orm.xml files
-        return new AnnotationsEntityInspector();
+        EntityInspector delegatedInspector = new AnnotationsEntityInspector();
+        List<EntityMappings> ormMappings = new ArrayList<EntityMappings>(this.ormMappings);
+        Collections.reverse(ormMappings);
+        for (EntityMappings mappings : ormMappings) {
+            delegatedInspector = new EntityMappingsEntityInspector(mappings, delegatedInspector);
+        }
+        return delegatedInspector;
     }
 }

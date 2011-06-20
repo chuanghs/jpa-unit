@@ -6,12 +6,9 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ormunit.entity.Auction;
-import org.ormunit.entity.Employee;
-import org.ormunit.entity.EmployeeId;
-import org.ormunit.entity.PropertyAccessEntity;
-import org.ormunit.inspector.EntityInspector;
-import org.ormunit.inspector.EntityMappingsEntityInspector;
+import org.ormunit.entity.*;
+import org.ormunit.jpa.entityinspector.EntityInspector;
+import org.ormunit.jpa.entityinspector.EntityMappingsEntityInspector;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -40,6 +37,25 @@ public class EntityMappingsEntityInspectorTest {
     public void before() {
         entityMappings = new EntityMappings();
         ormFileEntityInspector = spy(new EntityMappingsEntityInspector(entityMappings, backupEntityInspector));
+    }
+
+    @Test
+    public void testGetSchema() {
+        Entity entity = new Entity();
+        entity.setClazz(Employee.class.getCanonicalName());
+        Table table = new Table();
+        table.setSchema("schema");
+        entity.setTable(table);
+        entityMappings.getEntity().add(entity);
+
+        assertEquals(table.getSchema(), ormFileEntityInspector.getSchemaName(Employee.class));
+    }
+
+
+    @Test
+    public void testGetSchemaDelegated() {
+        ormFileEntityInspector.getSchemaName(Employee.class);
+        verify(backupEntityInspector).getSchemaName(eq(Employee.class));
     }
 
 
@@ -74,8 +90,44 @@ public class EntityMappingsEntityInspectorTest {
         entity.setIdClass(idclass);
         entityMappings.getEntity().add(entity);
 
-        assertEquals(EmployeeId.class, ormFileEntityInspector.getIdTypeOfEntityClass(Employee.class));
-        verify(backupEntityInspector, times(0)).getIdTypeOfEntityClass(eq(Employee.class));
+        assertEquals(EmployeeId.class, ormFileEntityInspector.getIdType(Employee.class));
+        verify(backupEntityInspector, times(0)).getIdType(eq(Employee.class));
+    }
+
+
+    @Test
+    public void testGetIdTypeOfEntityClass_Property() {
+        Entity entity = new Entity();
+        entity.setAccess(AccessType.PROPERTY);
+        entity.setClazz(PropertyAccessEntity.class.getCanonicalName());
+        Attributes value = new Attributes();
+        Id id = new Id();
+        id.setName("id");
+        value.getId().add(id);
+        entity.setAttributes(value);
+
+        entityMappings.getEntity().add(entity);
+
+        assertEquals(Integer.class, ormFileEntityInspector.getIdType(PropertyAccessEntity.class));
+        verify(backupEntityInspector, times(0)).getIdType(eq(PropertyAccessEntity.class));
+    }
+
+
+    @Test
+    public void testGetIdTypeOfEntityClass_Field() {
+        Entity entity = new Entity();
+        entity.setAccess(AccessType.FIELD );
+        entity.setClazz(FieldAccessEntity.class.getCanonicalName());
+        Attributes value = new Attributes();
+        Id id = new Id();
+        id.setName("integerValue");
+        value.getId().add(id);
+        entity.setAttributes(value);
+
+        entityMappings.getEntity().add(entity);
+
+        assertEquals(int.class, ormFileEntityInspector.getIdType(FieldAccessEntity.class));
+        verify(backupEntityInspector, times(0)).getIdType(eq(FieldAccessEntity.class));
     }
 
     @Test
@@ -85,8 +137,8 @@ public class EntityMappingsEntityInspectorTest {
         entity.setClazz(Employee.class.getCanonicalName());
         entityMappings.getEntity().add(entity);
 
-        ormFileEntityInspector.getIdTypeOfEntityClass(Employee.class);
-        verify(backupEntityInspector, times(1)).getIdTypeOfEntityClass(eq(Employee.class));
+        ormFileEntityInspector.getIdType(Employee.class);
+        verify(backupEntityInspector, times(1)).getIdType(eq(Employee.class));
     }
 
     @Test
@@ -193,11 +245,11 @@ public class EntityMappingsEntityInspectorTest {
         entity.setAttributes(attributes);
         entityMappings.getEntity().add(entity);
 
-        Class idClass = ormFileEntityInspector.getIdClass(Auction.class);
+        Class idClass = ormFileEntityInspector.getIdType(Auction.class);
 
         assertNotNull(idClass);
         assertEquals(Integer.class, idClass);
-        verify(backupEntityInspector, times(0)).getIdClass(eq(Auction.class));
+        verify(backupEntityInspector, times(0)).getIdType(eq(Auction.class));
     }
 
     @Test
@@ -207,8 +259,8 @@ public class EntityMappingsEntityInspectorTest {
         entity.setClazz(Auction.class.getCanonicalName());
         entityMappings.getEntity().add(entity);
 
-        ormFileEntityInspector.getIdClass(Auction.class);
-        verify(backupEntityInspector, times(1)).getIdClass(eq(Auction.class));
+        ormFileEntityInspector.getIdType(Auction.class);
+        verify(backupEntityInspector, times(1)).getIdType(eq(Auction.class));
     }
 
 }

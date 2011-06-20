@@ -3,7 +3,7 @@ package org.ormunit.live;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ormunit.unit.XmlPersistenceUnit;
+import org.ormunit.jpa.unit.XmlPersistenceUnit;
 import org.ormunit.entity.Employee;
 import org.ormunit.entity.EmployeeId;
 import org.ormunit.entity.PhoneNumber;

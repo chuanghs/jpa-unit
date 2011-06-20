@@ -1,9 +1,8 @@
-package org.ormunit.inspector;
+package org.ormunit.jpa.entityinspector;
 
 
 import com.sun.java.xml.ns.persistence.orm.AccessType;
 import org.ormunit.BeanUtils;
-import org.ormunit.exception.ORMUnitConfigurationException;
 
 import javax.persistence.*;
 import java.beans.PropertyDescriptor;
@@ -52,34 +51,26 @@ public class AnnotationsEntityInspector implements EntityInspector {
 
     public Field getIdField(Class<?> entityClass) {
         Set<Field> annotatedFields = utils.getFieldsAnnotatedWith(entityClass, Id.class, EmbeddedId.class);
-        if (annotatedFields.size() == 0) {
-            throw new ORMUnitConfigurationException("");
-        } else if (annotatedFields.size() == 1) {
+        if (annotatedFields.size() == 1)
             return annotatedFields.iterator().next();
-        } else {
-            throw new RuntimeException();
-        }
+        return null;
     }
 
     public PropertyDescriptor getIdProperty(Class<?> entityClass) {
         Set<PropertyDescriptor> annotatedProperties = utils.getPropertiesAnnotatedWith(entityClass, Id.class, EmbeddedId.class);
-        if (annotatedProperties.size() == 0) {
-            throw new RuntimeException();
-        } else if (annotatedProperties.size() == 1) {
+        if (annotatedProperties.size() == 1)
             return annotatedProperties.iterator().next();
-        } else {
-            throw new RuntimeException();
-        }
+        return null;
     }
 
-    public Class getIdClass(Class<?> entityClass) {
+    public Class getIdClassValue(Class<?> entityClass) {
         IdClass idClassAnnotation = entityClass.getAnnotation(IdClass.class);
         if (idClassAnnotation != null)
             return idClassAnnotation.value();
         return null;
     }
 
-    public Class<?> getIdTypeOfEntityClass(Class<?> entityClass) {
+    public Class<?> getIdType(Class<?> entityClass) {
         Class<?> result = null;
         IdClass idClass = entityClass.getAnnotation(IdClass.class);
         if (idClass != null) {

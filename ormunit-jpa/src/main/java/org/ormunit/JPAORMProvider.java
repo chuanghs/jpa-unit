@@ -2,11 +2,11 @@ package org.ormunit;
 
 import com.sun.java.xml.ns.persistence.orm.AccessType;
 import org.ormunit.dialect.Dialect;
-import org.ormunit.inspector.*;
-import org.ormunit.provider.ProviderProperties;
-import org.ormunit.unit.FakePersistenceUnit;
-import org.ormunit.unit.PersistenceUnit;
-import org.ormunit.unit.XmlPersistenceUnit;
+import org.ormunit.jpa.entityinspector.EntityInspector;
+import org.ormunit.jpa.providerproperties.ProviderProperties;
+import org.ormunit.jpa.unit.FakePersistenceUnit;
+import org.ormunit.jpa.unit.PersistenceUnit;
+import org.ormunit.jpa.unit.XmlPersistenceUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +92,7 @@ public class JPAORMProvider extends ORMProviderAdapter {
 
     public Object getId(Object entity) throws InstantiationException, IllegalAccessException, InvocationTargetException {
         Class<?> entityClass = entity.getClass();
-        Class idClassType = entityClassInspector.getIdClass(entityClass);
+        Class idClassType = entityClassInspector.getIdClassValue(entityClass);
         Object result = null;
         if (idClassType != null) {
             result = idClassType.newInstance();
@@ -115,7 +115,7 @@ public class JPAORMProvider extends ORMProviderAdapter {
 
     public void setId(Object entity, Object id) throws IllegalAccessException, InvocationTargetException {
         Class<?> entityClass = entity.getClass();
-        Class idClassType = entityClassInspector.getIdClass(entityClass);
+        Class idClassType = entityClassInspector.getIdClassValue(entityClass);
         if (idClassType != null) {
             if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY)
                 utils.copyPropertyValues(id, entity);
@@ -133,7 +133,7 @@ public class JPAORMProvider extends ORMProviderAdapter {
     }
 
     public Class<?> getIdType(Class<?> entityClass) {
-        return entityClassInspector.getIdTypeOfEntityClass(entityClass);
+        return entityClassInspector.getIdType(entityClass);
     }
 
     public Set<Class<?>> getManagedTypes() {
@@ -156,12 +156,6 @@ public class JPAORMProvider extends ORMProviderAdapter {
 
         entityManager.getTransaction().begin();
 
-        if (selfManagedEM)
-            try {
-                con.close();
-            } catch (SQLException e) {
-                log.error("", e);
-            }
 
     }
 
@@ -199,5 +193,12 @@ public class JPAORMProvider extends ORMProviderAdapter {
         } else {
             log.warn("teardown is unnecessary because entityManager is null. Are there errors while creating EnittyManager?");
         }
+
+        if (selfManagedEM)
+            try {
+                con.close();
+            } catch (SQLException e) {
+                log.error("", e);
+            }
     }
 }
