@@ -1,6 +1,6 @@
 package org.ormunit.jpa.entityinspector;
 
-import com.sun.java.xml.ns.persistence.orm.AccessType;
+import org.ormunit.ORMProviderAdapter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -16,7 +16,7 @@ public interface EntityInspector {
 
     String getSchemaName(Class<?> entityClass);
 
-    AccessType getAccessTypeOfClass(Class entityClass);
+    ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass);
 
     Class<?> getIdType(Class<?> entityClass);
 

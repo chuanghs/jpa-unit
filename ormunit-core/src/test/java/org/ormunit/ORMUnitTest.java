@@ -6,9 +6,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Matchers;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.command.StatementCommand;
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitFileReadException;
-import org.ormunit.exception.ORMUnitFileSyntaxException;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.FileReadException;
+import org.ormunit.exception.FileSyntaxException;
 import org.ormunit.node.NodeProcessor;
 import org.ormunit.node.ImportNodeProcessor;
 
@@ -40,7 +40,7 @@ public class ORMUnitTest {
 
 
     @Test
-    public void testReadStatements() throws ORMUnitFileReadException, IOException {
+    public void testReadStatements() throws FileReadException, IOException {
 
         byte[] value = ("<ormunit> " +
                 "<statement code=\"this code shouldnt be added\">code0</statement>" +
@@ -61,8 +61,8 @@ public class ORMUnitTest {
 
     }
 
-    @Test(expected = ORMUnitFileSyntaxException.class)
-    public void testStatementWith2Children() throws ORMUnitFileReadException, IOException {
+    @Test(expected = FileSyntaxException.class)
+    public void testStatementWith2Children() throws FileReadException, IOException {
 
         byte[] value = "<ormunit> <statement code=\"this code shouldnt be added\"><![CDATA[code1]]><somesubelem /></statement></ormunit>".getBytes();
 
@@ -77,7 +77,7 @@ public class ORMUnitTest {
 
 
     @Test
-    public void testInvalidClassNames1() throws ORMUnitFileReadException, IOException {
+    public void testInvalidClassNames1() throws FileReadException, IOException {
 
         assertFalse("1com".matches(ImportNodeProcessor.ClassNamePattern));
         assertTrue("com".matches(ImportNodeProcessor.ClassNamePattern));
@@ -87,8 +87,8 @@ public class ORMUnitTest {
 
     }
 
-    @Test(expected = ORMUnitConfigurationException.class)
-    public void testInvalidClassNames2() throws ORMUnitFileReadException, IOException {
+    @Test(expected = ConfigurationException.class)
+    public void testInvalidClassNames2() throws FileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"1com.example.SomeClass\" alias=\"sc1\"/></ormunit>".getBytes();
 
         new ORMUnitPropertiesReader(getClass())
@@ -97,7 +97,7 @@ public class ORMUnitTest {
     }
 
     @Test
-    public void testRegisterNodeProcessor() throws ORMUnitFileReadException, IOException {
+    public void testRegisterNodeProcessor() throws FileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\" alias=\"sc2\"/></ormunit>".getBytes();
 
 
@@ -108,16 +108,16 @@ public class ORMUnitTest {
     }
 
 
-    @Test(expected = ORMUnitFileSyntaxException.class)
-    public void testUnknownNode() throws ORMUnitFileReadException, IOException {
+    @Test(expected = FileSyntaxException.class)
+    public void testUnknownNode() throws FileReadException, IOException {
         byte[] value = "<ormunit><someInvalidAndUndUnknownNode/></ormunit>".getBytes();
 
         ormUnit.read(new ByteArrayInputStream(value), testSet);
     }
 
 
-    @Test(expected = ORMUnitFileReadException.class)
-    public void testInvalidSyntax() throws ORMUnitFileReadException {
+    @Test(expected = FileReadException.class)
+    public void testInvalidSyntax() throws FileReadException {
         byte[] value = "some non xml content".getBytes();
         ormUnit.read(new ByteArrayInputStream(value), testSet);
     }

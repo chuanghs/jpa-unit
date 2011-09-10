@@ -12,7 +12,7 @@ import org.ormunit.command.EntityReference;
 import org.ormunit.entity.FieldAccessEntity;
 import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessEntity;
-import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.FileReadException;
 
 import javax.persistence.EntityManager;
 import java.beans.IntrospectionException;
@@ -36,7 +36,7 @@ public class EntityReferencesTest {
 
 
     @Test
-    public void testComplexTypeWithReferenceSubElement() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithReferenceSubElement() throws FileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.PropertyAccessEntity\" /> " +
                 "   <import class=\"org.ormunit.entity.FieldAccessEntity\" /> " +
@@ -65,6 +65,7 @@ public class EntityReferencesTest {
         persistedEntity.setIntegerValue(1);
 
         PropertyAccessEntity persistedPropertyAccessEntity = new PropertyAccessEntity();
+        persistedPropertyAccessEntity.setId(1);
         persistedEntity.setComplexType(persistedPropertyAccessEntity);
 
         verify(em, times(1)).persist(eq(persistedPropertyAccessEntity));

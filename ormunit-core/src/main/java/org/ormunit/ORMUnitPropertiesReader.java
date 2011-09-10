@@ -1,9 +1,9 @@
 package org.ormunit;
 
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitFileReadException;
-import org.ormunit.exception.ORMUnitFileSyntaxException;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.FileReadException;
+import org.ormunit.exception.FileSyntaxException;
+import org.ormunit.exception.NodeProcessingException;
 import org.ormunit.node.NodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +18,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,6 +45,7 @@ public class ORMUnitPropertiesReader {
     private Class<?> workClass;
 
     private String defaultDataSourceName;
+
     private Map<String, Properties> dsProperties = new HashMap<String, Properties>();
     private Properties properties;
 
@@ -98,7 +100,7 @@ public class ORMUnitPropertiesReader {
 
     public Properties getDefaultDataSourceProperties() {
         if (this.defaultDataSourceName == null) {
-            throw new ORMUnitConfigurationException("no default datasource");
+            throw new ConfigurationException("no default datasource", null);
         }
         return this.getDefaultDataSourceProperties(new Properties());
     }
@@ -115,7 +117,7 @@ public class ORMUnitPropertiesReader {
 
     }
 
-    public TestSet read(String filePath, TestSet result) throws ORMUnitFileReadException {
+    public TestSet read(String filePath, TestSet result) throws FileReadException {
         String workDir = currentDir;
         try {
             InputStream stream = null;
@@ -125,7 +127,7 @@ public class ORMUnitPropertiesReader {
             try {
                 read(stream = getResourceAsStream(parentChild[0] + parentChild[1]), result);
             } catch (Exception e) {
-                throw new ORMUnitFileReadException(String.format("file does not exist: %s (workdir: %s)", parentChild[1], parentChild[0]), e);
+                throw new FileReadException(String.format("file does not exist: %s (workdir: %s)", parentChild[1], parentChild[0]), e);
             } finally {
                 if (stream != null)
                     try {
@@ -141,7 +143,7 @@ public class ORMUnitPropertiesReader {
     }
 
 
-    public TestSet read(InputStream stream, TestSet result) throws ORMUnitFileReadException {
+    public TestSet read(InputStream stream, TestSet result) throws FileReadException {
         registerNodeProcessors(result);
         try {
             DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
@@ -164,45 +166,62 @@ public class ORMUnitPropertiesReader {
 
                         try {
                             nodeProcessor.process(jpaUnitElement, result);
-                        } catch (ORMUnitNodeProcessingException e) {
-                            throw new ORMUnitFileSyntaxException("error at node: " + i, e);
+                        } catch (NodeProcessingException e) {
+                            throw new FileSyntaxException("error at node: " + i, e);
                         }
                     } else {
                         String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + NodeProcessor.class.getCanonicalName() + " implementations";
                         if (log.isWarnEnabled()) {
                             log.warn(s);
                         }
-                        throw new ORMUnitFileSyntaxException(s);
+                        throw new FileSyntaxException(s);
                     }
                 }
             }
         } catch (ParserConfigurationException e) {
-            throw new ORMUnitFileReadException(e);
+            throw new FileReadException(e);
         } catch (SAXException e) {
-            throw new ORMUnitFileReadException(e);
+            throw new FileReadException(e);
         } catch (IOException e) {
-            throw new ORMUnitFileReadException(e);
+            throw new FileReadException(e);
         }
         return result;
     }
 
 
-
-
     private void registerNodeProcessors(TestSet testset) {
+        createAndRegisterNodeProcessors(testset, findNodeProcessorProperties());
+    }
+
+    private void createAndRegisterNodeProcessors(TestSet testset, Map<String, String> nodeProcessorClassNames) {
+        for (Map.Entry<String, String> entry : nodeProcessorClassNames.entrySet()) {
+            createAndRegisterNodeProcessor(testset, entry.getKey(), entry.getValue());
+        }
+    }
+
+    private void createAndRegisterNodeProcessor(TestSet testset, String className, String nodeTag) {
+        try {
+            Constructor<?> constructor = Class.forName(className).getConstructor(ORMUnitPropertiesReader.class);
+            testset.registerNodeProcessor(nodeTag, (NodeProcessor) constructor.newInstance(this));
+        } catch (Exception e) {
+            if (e instanceof ClassNotFoundException || e instanceof NoSuchMethodException)
+                throw new ConfigurationException(String.format("There is no class %1$s or there is no there is no required constructor %1$s.<init>(%2$s)", className, ORMUnitPropertiesReader.class.getCanonicalName()), e);
+            else if (e instanceof InvocationTargetException || e instanceof InstantiationException || e instanceof IllegalAccessException)
+                throw new ConfigurationException(String.format("Couldnt instantiate node processor %1$s", className), e);
+        }
+    }
+
+    private Map<String, String> findNodeProcessorProperties() {
+        Map<String, String> notProcessorClassNames = new HashMap<String, String>();
+
         Enumeration<?> enumeration = properties.propertyNames();
         while (enumeration.hasMoreElements()) {
             String name = (String) enumeration.nextElement();
             if (name.startsWith(Properties_NodeProcessor_Prefix)) {
-                String nodeType = name.substring(Properties_NodeProcessor_Prefix.length());
-                try {
-                    Constructor<?> constructor = Class.forName(properties.getProperty(name)).getConstructor(ORMUnitPropertiesReader.class);
-                    testset.registerNodeProcessor(nodeType, (NodeProcessor) constructor.newInstance(this));
-                } catch (Exception e) {
-                    throw new ORMUnitConfigurationException(e);
-                }
+                notProcessorClassNames.put(properties.getProperty(name), name.substring(Properties_NodeProcessor_Prefix.length()));
             }
         }
+        return notProcessorClassNames;
     }
 
     public InputStream getResourceAsStream(String s) {

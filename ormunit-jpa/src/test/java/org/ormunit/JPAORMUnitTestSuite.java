@@ -2,9 +2,11 @@ package org.ormunit;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
+import org.ormunit.entity.embedded.EmbeddingTest;
 import org.ormunit.live.JPAUnitEntitiesWithComposedIdsTest;
 import org.ormunit.live.JPAUnitOrmXmlReadTest;
 import org.ormunit.live.JPAUnitRealEntitiesTest;
+import org.ormunit.node.EntityReferencesTest;
 import org.ormunit.node.JPAEntityNodeProcessorTest;
 
 /**
@@ -17,10 +19,12 @@ import org.ormunit.node.JPAEntityNodeProcessorTest;
 @Suite.SuiteClasses({
         JPAORMProviderTest.class,
         JPAEntityNodeProcessorTest.class,
+        EntityReferencesTest.class,
         JPAUnitOrmXmlReadTest.class,
         AnnotationsEntityInspectorTest.class,
         EntityMappingsEntityInspectorTest.class,
         JPAUnitRealEntitiesTest.class,
+        EmbeddingTest.class,
         JPAUnitEntitiesWithComposedIdsTest.class
 })
 public class JPAORMUnitTestSuite {

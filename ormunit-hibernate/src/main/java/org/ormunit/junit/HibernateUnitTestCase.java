@@ -8,8 +8,8 @@ import org.ormunit.HibernateORMProvider;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.ORMUnitHelper;
 import org.ormunit.TestSet;
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.FileReadException;
 import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,8 +66,8 @@ public class HibernateUnitTestCase extends TestCase {
             if (inputStream != null) {
                 try {
                     ormUnit.read(inputStream, testSet);
-                } catch (ORMUnitFileReadException e) {
-                    throw new ORMUnitConfigurationException(e);
+                } catch (FileReadException e) {
+                    throw new ConfigurationException(e);
                 }
             }
             if (inputStream != null)
@@ -89,7 +89,7 @@ public class HibernateUnitTestCase extends TestCase {
             try {
                 result[i++] = (Class<Object>) Class.forName((String) e.getKey());
             } catch (Exception e1) {
-                throw new ORMUnitConfigurationException(e1);
+                throw new ConfigurationException(e1);
             }
         }
         return result;

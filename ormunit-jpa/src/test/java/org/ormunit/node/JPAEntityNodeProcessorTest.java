@@ -13,7 +13,7 @@ import org.ormunit.command.EntityReference;
 import org.ormunit.entity.FieldAccessEntity;
 import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessEntity;
-import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.FileReadException;
 
 import javax.persistence.EntityManager;
 import java.beans.IntrospectionException;
@@ -44,7 +44,7 @@ public class JPAEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithReference() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithReference() throws FileReadException, IntrospectionException {
 
         Assert.assertEquals(new FieldAccessEntity(), new FieldAccessEntity());
 
@@ -64,7 +64,7 @@ public class JPAEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithReferenceSubElement() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithReferenceSubElement() throws FileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.FieldAccessEntity\" alias=\"pojo\" /> " +
                 "   <pojo> " +

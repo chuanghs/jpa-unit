@@ -61,8 +61,8 @@ public class AnnotationsEntityInspectorTest {
 
     @Test
     public void testGetAccessType(){
-        assertEquals(AccessType.PROPERTY, entityInspector.getAccessTypeOfClass(PropertyAccessEntity.class));
-        assertEquals(AccessType.FIELD, entityInspector.getAccessTypeOfClass(FieldAccessEntity.class));
+        assertEquals(ORMProviderAdapter.AccessType.Property, entityInspector.getAccessTypeOfClass(PropertyAccessEntity.class));
+        assertEquals(ORMProviderAdapter.AccessType.Field, entityInspector.getAccessTypeOfClass(FieldAccessEntity.class));
     }
 
     @Test

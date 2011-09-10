@@ -8,7 +8,7 @@ import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
 import org.ormunit.command.TestSetCommand;
-import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.FileReadException;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -46,7 +46,7 @@ public class IncludeNodeProcessorTest {
     }
 
     @Test
-    public void testIncludeChangeWorkDir1() throws ORMUnitFileReadException {
+    public void testIncludeChangeWorkDir1() throws FileReadException {
 
         TestSet rootTestSet = new TestSet(ormProvider);
         TestSet includedTestSet = new TestSet(rootTestSet);
@@ -73,10 +73,10 @@ public class IncludeNodeProcessorTest {
      *   +-bar
      *   +-bar.xml
      *
-     * @throws ORMUnitFileReadException
+     * @throws org.ormunit.exception.FileReadException
      */
     @Test
-    public void testIncludeChangeWorkDirRecurrent() throws ORMUnitFileReadException {
+    public void testIncludeChangeWorkDirRecurrent() throws FileReadException {
         byte[] value = "<ormunit><include src=\"../bar.xml\"/></ormunit>".getBytes();
 
         doReturn(new ByteArrayInputStream("<ormunit><include src=\"../foo.xml\"/></ormunit>".getBytes()))
@@ -95,7 +95,7 @@ public class IncludeNodeProcessorTest {
     }
 
     @Test
-    public void testInclude() throws ORMUnitFileReadException {
+    public void testInclude() throws FileReadException {
         IncludeNodeProcessor includeNodeProcessor = spy(new IncludeNodeProcessor(ormUnit));
 
         doReturn(new ByteArrayInputStream("<ormunit></ormunit>".getBytes()))

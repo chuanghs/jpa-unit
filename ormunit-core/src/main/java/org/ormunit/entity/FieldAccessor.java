@@ -1,6 +1,6 @@
 package org.ormunit.entity;
 
-import org.ormunit.exception.ORMEntityAccessException;
+import org.ormunit.exception.EntityAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,25 +55,25 @@ public class FieldAccessor extends AEntityAccessor {
         try {
             Field pd = fields.get(propertyName);
             if (pd == null) {
-                new ORMEntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
+                new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
             }
             pd.setAccessible(true);
             pd.set(entity, value);
         } catch (Exception e) {
-            throw new ORMEntityAccessException(e);
+            throw new EntityAccessException(e);
         }
     }
 
     public Object get(Object entity, String propertyName) {
         Field pd = fields.get(propertyName);
         if (pd == null) {
-            new ORMEntityAccessException(String.format("attribute: %s does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
+            new EntityAccessException(String.format("attribute: %s does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
         }
         pd.setAccessible(true);
         try {
             return pd.get(entity);
         } catch (IllegalAccessException e) {
-            throw new ORMEntityAccessException(e);
+            throw new EntityAccessException(e);
         }
     }
 

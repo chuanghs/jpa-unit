@@ -14,4 +14,5 @@ public class Auction {
     @MapKey(name = "auctionParam")
     private Map<AuctionParam, AuctionParamValue> values;
 
+
 }

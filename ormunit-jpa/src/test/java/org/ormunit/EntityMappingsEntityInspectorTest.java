@@ -66,7 +66,7 @@ public class EntityMappingsEntityInspectorTest {
         entity.setClazz(Employee.class.getCanonicalName());
         entityMappings.getEntity().add(entity);
 
-        assertEquals(AccessType.FIELD, ormFileEntityInspector.getAccessTypeOfClass(Employee.class));
+        assertEquals(ORMProviderAdapter.AccessType.Field, ormFileEntityInspector.getAccessTypeOfClass(Employee.class));
     }
 
     @Test
@@ -116,7 +116,7 @@ public class EntityMappingsEntityInspectorTest {
     @Test
     public void testGetIdTypeOfEntityClass_Field() {
         Entity entity = new Entity();
-        entity.setAccess(AccessType.FIELD );
+        entity.setAccess(AccessType.FIELD);
         entity.setClazz(FieldAccessEntity.class.getCanonicalName());
         Attributes value = new Attributes();
         Id id = new Id();

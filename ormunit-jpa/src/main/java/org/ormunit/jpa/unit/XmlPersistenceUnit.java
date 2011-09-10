@@ -3,7 +3,7 @@ package org.ormunit.jpa.unit;
 import com.sun.java.xml.ns.persistence.Persistence;
 import com.sun.java.xml.ns.persistence.orm.Entity;
 import com.sun.java.xml.ns.persistence.orm.EntityMappings;
-import org.ormunit.exception.ORMUnitConfigurationException;
+import org.ormunit.exception.ConfigurationException;
 import org.ormunit.jpa.entityinspector.AnnotationsEntityInspector;
 import org.ormunit.jpa.entityinspector.EntityInspector;
 import org.ormunit.jpa.entityinspector.EntityMappingsEntityInspector;
@@ -66,7 +66,7 @@ public class XmlPersistenceUnit implements PersistenceUnit {
                 try {
                     ormMappings.add(readOrmFile(ormFileName));
                 } catch (FileNotFoundException e) {
-                    throw new ORMUnitConfigurationException(e);
+                    throw new ConfigurationException(e);
                 }
             }
         }
@@ -146,9 +146,9 @@ public class XmlPersistenceUnit implements PersistenceUnit {
                 throw new FileNotFoundException(String.format("File not found %s", xmlFileName));
             }
         } catch (XMLStreamException e) {
-            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", xmlFileName));
+            throw new ConfigurationException(String.format("Error when unmarshaling %s", xmlFileName));
         } catch (JAXBException e) {
-            throw new ORMUnitConfigurationException(String.format("Error when unmarshaling %s", xmlFileName));
+            throw new ConfigurationException(String.format("Error when unmarshaling %s", xmlFileName));
         } finally {
             if (stream != null) {
                 try {
@@ -166,7 +166,7 @@ public class XmlPersistenceUnit implements PersistenceUnit {
         try {
             persistenceFileRoot = readPersistenceFile();
         } catch (FileNotFoundException e) {
-            throw new ORMUnitConfigurationException(e);
+            throw new ConfigurationException(e);
         }
         for (Persistence.PersistenceUnit pu : persistenceFileRoot.getPersistenceUnit()) {
             if (pu.getName().equals(unitName)) {
@@ -215,7 +215,7 @@ public class XmlPersistenceUnit implements PersistenceUnit {
         } catch (ClassNotFoundException e) {
             String format = String.format("Class %s cannot be found", cn);
             log.error(format);
-            throw new ORMUnitConfigurationException(format);
+            throw new ConfigurationException(format);
         }
         return c;
     }

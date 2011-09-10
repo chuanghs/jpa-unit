@@ -1,6 +1,6 @@
 package org.ormunit.entity;
 
-import org.ormunit.exception.ORMUnitInstantiationException;
+import org.ormunit.exception.EntityInstantiationException;
 
 import java.lang.reflect.*;
 import java.util.*;
@@ -13,14 +13,9 @@ import java.util.*;
  */
 public abstract class AEntityAccessor implements EntityAccessor {
 
-    public static boolean isSimpleType(Class<?> propertyType) {
+    private boolean isSimpleType(Class<?> propertyType) {
         return simpleTypes.contains(propertyType);
     }
-
-    public boolean isSimpleType(String propertyName) {
-        return isSimpleType(getType(propertyName));
-    }
-
 
     protected Class getCollectionParameterType(String propertyName, ParameterizedType genericType) {
         return extractClass(getTypeValue(genericType, Collection.class, 0));
@@ -145,10 +140,10 @@ public abstract class AEntityAccessor implements EntityAccessor {
 
         Class<?> type = getType(propertyName);
         if (type == null)
-            throw new ORMUnitInstantiationException(String.format("no such property: %s in class: %s", propertyName, getEntityClass().getCanonicalName()));
+            throw new EntityInstantiationException(String.format("no such property: %s in class: %s", propertyName, getEntityClass().getCanonicalName()));
 
         if (!type.isInterface() && Modifier.isAbstract(type.getModifiers())) {
-            throw new ORMUnitInstantiationException(String.format("cannot instantiate abstract collections, property: %s in class %s ", propertyName, getEntityClass().getCanonicalName()));
+            throw new EntityInstantiationException(String.format("cannot instantiate abstract collections, property: %s in class %s ", propertyName, getEntityClass().getCanonicalName()));
         }
 
         if (Collection.class.isAssignableFrom(type)) {
@@ -171,12 +166,12 @@ public abstract class AEntityAccessor implements EntityAccessor {
             try {
                 return type.newInstance();
             } catch (Exception e) {
-                throw new ORMUnitInstantiationException(e);
+                throw new EntityInstantiationException(e);
             }
         } else {
-            throw new ORMUnitInstantiationException(String.format("cannot create simple types, property: %s in class %s", propertyName + getEntityClass().getCanonicalName()));
+            throw new EntityInstantiationException(String.format("cannot create simple types, property: %s in class %s", propertyName + getEntityClass().getCanonicalName()));
         }
-        throw new ORMUnitInstantiationException(String.format("cannon instantiate object of type: %s , property: %s in class %s", type.getCanonicalName(), propertyName, getEntityClass().getCanonicalName()));
+        throw new EntityInstantiationException(String.format("cannon instantiate object of type: %s , property: %s in class %s", type.getCanonicalName(), propertyName, getEntityClass().getCanonicalName()));
     }
 
 

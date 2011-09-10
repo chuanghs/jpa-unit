@@ -15,7 +15,7 @@ import org.ormunit.command.EntityReference;
 import org.ormunit.entity.PropertyAccessor;
 import org.ormunit.entity.SimplePOJO;
 import org.ormunit.entity.SimplePOJO2;
-import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.FileReadException;
 
 import java.beans.IntrospectionException;
 import java.io.ByteArrayInputStream;
@@ -61,7 +61,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testSimplePropertiesAttributes() throws ORMUnitFileReadException, ParseException {
+    public void testSimplePropertiesAttributes() throws FileReadException, ParseException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo integerValue=\"1\" enumValue=\"Value1\" doubleValue=\"1.23\" booleanValue=\"true\" stringValue=\"string\" timestampValue=\"2010-12-18 18:22:00\" dateValue=\"2010-12-18\" />" +
@@ -87,7 +87,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testSimplePropertiesElements() throws ORMUnitFileReadException, ParseException {
+    public void testSimplePropertiesElements() throws FileReadException, ParseException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo integerValue=\"2\" longValue=\"23\"> " +
@@ -122,7 +122,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexType() throws ORMUnitFileReadException, ParseException {
+    public void testComplexType() throws FileReadException, ParseException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO2\" /> " +
@@ -157,7 +157,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithReference() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithReference() throws FileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo complexType=\"ref(1)\"> " +
@@ -183,7 +183,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithSimpleReferenceAsTag() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithSimpleReferenceAsTag() throws FileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo> " +
@@ -213,7 +213,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithComplexReferenceAsTag() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithComplexReferenceAsTag() throws FileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <pojo> " +
@@ -243,7 +243,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testComplexTypeWithORMReference() throws ORMUnitFileReadException, IntrospectionException {
+    public void testComplexTypeWithORMReference() throws FileReadException, IntrospectionException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"pojo2\" />" +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
@@ -274,7 +274,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testCollection() throws ORMUnitFileReadException {
+    public void testCollection() throws FileReadException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"pojo2\" /> " +
@@ -309,7 +309,7 @@ public class CoreEntityNodeProcessorTest {
     }
 
     @Test
-    public void testMap() throws ORMUnitFileReadException {
+    public void testMap() throws FileReadException {
         ByteArrayInputStream bais = new ByteArrayInputStream(("<ormunit> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"pojo\" /> " +
                 "   <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"pojo2\" /> " +

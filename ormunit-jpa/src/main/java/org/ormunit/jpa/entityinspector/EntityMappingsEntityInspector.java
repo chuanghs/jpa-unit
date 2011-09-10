@@ -2,8 +2,9 @@ package org.ormunit.jpa.entityinspector;
 
 import com.sun.java.xml.ns.persistence.orm.*;
 import org.ormunit.BeanUtils;
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitInstantiationException;
+import org.ormunit.ORMProviderAdapter;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.EntityInstantiationException;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
@@ -34,10 +35,17 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         return super.getSchemaName(entityClass);
     }
 
-    public AccessType getAccessTypeOfClass(Class entityClass) {
+    public ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass) {
         Entity entityEntry = getEntityEntry(entityClass);
         if (entityEntry != null && entityEntry.getAccess() != null) {
-            return entityEntry.getAccess();
+            switch (entityEntry.getAccess()) {
+                case FIELD:
+                    return ORMProviderAdapter.AccessType.Field;
+                case PROPERTY:
+                    return ORMProviderAdapter.AccessType.Property;
+                default:
+                    throw new IllegalStateException("New access type was intruduces? This version does not support it " + entityEntry.getAccess());
+            }
         }
         return super.getAccessTypeOfClass(entityClass);
     }
@@ -47,11 +55,11 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         if (idClass != null) {
             return idClass;
         }
-        if (getAccessTypeOfClass(entityClass) == AccessType.FIELD) {
+        if (getAccessTypeOfClass(entityClass) == ORMProviderAdapter.AccessType.Field) {
             Field idField = getIdField(entityClass);
             if (idField != null)
                 return idField.getType();
-        } else if (getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+        } else if (getAccessTypeOfClass(entityClass) == ORMProviderAdapter.AccessType.Property) {
             PropertyDescriptor idProperty = getIdProperty(entityClass);
             if (idProperty != null)
                 return idProperty.getPropertyType();
@@ -59,7 +67,6 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
 
         return super.getIdType(entityClass);
     }
-
 
 
     public boolean isIdGenerated(Class<?> entityClass) {
@@ -72,7 +79,7 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
     public Class getIdClassValue(Class<?> entityClass) {
         IdClass idClassEntry = getIdClassEntry(entityClass);
         if (idClassEntry != null) {
-           return instantiateIdTypeOf(entityClass, idClassEntry.getClazz());
+            return instantiateIdTypeOf(entityClass, idClassEntry.getClazz());
         }
         return super.getIdClassValue(entityClass);
     }
@@ -98,7 +105,7 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         try {
             return Class.forName(idTypeName);
         } catch (ClassNotFoundException e) {
-            throw new ORMUnitInstantiationException(String.format("Cannot instantiate idclass: %s (based on orm file) of %s",
+            throw new EntityInstantiationException(String.format("Cannot instantiate idclass: %s (based on orm file) of %s",
                     idTypeName,
                     entityClass.getCanonicalName()));
         }
@@ -134,7 +141,7 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
                     if (ids.size() == 1) {
                         return ids.iterator().next();
                     } else if (ids.size() > 1) {
-                        throw new ORMUnitConfigurationException(String.format("Ambiguous id in ORM file for %s", entityClass.getCanonicalName()));
+                        throw new ConfigurationException(String.format("Ambiguous id in ORM file for %s", entityClass.getCanonicalName()));
                     }
                 }
             }

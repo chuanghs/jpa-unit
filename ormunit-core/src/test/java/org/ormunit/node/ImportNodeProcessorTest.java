@@ -7,9 +7,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.ORMProvider;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitFileReadException;
-import org.ormunit.exception.ORMUnitFileSyntaxException;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.FileReadException;
+import org.ormunit.exception.FileSyntaxException;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,8 +32,8 @@ public class ImportNodeProcessorTest {
     @Spy
     TestSet testSet = new TestSet(mock(ORMProvider.class));
 
-    @Test(expected = ORMUnitConfigurationException.class)
-    public void testImportInvalidClassName() throws ORMUnitFileReadException {
+    @Test(expected = ConfigurationException.class)
+    public void testImportInvalidClassName() throws FileReadException {
         byte[] value = ("<ormunit> " +
                 "<import class=\"1some.invalid.0ClassName\" alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
@@ -41,8 +41,8 @@ public class ImportNodeProcessorTest {
         reader.read(new ByteArrayInputStream(value), testSet);
     }
 
-    @Test(expected = ORMUnitFileSyntaxException.class)
-    public void testImportInvalidImportSyntax() throws ORMUnitFileReadException {
+    @Test(expected = FileSyntaxException.class)
+    public void testImportInvalidImportSyntax() throws FileReadException {
         byte[] value = ("<ormunit> " +
                 "<import alias=\"some alias\" />" +
                 "</ormunit>").getBytes();
@@ -51,7 +51,7 @@ public class ImportNodeProcessorTest {
     }
 
     @Test
-    public void testImports() throws ORMUnitFileReadException, IOException {
+    public void testImports() throws FileReadException, IOException {
         byte[] value = ("<ormunit> " +
                 "<import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
                 "<import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
@@ -68,8 +68,8 @@ public class ImportNodeProcessorTest {
         //verifyNoMoreInteractions(testSet);
     }
 
-    @Test(expected = ORMUnitConfigurationException.class)
-    public void testAmbiguousAlias() throws ORMUnitFileReadException, IOException {
+    @Test(expected = ConfigurationException.class)
+    public void testAmbiguousAlias() throws FileReadException, IOException {
         byte[] value = ("<ormunit>" +
                 "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
                 "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +

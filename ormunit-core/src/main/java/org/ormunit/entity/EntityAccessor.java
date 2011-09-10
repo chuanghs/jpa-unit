@@ -1,10 +1,7 @@
 package org.ormunit.entity;
 
 import java.sql.Timestamp;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +11,7 @@ import java.util.Set;
  */
 public interface EntityAccessor {
 
-    Set<Class> simpleTypes = new HashSet<Class>(Arrays.asList(
+    Set<Class> simpleTypes = Collections.unmodifiableSet(new HashSet<Class>(Arrays.asList(
             Byte.class, byte.class,
             Character.class, char.class,
             Integer.class, int.class,
@@ -24,13 +21,11 @@ public interface EntityAccessor {
             Float.class, float.class,
             Date.class,
             Timestamp.class,
-            String.class));
+            String.class)));
 
     Class getEntityClass();
 
     Object newInstance(String propertyName);
-
-    boolean isSimpleType(String propertyName);
 
     Class getType(String propertyName);
 

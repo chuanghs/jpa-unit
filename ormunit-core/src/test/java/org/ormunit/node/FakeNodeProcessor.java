@@ -2,7 +2,7 @@ package org.ormunit.node;
 
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.NodeProcessingException;
 import org.w3c.dom.Node;
 
 /**
@@ -17,7 +17,7 @@ public class FakeNodeProcessor extends NodeProcessor {
         super(ormUnit);
     }
 
-    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws NodeProcessingException {
 
     }
 }

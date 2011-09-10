@@ -11,7 +11,7 @@
     <modules>
         <module>../ormunit-core</module>
         <module>../ormunit-jpa</module>
-        <module>../ormunit-hibernate</module>
+        <!--<module>../ormunit-hibernate</module>-->
     </modules>
     <dependencies>
         <dependency>

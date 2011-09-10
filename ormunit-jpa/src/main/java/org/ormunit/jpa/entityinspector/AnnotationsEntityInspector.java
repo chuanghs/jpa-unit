@@ -1,8 +1,8 @@
 package org.ormunit.jpa.entityinspector;
 
 
-import com.sun.java.xml.ns.persistence.orm.AccessType;
 import org.ormunit.BeanUtils;
+import org.ormunit.ORMProviderAdapter;
 
 import javax.persistence.*;
 import java.beans.PropertyDescriptor;
@@ -28,12 +28,12 @@ public class AnnotationsEntityInspector implements EntityInspector {
         return null;
     }
 
-    public AccessType getAccessTypeOfClass(Class entityClass) {
+    public ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass) {
         Class clazz = entityClass;
         while (clazz != null) {
             for (Method m : clazz.getDeclaredMethods()) {
                 if (m.getAnnotation(Id.class) != null || m.getAnnotation(EmbeddedId.class) != null)
-                    return AccessType.PROPERTY;
+                    return ORMProviderAdapter.AccessType.Property;
             }
             clazz = clazz.getSuperclass();
         }
@@ -41,7 +41,7 @@ public class AnnotationsEntityInspector implements EntityInspector {
         while (clazz != null) {
             for (Field m : clazz.getDeclaredFields()) {
                 if (m.getAnnotation(Id.class) != null || m.getAnnotation(EmbeddedId.class) != null)
-                    return AccessType.FIELD;
+                    return ORMProviderAdapter.AccessType.Field;
             }
             clazz = clazz.getSuperclass();
         }
@@ -76,9 +76,9 @@ public class AnnotationsEntityInspector implements EntityInspector {
         if (idClass != null) {
             result = idClass.value();
         } else {
-            if (getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+            if (getAccessTypeOfClass(entityClass) == ORMProviderAdapter.AccessType.Property) {
                 return utils.getPropertiesAnnotatedWith(entityClass, Id.class, EmbeddedId.class).iterator().next().getPropertyType();
-            } else if (getAccessTypeOfClass(entityClass) == AccessType.FIELD) {
+            } else if (getAccessTypeOfClass(entityClass) == ORMProviderAdapter.AccessType.Field) {
                 return utils.getFieldsAnnotatedWith(entityClass, Id.class, EmbeddedId.class).iterator().next().getType();
             }
         }
@@ -86,13 +86,13 @@ public class AnnotationsEntityInspector implements EntityInspector {
     }
 
     public boolean isIdGenerated(Class<?> entity) {
-        if (getAccessTypeOfClass(entity) == AccessType.FIELD) {
+        if (getAccessTypeOfClass(entity) == ORMProviderAdapter.AccessType.Field) {
             for (Field field : utils.getFieldsAnnotatedWith(entity.getClass(), Id.class)) {
                 if (field.getAnnotation(GeneratedValue.class) != null) {
                     return true;
                 }
             }
-        } else if (getAccessTypeOfClass(entity) == AccessType.FIELD) {
+        } else if (getAccessTypeOfClass(entity) == ORMProviderAdapter.AccessType.Property) {
             for (PropertyDescriptor pd : utils.getPropertiesAnnotatedWith(entity.getClass(), Id.class)) {
                 if (pd.getReadMethod().getAnnotation(GeneratedValue.class) != null) {
                     return true;

@@ -4,8 +4,8 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.ormunit.exception.ORMEntityAccessException;
-import org.ormunit.exception.ORMUnitInstantiationException;
+import org.ormunit.exception.EntityAccessException;
+import org.ormunit.exception.EntityInstantiationException;
 
 import java.util.Collection;
 import java.util.Map;
@@ -77,7 +77,7 @@ public class EntityAccessorTest {
         Assert.assertEquals((Class) int.class, fieldAccessor.getType("intField"));
     }
 
-    @Test(expected = ORMUnitInstantiationException.class)
+    @Test(expected = EntityInstantiationException.class)
     public void testNewInstance() {
 
         fieldAccessor.newInstance("intField");
@@ -94,7 +94,7 @@ public class EntityAccessorTest {
 
     }
 
-    @Test(expected = ORMEntityAccessException.class)
+    @Test(expected = EntityAccessException.class)
     public void testSetNonExistingField() {
 
         FieldEntity simplePOJO = new FieldEntity();
@@ -121,19 +121,19 @@ public class EntityAccessorTest {
         try {
             pa.set(simplePOJO, "nonExistingProperty", 1);
             fail();
-        } catch (ORMEntityAccessException e) {
+        } catch (EntityAccessException e) {
         }
 
         try {
             pa.set(simplePOJO, "noSetterProperty", 1);
             fail();
-        } catch (ORMEntityAccessException e) {
+        } catch (EntityAccessException e) {
         }
 
         try {
             pa.get(simplePOJO, "noGetterProperty");
             fail();
-        } catch (ORMEntityAccessException e) {
+        } catch (EntityAccessException e) {
         }
     }
 
@@ -171,13 +171,13 @@ public class EntityAccessorTest {
         try {
             pa.newInstance("abstractCollection");
             fail();
-        } catch (ORMUnitInstantiationException e) {
+        } catch (EntityInstantiationException e) {
         }
 
         try {
             pa.newInstance("nonexistingproperty");
             fail();
-        } catch (ORMUnitInstantiationException e) {
+        } catch (EntityInstantiationException e) {
         }
 
     }
