@@ -3,7 +3,7 @@ package org.ormunit.command;
 import org.ormunit.ORMProvider;
 import org.ormunit.TestSet;
 import org.ormunit.entity.EntityAccessor;
-import org.ormunit.exception.ORMUnitConfigurationException;
+import org.ormunit.exception.ConfigurationException;
 
 import java.util.*;
 
@@ -60,7 +60,7 @@ public class EntityCommand implements ORMUnitCommand {
             }
 
             if (reference == null)
-                throw new ORMUnitConfigurationException(String.format("Entity: %s with id: '%s' cannot be found for entity: %s", propertyClass.getCanonicalName(), ref.getId(), entity.getClass().getCanonicalName()));
+                throw new ConfigurationException(String.format("Entity: %s with id: '%s' cannot be found for entity: %s", propertyClass.getCanonicalName(), ref.getId(), entity.getClass().getCanonicalName()), null);
 
             set(getEntity(), reference, ref.getPropertyName());
         }
@@ -89,16 +89,16 @@ public class EntityCommand implements ORMUnitCommand {
             entities.put(testSet, stringObjectMap = new HashMap<String, Object>());
         }
         if (stringObjectMap.get(ormId)!=null)
-            throw new ORMUnitConfigurationException(String.format("Multiple entities with same ormId: %s", ormId));
+            throw new ConfigurationException(String.format("Multiple entities with same ormId: %s", ormId), null);
         stringObjectMap.put(ormId, entity);
     }
 
 
     @Override
     public String toString() {
-        return "EntityWithRefsCommand{" +
+        return "EntityCommand{" +
                 "ormId=" + ormId +
-                "entity=" + getEntity() +
+                ", entity=" + getEntity() +
                 ", references=" + references +
                 '}';
     }

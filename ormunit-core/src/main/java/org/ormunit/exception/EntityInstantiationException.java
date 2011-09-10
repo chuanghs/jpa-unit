@@ -6,12 +6,13 @@ package org.ormunit.exception;
  * Date: 31.12.10
  * Time: 20:56
  */
-public class ORMUnitInstantiationException extends ORMUnitAccessorException {
-    public ORMUnitInstantiationException(String message) {
+public class EntityInstantiationException extends AccessorException {
+
+    public EntityInstantiationException(String message) {
         super(message);
     }
 
-    public ORMUnitInstantiationException(Throwable e) {
+    public EntityInstantiationException(Exception e) {
         super(e);
     }
 }

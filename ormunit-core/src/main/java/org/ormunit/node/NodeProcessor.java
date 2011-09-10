@@ -2,7 +2,7 @@ package org.ormunit.node;
 
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.NodeProcessingException;
 import org.w3c.dom.Node;
 
 /**
@@ -23,6 +23,6 @@ public abstract class NodeProcessor {
         return ormUnit;
     }
 
-    public abstract void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException;
+    public abstract void process(Node jpaUnitElement, TestSet result) throws NodeProcessingException;
 
 }

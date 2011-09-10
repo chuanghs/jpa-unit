@@ -1,11 +1,14 @@
 package org.ormunit;
 
+import org.ormunit.entity.AEntityAccessor;
 import org.ormunit.entity.EntityAccessor;
 import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessor;
+import org.ormunit.exception.AccessorException;
+import org.ormunit.exception.EntityAccessException;
+import org.ormunit.exception.UnknownAccessTypeException;
 
 import java.lang.ref.WeakReference;
-import java.util.Properties;
 import java.util.WeakHashMap;
 
 /**
@@ -16,7 +19,11 @@ import java.util.WeakHashMap;
  */
 public abstract class ORMProviderAdapter implements ORMProvider {
 
-    private final WeakHashMap<Class, WeakReference<EntityAccessor>> inspectors = new WeakHashMap<Class, WeakReference<EntityAccessor>>();
+    public static enum AccessType {
+        Field, Property
+    }
+
+    private final WeakHashMap<Class, WeakReference<EntityAccessor>> accessors = new WeakHashMap<Class, WeakReference<EntityAccessor>>();
 
     protected Object getDefault(Class<?> idType) {
         if (boolean.class.equals(idType))
@@ -37,33 +44,54 @@ public abstract class ORMProviderAdapter implements ORMProvider {
         return null;
     }
 
-    public EntityAccessor getAccessor(Class<?> clazz, Class<?> defaultAcessClass) {
-        if (inspectors.get(clazz) == null) {
-
-            if (isPropertyAccessed(clazz)) {
-                inspectors.put(clazz, new WeakReference<EntityAccessor>(new PropertyAccessor(clazz)));
-            } else if (isFieldAccessed(clazz)) {
-                inspectors.put(clazz, new WeakReference<EntityAccessor>(new FieldAccessor(clazz)));
-            } else {
-                if (defaultAcessClass == null)
-                    throw new RuntimeException("invalid entity class, its neither PropertyAccessed nor FieldAccessed entity");
+    public EntityAccessor getAccessor(Class<?> clazz, Class<?> inheritAcessTypeFromThisClass) {
+        if (accessors.get(clazz) == null) {
+            AEntityAccessor accessor = null;
+            try {
+                accessor = getEntityAccessor(clazz);
+            } catch (UnknownAccessTypeException e) {
+                if (inheritAcessTypeFromThisClass == null)
+                    throw new EntityAccessException(String.format("Could not inferr access type of class %s.", clazz.getCanonicalName()), e);
                 else {
-                    if (isPropertyAccessed(defaultAcessClass)) {
-                        inspectors.put(clazz, new WeakReference<EntityAccessor>(new PropertyAccessor(clazz)));
-                    } else if (isFieldAccessed(defaultAcessClass)) {
-                        inspectors.put(clazz, new WeakReference<EntityAccessor>(new FieldAccessor(clazz)));
-                    } else {
-                        throw new RuntimeException("invalid entity class, its neither PropertyAccessed nor FieldAccessed entity");
+                    try {
+                        accessor = createAccessor(clazz, getAccessType(inheritAcessTypeFromThisClass));
+                    } catch (UnknownAccessTypeException e1) {
+                        throw new AccessorException(
+                                String.format("Could not inferr proper access type neither from given class %s nor from \"inheritAcessTypeFromThisClass\" argument: %s",
+                                        clazz.getCanonicalName(),
+                                        inheritAcessTypeFromThisClass.getCanonicalName()), e);
                     }
                 }
-
             }
+            accessors.put(clazz, new WeakReference<EntityAccessor>(accessor));
         }
-        return inspectors.get(clazz).get();
+        return accessors.get(clazz).get();
     }
 
+    /**
+     * @param clazz
+     * @return
+     * @throws UnknownAccessTypeException if no access type could be inferred from given class argumet
+     */
+    private AEntityAccessor getEntityAccessor(Class<?> clazz) throws UnknownAccessTypeException {
+        return createAccessor(clazz, getAccessType(clazz));
+    }
 
-    public abstract boolean isFieldAccessed(Class<?> clazz);
+    /**
+     * @param clazz
+     * @param accessType
+     * @return
+     * @throws IllegalStateException if given access type is neither Field nor Property
+     */
+    private AEntityAccessor createAccessor(Class<?> clazz, AccessType accessType) {
+        if (accessType == AccessType.Field) {
+            return new FieldAccessor(clazz);
+        } else if (accessType == AccessType.Property) {
+            return new PropertyAccessor(clazz);
+        }
+        throw new IllegalStateException(String.format("Requested access type for clazz %s is null ", clazz.getCanonicalName()));
+    }
 
-    public abstract boolean isPropertyAccessed(Class<?> clazz);
+    public abstract AccessType getAccessType(Class<?> clazz) throws UnknownAccessTypeException;
+
 }

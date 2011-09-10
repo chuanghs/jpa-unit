@@ -19,7 +19,6 @@ public interface ORMProvider {
     EntityAccessor getAccessor(Class<?> entityClass, Class<?> defaultAcessClass);
 
 
-
     Class getIdType(Class<?> entityClass);
 
     Object getId(Object entity) throws Exception;
@@ -27,9 +26,10 @@ public interface ORMProvider {
     void setId(Object entity, Object id) throws Exception;
 
 
-
     Object entity(Object entity);
+
     void statement(String statement);
 
 
+    boolean isEmbeddable(Class propertyType);
 }

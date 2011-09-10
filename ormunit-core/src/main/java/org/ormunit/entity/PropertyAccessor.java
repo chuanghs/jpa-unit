@@ -1,6 +1,6 @@
 package org.ormunit.entity;
 
-import org.ormunit.exception.ORMEntityAccessException;
+import org.ormunit.exception.EntityAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -33,7 +33,7 @@ public class PropertyAccessor extends AEntityAccessor {
                 descriptors.put(pd.getName(), pd);
             }
         } catch (IntrospectionException e) {
-            throw new ORMEntityAccessException(e);
+            throw new EntityAccessException(e);
         }
     }
 
@@ -59,16 +59,16 @@ public class PropertyAccessor extends AEntityAccessor {
         try {
             PropertyDescriptor pd = getPD(propertyName);
             if (pd == null) {
-                throw new ORMEntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName,clazz.getCanonicalName()));
+                throw new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName,clazz.getCanonicalName()));
             }
             Method setter = pd.getWriteMethod();
             if (setter == null) {
-                throw new ORMEntityAccessException(String.format("there is no setter for property: %s of class: %s", pd.getName(), clazz.getCanonicalName()));
+                throw new EntityAccessException(String.format("there is no setter for property: %s of class: %s", pd.getName(), clazz.getCanonicalName()));
             }
 
             setter.invoke(entity, value);
         } catch (Exception e) {
-            throw new ORMEntityAccessException(e);
+            throw new EntityAccessException(e);
         }
     }
 
@@ -76,16 +76,16 @@ public class PropertyAccessor extends AEntityAccessor {
         try {
             PropertyDescriptor pd = getPD(propertyName);
             if (pd == null) {
-                new ORMEntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", pd.getName(), clazz.getCanonicalName()));
+                new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", pd.getName(), clazz.getCanonicalName()));
             }
             Method getter = pd.getReadMethod();
             if (getter == null) {
-                new ORMEntityAccessException(String.format("there is no getter for property: %s of class: %s", pd.getName(), clazz.getCanonicalName()));
+                new EntityAccessException(String.format("there is no getter for property: %s of class: %s", pd.getName(), clazz.getCanonicalName()));
             }
 
             return getter.invoke(entity);
         } catch (Exception e) {
-            throw new ORMEntityAccessException(e);
+            throw new EntityAccessException(e);
         }
     }
 

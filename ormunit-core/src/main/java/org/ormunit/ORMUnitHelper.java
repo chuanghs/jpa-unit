@@ -1,7 +1,7 @@
 package org.ormunit;
 
 import org.ormunit.exception.ConvertionException;
-import org.ormunit.exception.ORMUnitConfigurationException;
+import org.ormunit.exception.ConfigurationException;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -149,7 +149,7 @@ public class ORMUnitHelper {
         try {
             properties.load(resourceAsStream);
         } catch (IOException e) {
-            throw new ORMUnitConfigurationException(e);
+            throw new ConfigurationException(e);
         } finally {
             if (resourceAsStream != null)
                 try {

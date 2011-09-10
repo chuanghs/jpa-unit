@@ -2,8 +2,8 @@ package org.ormunit.node;
 
 import org.ormunit.TestSet;
 import org.ormunit.ORMUnitPropertiesReader;
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.NodeProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NamedNodeMap;
@@ -42,26 +42,26 @@ public class ImportNodeProcessor extends NodeProcessor {
 
         if (imports.containsKey(alias)) {
             if (!className.equals(imports.get(alias)))
-                throw new ORMUnitConfigurationException("alias: " + alias + " is defined more than once (" + imports.get(className) + ", " + className + ")");
+                throw new ConfigurationException("alias: " + alias + " is defined more than once (" + imports.get(className) + ", " + className + ")");
 
             log.warn("alias: " + alias + " is defined twice for the same class: " + className);
 
         }
 
         if (!className.matches(ClassNamePattern))
-            throw new ORMUnitConfigurationException("className: " + className + " is invalid class name");
+            throw new ConfigurationException("className: " + className + " is invalid class name");
 
         imports.put(alias, className);
 
     }
 
-    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws NodeProcessingException {
         NamedNodeMap importAttributes = jpaUnitElement.getAttributes();
         Node classNode = importAttributes.getNamedItem("class");
         Node aliasNode = importAttributes.getNamedItem("alias");
 
         if (classNode == null) {
-            throw new ORMUnitNodeProcessingException("import element is must have \"class\" attribute. It must be fully qualified class name");
+            throw new NodeProcessingException("import element is must have \"class\" attribute. It must be fully qualified class name");
         }
         String className = classNode.getNodeValue();
         int dotIndex = className.lastIndexOf(".");

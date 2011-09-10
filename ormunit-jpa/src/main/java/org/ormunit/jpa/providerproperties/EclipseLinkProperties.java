@@ -1,7 +1,7 @@
 package org.ormunit.jpa.providerproperties;
 
 import org.ormunit.ORMUnitHelper;
-import org.ormunit.exception.ORMUnitConfigurationException;
+import org.ormunit.exception.ConfigurationException;
 import org.ormunit.jpa.unit.PersistenceUnit;
 import org.slf4j.Logger;
 
@@ -46,7 +46,7 @@ public class EclipseLinkProperties extends AProviderProperties {
         this.properties = persistenceUnit.getProperties(properties);
 
         if (this.properties.getProperty(JAVAX_PERSISTENCE_JDBC_URL) == null){
-            throw new ORMUnitConfigurationException(String.format("Cannot find connection configuration. Check if there is one of following drivers in class path %s, %s, %s",
+            throw new ConfigurationException(String.format("Cannot find connection configuration. Check if there is one of following drivers in class path %s, %s, %s",
                     ORMUnitHelper.DerbyDriverClassName,
                     ORMUnitHelper.HSQLDriverClassName,
                     ORMUnitHelper.H2DriverClassName));

@@ -6,13 +6,13 @@ package org.ormunit.exception;
  * Date: 12.12.10
  * Time: 21:11
  */
-public class ORMUnitFileSyntaxException extends ORMUnitFileReadException {
+public class FileSyntaxException extends FileReadException {
 
-    public ORMUnitFileSyntaxException(String message) {
+    public FileSyntaxException(String message) {
         super(message);
     }
 
-    public ORMUnitFileSyntaxException(String message, Throwable cause) {
+    public FileSyntaxException(String message, Throwable cause) {
         super(message, cause);
     }
 

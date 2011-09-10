@@ -3,7 +3,7 @@ package org.ormunit.node;
 import org.ormunit.TestSet;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.command.StatementCommand;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.NodeProcessingException;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -22,10 +22,10 @@ public class StatementNodeProcessor extends NodeProcessor {
         super(ormUnit);
     }
 
-    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws NodeProcessingException {
         NodeList statementChildren = jpaUnitElement.getChildNodes();
         if (statementChildren.getLength() > 1) {
-            throw new ORMUnitNodeProcessingException("statement element is allowed only to have 1 child: CDATA or text");
+            throw new NodeProcessingException("statement element is allowed only to have 1 child: CDATA or text");
         }
         String statement = null;
 

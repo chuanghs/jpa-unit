@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.ormunit.exception.ORMUnitConfigurationException;
+import org.ormunit.exception.ConfigurationException;
 
 import javax.naming.NamingException;
 import java.io.ByteArrayInputStream;
@@ -63,7 +63,7 @@ public class ORMUnitDataSourceTest {
         try {
             properties = ormUnit.getDefaultDataSourceProperties();
             Assert.fail("not default datasource properties set, so exception should be thrown");
-        } catch (ORMUnitConfigurationException e) {
+        } catch (ConfigurationException e) {
         }
 
 

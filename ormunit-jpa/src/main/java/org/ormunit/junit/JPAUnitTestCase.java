@@ -7,8 +7,8 @@ import org.ormunit.JPAORMProvider;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.ORMUnitHelper;
 import org.ormunit.TestSet;
-import org.ormunit.exception.ORMUnitConfigurationException;
-import org.ormunit.exception.ORMUnitFileReadException;
+import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.FileReadException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +59,8 @@ public abstract class JPAUnitTestCase extends TestCase {
             if (inputStream != null) {
                 try {
                     ormUnit.read(inputStream, testSet);
-                } catch (ORMUnitFileReadException e) {
-                    throw new ORMUnitConfigurationException(e);
+                } catch (FileReadException e) {
+                    throw new ConfigurationException(e);
                 }
             }
             if (inputStream != null)

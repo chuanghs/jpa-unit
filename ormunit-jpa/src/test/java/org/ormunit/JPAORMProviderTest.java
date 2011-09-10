@@ -36,7 +36,7 @@ public class JPAORMProviderTest {
     public void testGetAccessor() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
 
-        EntityAccessor fieldAccessor = provider.getAccessor(FieldAccessEntity.class, (Class<?>) isNull());
+        EntityAccessor fieldAccessor = provider.getAccessor(FieldAccessEntity.class, null);
 
 
         FieldAccessEntity fieldAccessEntity = new FieldAccessEntity();
@@ -66,7 +66,7 @@ public class JPAORMProviderTest {
     @Test
     public void testGetIdTypeOfSubClass() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
-        EntityAccessor fieldAccessor = provider.getAccessor(SubPropertyAccessEntity.class, (Class<?>) isNull());
+        EntityAccessor fieldAccessor = provider.getAccessor(SubPropertyAccessEntity.class, null);
         assertEquals(Integer.class, provider.getIdType(SubPropertyAccessEntity.class));
 
         SubPropertyAccessEntity entity = new SubPropertyAccessEntity();

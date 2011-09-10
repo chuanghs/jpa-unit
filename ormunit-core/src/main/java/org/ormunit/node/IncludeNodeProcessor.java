@@ -3,8 +3,8 @@ package org.ormunit.node;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
 import org.ormunit.command.TestSetCommand;
-import org.ormunit.exception.ORMUnitFileReadException;
-import org.ormunit.exception.ORMUnitNodeProcessingException;
+import org.ormunit.exception.FileReadException;
+import org.ormunit.exception.NodeProcessingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -28,18 +28,18 @@ public class IncludeNodeProcessor extends NodeProcessor {
     }
 
 
-    public void process(Node jpaUnitElement, TestSet result) throws ORMUnitNodeProcessingException {
+    public void process(Node jpaUnitElement, TestSet result) throws NodeProcessingException {
         Node srcNode = jpaUnitElement.getAttributes().getNamedItem("src");
         if (srcNode != null) {
             try {
                 include(srcNode.getNodeValue().trim(), result);
-            } catch (ORMUnitFileReadException e) {
-                throw new ORMUnitNodeProcessingException(e);
+            } catch (FileReadException e) {
+                throw new NodeProcessingException(e);
             }
         }
     }
 
-    public void include(String s, TestSet currentTestSet) throws ORMUnitFileReadException {
+    public void include(String s, TestSet currentTestSet) throws FileReadException {
         String[] strings = getOrmUnit().normalizePath(s);
         String s1 = strings[0] + strings[1];
 

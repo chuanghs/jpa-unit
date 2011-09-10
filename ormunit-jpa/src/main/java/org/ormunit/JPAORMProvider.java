@@ -1,7 +1,7 @@
 package org.ormunit;
 
-import com.sun.java.xml.ns.persistence.orm.AccessType;
 import org.ormunit.dialect.Dialect;
+import org.ormunit.exception.UnknownAccessTypeException;
 import org.ormunit.jpa.entityinspector.EntityInspector;
 import org.ormunit.jpa.providerproperties.ProviderProperties;
 import org.ormunit.jpa.unit.FakePersistenceUnit;
@@ -10,9 +10,7 @@ import org.ormunit.jpa.unit.XmlPersistenceUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
+import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
@@ -62,6 +60,10 @@ public class JPAORMProvider extends ORMProviderAdapter {
         getEntityManager().createNativeQuery(statement).executeUpdate();
     }
 
+    public boolean isEmbeddable(Class propertyType) {
+        return propertyType.getAnnotation(Embeddable.class) != null;
+    }
+
     public Object entity(Object entity) {
         try {
             if (entityClassInspector.isIdGenerated(entity.getClass())) {
@@ -79,11 +81,11 @@ public class JPAORMProvider extends ORMProviderAdapter {
     }
 
     public boolean isFieldAccessed(Class<?> clazz) {
-        return entityClassInspector.getAccessTypeOfClass(clazz) == AccessType.FIELD;
+        return entityClassInspector.getAccessTypeOfClass(clazz) == AccessType.Field;
     }
 
     public boolean isPropertyAccessed(Class clazz) {
-        return entityClassInspector.getAccessTypeOfClass(clazz) == AccessType.PROPERTY;
+        return entityClassInspector.getAccessTypeOfClass(clazz) == AccessType.Property;
     }
 
     public <T> T getEntity(Class<T> propertyClass, Object id) {
@@ -96,13 +98,13 @@ public class JPAORMProvider extends ORMProviderAdapter {
         Object result = null;
         if (idClassType != null) {
             result = idClassType.newInstance();
-            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.Property) {
                 result = utils.copyPropertyValues(entity, idClassType.newInstance());
             } else {
                 result = utils.copyFieldValues(entity, idClassType.newInstance());
             }
         } else {
-            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.Property) {
                 result = entityClassInspector.getIdProperty(entityClass).getReadMethod().invoke(entity);
             } else {
                 Field next = entityClassInspector.getIdField(entityClass);
@@ -117,14 +119,14 @@ public class JPAORMProvider extends ORMProviderAdapter {
         Class<?> entityClass = entity.getClass();
         Class idClassType = entityClassInspector.getIdClassValue(entityClass);
         if (idClassType != null) {
-            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY)
+            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.Property)
                 utils.copyPropertyValues(id, entity);
-            else if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.FIELD)
+            else if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.Field)
                 utils.copyFieldValues(id, entity);
         } else {
-            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.PROPERTY) {
+            if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.Property) {
                 entityClassInspector.getIdProperty(entityClass).getWriteMethod().invoke(entity, id);
-            } else if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.FIELD) {
+            } else if (entityClassInspector.getAccessTypeOfClass(entityClass) == AccessType.Field) {
                 Field next = entityClassInspector.getIdField(entityClass);
                 next.setAccessible(true);
                 next.set(entity, id);
@@ -200,5 +202,18 @@ public class JPAORMProvider extends ORMProviderAdapter {
             } catch (SQLException e) {
                 log.error("", e);
             }
+    }
+
+    @Override
+    public AccessType getAccessType(Class<?> clazz) throws UnknownAccessTypeException {
+        if (isFieldAccessed(clazz)) {
+            return AccessType.Field;
+        } else if (isPropertyAccessed(clazz)) {
+            return AccessType.Property;
+        }
+        throw new UnknownAccessTypeException(String.format("Class %s is neither Field nor Property accessed. Did you forget to use %s or %s annotation.",
+                clazz.getCanonicalName(),
+                Id.class.getCanonicalName(),
+                EmbeddedId.class.getCanonicalName()));
     }
 }
