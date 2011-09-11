@@ -12,7 +12,8 @@ import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
-import org.ormunit.entity.PropertyAccessor;
+import org.ormunit.node.entity.EntityNodeProcessor;
+import org.ormunit.node.entity.accessor.PropertyAccessor;
 import org.ormunit.entity.SimplePOJO;
 import org.ormunit.entity.SimplePOJO2;
 import org.ormunit.exception.FileReadException;
@@ -166,13 +167,13 @@ public class CoreEntityNodeProcessorTest {
 
         TestSet result = spy(new TestSet(ormProvider));
 
-        when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
+        doReturn(int.class).when(ormProvider).getIdType(SimplePOJO.class);
 
         ormUnit.read(bais, result);
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference("complexType", 1));
+        references.add(new EntityReference("complexType", 1, EntityReference.ReferenceType.DB));
         verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass(), null), references)));
 
 
@@ -195,14 +196,14 @@ public class CoreEntityNodeProcessorTest {
 
         TestSet result = spy(new TestSet(ormProvider));
 
-        when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(Integer.class);
+        doReturn(Integer.class).when(ormProvider).getIdType(SimplePOJO2.class);
 
         ormUnit.read(bais, result);
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
         SimplePOJO2 simplePOJO2 = new SimplePOJO2("0", 0);
-        references.add(new EntityReference("complexType", simplePOJO2.getIntValue()));
+        references.add(new EntityReference("complexType", simplePOJO2.getIntValue(), EntityReference.ReferenceType.DB));
         verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass(), null), references)));
 
 
@@ -225,14 +226,14 @@ public class CoreEntityNodeProcessorTest {
 
         TestSet result = spy(new TestSet(ormProvider));
 
-        when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(SimplePOJO2.class);
+        doReturn(SimplePOJO2.class).when(ormProvider).getIdType(SimplePOJO2.class);
 
         ormUnit.read(bais, result);
 
         SimplePOJO entity = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
         SimplePOJO2 id = new SimplePOJO2("0", 0);
-        references.add(new EntityReference("complexType", id));
+        references.add(new EntityReference("complexType", id, EntityReference.ReferenceType.DB));
         verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, ormProvider.getAccessor(entity.getClass(), null), references)));
 
 
@@ -255,7 +256,7 @@ public class CoreEntityNodeProcessorTest {
         TestSet result = spy(new TestSet(ormProvider));
 
 
-        when(ormProvider.getIdType(SimplePOJO2.class)).thenReturn(int.class);
+        doReturn(int.class).when(ormProvider).getIdType(SimplePOJO2.class);
 
         ormUnit.read(bais, result);
 
@@ -264,7 +265,7 @@ public class CoreEntityNodeProcessorTest {
 
 
         HashSet<EntityReference> entityReferences = new HashSet<EntityReference>();
-        entityReferences.add(new EntityReference("complexType", "some weird id", EntityReference.Type.ORMUNIT));
+        entityReferences.add(new EntityReference("complexType", "some weird id", EntityReference.ReferenceType.ORMUNIT));
         EntityCommand entityCommand1 = new EntityCommand(null, new SimplePOJO(), ormProvider.getAccessor(SimplePOJO.class, null), entityReferences);
         verify(result).addCommand(Mockito.eq(entityCommand1));
 

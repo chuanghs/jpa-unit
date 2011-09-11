@@ -57,11 +57,11 @@ public class BeanUtils {
     }
 
     public void copyFieldValues(Object source, Object target, Class<?> aClass) {
-        if (!aClass.isInstance(target))
-            throw new RuntimeException(String.format("target (%s) is not subclass of specified class: (%s)", target.getClass().getCanonicalName(), aClass.getCanonicalName()));
-
         if (aClass == null)
             return;
+
+        if (!aClass.isInstance(target))
+            throw new RuntimeException(String.format("target (%s) is not subclass of specified class: (%s)", target.getClass().getCanonicalName(), aClass.getCanonicalName()));
 
         for (Field targetField : aClass.getDeclaredFields()) {
             Field sourceField = getField(source.getClass(), targetField.getName());
@@ -85,11 +85,11 @@ public class BeanUtils {
     }
 
     public void copyPropertyValues(Object source, Object target, Class<?> targetClass) {
+         if (targetClass == null)
+            return;
+
         if (!targetClass.isInstance(target))
             throw new RuntimeException(String.format("target (%s) is not subclass of specified class: (%s)", target.getClass().getCanonicalName(), targetClass.getCanonicalName()));
-
-        if (targetClass == null)
-            return;
 
         try {
             for (PropertyDescriptor targetProperty : Introspector.getBeanInfo(targetClass).getPropertyDescriptors()) {

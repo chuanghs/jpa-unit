@@ -2,7 +2,7 @@ package org.ormunit.command;
 
 import org.ormunit.ORMProvider;
 import org.ormunit.TestSet;
-import org.ormunit.entity.EntityAccessor;
+import org.ormunit.node.entity.accessor.EntityAccessor;
 import org.ormunit.exception.ConfigurationException;
 
 import java.util.*;
@@ -53,9 +53,9 @@ public class EntityCommand implements ORMUnitCommand {
         for (EntityReference ref : references) {
             Class propertyClass = getPropertyClass(ref.getPropertyName());
             Object reference = null;
-            if (ref.getType() == EntityReference.Type.DB) {
+            if (ref.getReferenceType() == EntityReference.ReferenceType.DB) {
                 reference = provider.getEntity(propertyClass, ref.getId());
-            } else if (ref.getType() == EntityReference.Type.ORMUNIT) {
+            } else if (ref.getReferenceType() == EntityReference.ReferenceType.ORMUNIT) {
                 reference = getORMEntity(testSet.getRootTestSet(), (String) ref.getId());
             }
 

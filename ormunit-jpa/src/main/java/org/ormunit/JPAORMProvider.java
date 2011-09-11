@@ -1,6 +1,7 @@
 package org.ormunit;
 
 import org.ormunit.dialect.Dialect;
+import org.ormunit.exception.EntityDefinitionException;
 import org.ormunit.exception.UnknownAccessTypeException;
 import org.ormunit.jpa.entityinspector.EntityInspector;
 import org.ormunit.jpa.providerproperties.ProviderProperties;
@@ -135,7 +136,11 @@ public class JPAORMProvider extends ORMProviderAdapter {
     }
 
     public Class<?> getIdType(Class<?> entityClass) {
-        return entityClassInspector.getIdType(entityClass);
+        Class<?> idType = entityClassInspector.getIdType(entityClass);
+        if (idType == null) {
+            throw new EntityDefinitionException(String.format("Entity class %s does not define id", entityClass.getCanonicalName()));
+        }
+        return idType;
     }
 
     public Set<Class<?>> getManagedTypes() {

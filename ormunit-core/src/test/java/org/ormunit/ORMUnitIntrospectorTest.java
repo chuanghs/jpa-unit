@@ -2,7 +2,7 @@ package org.ormunit;
 
 import junit.framework.Assert;
 import org.junit.Test;
-import org.ormunit.entity.PropertyAccessor;
+import org.ormunit.node.entity.accessor.PropertyAccessor;
 import org.ormunit.entity.SimplePOJO;
 import org.ormunit.entity.SimplePOJO2;
 

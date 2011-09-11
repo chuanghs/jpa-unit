@@ -17,4 +17,7 @@ public class NodeProcessingException extends RuntimeException {
     }
 
 
+    public NodeProcessingException(String message, Exception e) {
+        super(message, e);
+    }
 }

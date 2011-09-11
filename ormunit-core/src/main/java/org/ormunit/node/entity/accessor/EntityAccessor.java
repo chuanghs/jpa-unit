@@ -1,4 +1,4 @@
-package org.ormunit.entity;
+package org.ormunit.node.entity.accessor;
 
 import java.sql.Timestamp;
 import java.util.*;
@@ -27,6 +27,12 @@ public interface EntityAccessor {
 
     Object newInstance(String propertyName);
 
+    /**
+     * @param propertyName
+     * @return
+     * @throws org.ormunit.exception.AccessorException
+     *          when there is no such property
+     */
     Class getType(String propertyName);
 
     void set(Object entity, String propertyName, Object value);

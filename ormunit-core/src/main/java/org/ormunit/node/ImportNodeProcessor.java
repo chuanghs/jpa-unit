@@ -1,9 +1,10 @@
 package org.ormunit.node;
 
-import org.ormunit.TestSet;
 import org.ormunit.ORMUnitPropertiesReader;
+import org.ormunit.TestSet;
 import org.ormunit.exception.ConfigurationException;
 import org.ormunit.exception.NodeProcessingException;
+import org.ormunit.node.entity.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.NamedNodeMap;
@@ -28,31 +29,23 @@ public class ImportNodeProcessor extends NodeProcessor {
     private final WeakHashMap<TestSet, WeakReference<Map<String, String>>> confImports = new WeakHashMap<TestSet, WeakReference<Map<String, String>>>();
 
 
-    public ImportNodeProcessor(ORMUnitPropertiesReader ormUnit){
+    public ImportNodeProcessor(ORMUnitPropertiesReader ormUnit) {
         super(ormUnit);
     }
 
     public void addImport(TestSet testSet, String className, String alias) {
-
-        if (confImports.get(testSet) == null) {
-            confImports.put(testSet, new WeakReference<Map<String, String>>(new HashMap<String, String>()));
-        }
-        Map<String, String> imports = confImports.get(testSet).get();
-
-
-        if (imports.containsKey(alias)) {
-            if (!className.equals(imports.get(alias)))
-                throw new ConfigurationException("alias: " + alias + " is defined more than once (" + imports.get(className) + ", " + className + ")");
-
-            log.warn("alias: " + alias + " is defined twice for the same class: " + className);
-
-        }
-
         if (!className.matches(ClassNamePattern))
             throw new ConfigurationException("className: " + className + " is invalid class name");
 
-        imports.put(alias, className);
+        Map<String, String> imports = confImports.get(testSet) != null ? confImports.get(testSet).get() : null;
+        if (imports == null) {
+            confImports.put(testSet, new WeakReference<Map<String, String>>(imports = new HashMap<String, String>()));
+        }
 
+        if (imports.containsKey(alias) && !className.equals(imports.get(alias)))
+            throw new ConfigurationException("alias: " + alias + " is defined more than once (" + imports.get(className) + ", " + className + ")");
+
+        imports.put(alias, className);
     }
 
     public void process(Node jpaUnitElement, TestSet result) throws NodeProcessingException {
@@ -70,6 +63,10 @@ public class ImportNodeProcessor extends NodeProcessor {
             alias = aliasNode.getNodeValue();
         }
         addImport(result, className, alias);
-        result.registerNodeProcessor(alias, new EntityNodeProcessor(className));
+        try {
+            result.registerNodeProcessor(alias, new EntityNodeProcessor(Class.forName(className)));
+        } catch (ClassNotFoundException e) {
+            throw new NodeProcessingException(String.format("Import node is declared for class: %s. but no such class could be found.", className), e);
+        }
     }
 }

@@ -1,5 +1,6 @@
-package org.ormunit.entity;
+package org.ormunit.node.entity.accessor;
 
+import org.ormunit.exception.AccessorException;
 import org.ormunit.exception.EntityAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,8 +47,7 @@ public class FieldAccessor extends AEntityAccessor {
         if (f != null)
             return f.getType();
         else {
-            log.warn(String.format("no property: %s in class: %s ",propertyName, clazz.getCanonicalName()));
-            return null;
+            throw new AccessorException(String.format("No field: %s in class: %s",propertyName, clazz.getCanonicalName()));
         }
     }
 
@@ -55,7 +55,7 @@ public class FieldAccessor extends AEntityAccessor {
         try {
             Field pd = fields.get(propertyName);
             if (pd == null) {
-                new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
+                throw new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
             }
             pd.setAccessible(true);
             pd.set(entity, value);
@@ -67,7 +67,7 @@ public class FieldAccessor extends AEntityAccessor {
     public Object get(Object entity, String propertyName) {
         Field pd = fields.get(propertyName);
         if (pd == null) {
-            new EntityAccessException(String.format("attribute: %s does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
+            throw new EntityAccessException(String.format("attribute: %s does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
         }
         pd.setAccessible(true);
         try {
@@ -87,7 +87,6 @@ public class FieldAccessor extends AEntityAccessor {
 
     public Class[] getMapParameterTypes(String propertyName) {
         Field field = fields.get(propertyName);
-        Class<?> type = field.getType();
         Type genericType = field.getGenericType();
 
         return getMapParameterTypes(propertyName, (ParameterizedType) genericType);

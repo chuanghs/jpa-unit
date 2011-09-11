@@ -1,12 +1,13 @@
 package org.ormunit;
 
-import org.ormunit.exception.ConvertionException;
 import org.ormunit.exception.ConfigurationException;
+import org.ormunit.exception.ConvertionException;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Properties;
@@ -29,46 +30,54 @@ public class ORMUnitHelper {
     public static final String H2DriverClassName = "org.h2.Driver";
     public static final String HSQLDriverClassName = "org.hsqldb.jdbcDriver";
 
-    public static DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
-    public static DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    private static final DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+    private static final DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 
-    public static Object convert(Class<?> propertyType, String value) throws ConvertionException {
+    public static Object convert(Class<?> targetType, String value) throws ConvertionException {
         try {
-            if (propertyType.equals(Object.class)) {
+            if (targetType.equals(Object.class)) {
                 return value;
-            } else if (propertyType.equals(Integer.class) || propertyType.equals(int.class)) {
+            } else if (targetType.equals(Integer.class) || targetType.equals(int.class)) {
                 return Integer.parseInt(value);
-            } else if (propertyType.equals(Double.class) || propertyType.equals(double.class)) {
+            } else if (targetType.equals(Double.class) || targetType.equals(double.class)) {
                 return Double.parseDouble(value);
-            } else if (propertyType.equals(Boolean.class) || propertyType.equals(boolean.class)) {
+            } else if (targetType.equals(Boolean.class) || targetType.equals(boolean.class)) {
                 if ("true".equalsIgnoreCase(value))
                     return true;
                 if ("false".equalsIgnoreCase(value))
                     return false;
                 throw new IllegalArgumentException(value + " is neither true nor false");
-            } else if (propertyType.equals(Long.class) || propertyType.equals(long.class)) {
+            } else if (targetType.equals(Long.class) || targetType.equals(long.class)) {
                 return Long.parseLong(value);
-            } else if (propertyType.equals(Float.class) || propertyType.equals(float.class)) {
+            } else if (targetType.equals(Float.class) || targetType.equals(float.class)) {
                 return Float.parseFloat(value);
-            } else if (propertyType.equals(Character.class) || propertyType.equals(char.class)) {
+            } else if (targetType.equals(Character.class) || targetType.equals(char.class)) {
                 return value.charAt(0);
-            } else if (propertyType.equals(Byte.class) || propertyType.equals(byte.class)) {
+            } else if (targetType.equals(Byte.class) || targetType.equals(byte.class)) {
                 return Byte.parseByte(value);
-            } else if (propertyType.equals(Date.class)) {
-                return df.parse(value);
-            } else if (propertyType.equals(Timestamp.class)) {
-                return new Timestamp(tf.parse(value).getTime());
-            } else if (propertyType.equals(String.class)) {
+            } else if (targetType.equals(Date.class)) {
+                return parseDate(value);
+            } else if (targetType.equals(Timestamp.class)) {
+                return new Timestamp(parseTime(value).getTime());
+            } else if (targetType.equals(String.class)) {
                 return value;
-            } else if (Enum.class.isAssignableFrom(propertyType)) {
-                return valueOf((Class<? extends Enum>) propertyType, value);
+            } else if (Enum.class.isAssignableFrom(targetType)) {
+                return valueOf((Class<? extends Enum>) targetType, value);
             }
         } catch (Exception pe) {
             throw new ConvertionException(pe);
         }
-        throw new ConvertionException("unsupported propertyType: " + propertyType.getCanonicalName());
+        throw new ConvertionException("unsupported targetType: " + targetType.getCanonicalName());
 
+    }
+
+    private static synchronized Date parseDate(String value) throws ParseException {
+        return df.parse(value);
+    }
+
+    private static synchronized Date parseTime(String value) throws ParseException {
+        return tf.parse(value);
     }
 
     public static String getDefaultDriverClassName() {
@@ -122,9 +131,9 @@ public class ORMUnitHelper {
 
         String[] split = start.getPackage().getName().split("\\.");
         int i = 0;
-        String path = "/";
+        StringBuilder path = new StringBuilder("/");
         Properties defaults = readDefaults(d);
-        Properties result = new Properties();
+        Properties result = null;
         try {
             do {
                 InputStream propertiesStream = start.getResourceAsStream(path + ORMUnitPropertiesReader.PropertiesFileName);
@@ -134,7 +143,7 @@ public class ORMUnitHelper {
                     result.load(propertiesStream);
                 defaults = result;
                 if (i < split.length)
-                    path = path + split[i] + "/";
+                    path.append(split[i]).append("/");
                 i++;
             } while (i <= split.length);
         } catch (Exception e) {

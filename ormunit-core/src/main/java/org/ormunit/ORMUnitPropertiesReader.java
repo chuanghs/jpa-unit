@@ -167,7 +167,7 @@ public class ORMUnitPropertiesReader {
                         try {
                             nodeProcessor.process(jpaUnitElement, result);
                         } catch (NodeProcessingException e) {
-                            throw new FileSyntaxException("error at node: " + i, e);
+                            throw new FileReadException("error at node: " + i, e);
                         }
                     } else {
                         String s = jpaUnitElement.getNodeName() + " element (" + i + ": " + jpaUnitElement.getNodeName() + ") does not have associated I" + NodeProcessor.class.getCanonicalName() + " implementations";

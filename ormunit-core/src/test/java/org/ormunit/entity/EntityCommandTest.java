@@ -9,6 +9,7 @@ import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.command.TestSetCommand;
+import org.ormunit.node.entity.accessor.PropertyAccessor;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -37,7 +38,7 @@ public class EntityCommandTest {
 
         SimplePOJO simplePOJO = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference("complexType", "pojo2", EntityReference.Type.ORMUNIT));
+        references.add(new EntityReference("complexType", "pojo2", EntityReference.ReferenceType.ORMUNIT));
         EntityCommand entityCommand2 = new EntityCommand("pojo", simplePOJO, new PropertyAccessor(simplePOJO.getClass()), references);
 
         ORMProvider provider = mock(ORMProvider.class);
@@ -66,7 +67,7 @@ public class EntityCommandTest {
 
         SimplePOJO simplePOJO = new SimplePOJO();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference("complexType", "pojo2", EntityReference.Type.ORMUNIT));
+        references.add(new EntityReference("complexType", "pojo2", EntityReference.ReferenceType.ORMUNIT));
         EntityCommand entityCommand2 = new EntityCommand("pojo", simplePOJO, new PropertyAccessor(simplePOJO.getClass()), references);
 
         ORMProvider provider = mock(ORMProvider.class);

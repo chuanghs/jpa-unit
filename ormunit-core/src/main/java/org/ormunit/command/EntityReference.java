@@ -9,27 +9,23 @@ package org.ormunit.command;
 public class EntityReference {
 
 
-    public static enum Type {
+    public static enum ReferenceType {
         DB,
         ORMUNIT
     }
 
     private final String propertyName;
     private final Object id;
-    private final Type type;
+    private final ReferenceType referenceType;
 
-    public EntityReference(String propertyName, Object id){
-        this(propertyName, id, Type.DB);
-    }
-
-    public EntityReference(String propertyName, Object id, Type type) {
+    public EntityReference(String propertyName, Object id, ReferenceType referenceType) {
         this.propertyName = propertyName;
         this.id = id;
-        this.type = type;
+        this.referenceType = referenceType;
     }
 
-    public Type getType() {
-        return type;
+    public ReferenceType getReferenceType() {
+        return referenceType;
     }
 
     public Object getId() {
@@ -45,7 +41,7 @@ public class EntityReference {
         return "EntityReference{" +
                 ", property=" + propertyName +
                 ", id=" + id +
-                ", type=" + type +
+                ", referenceType=" + referenceType +
                 '}';
     }
 
@@ -57,7 +53,7 @@ public class EntityReference {
         EntityReference that = (EntityReference) o;
 
         if (id != null ? !id.equals(that.id) : that.id != null) return false;
-        if (type != null ? !type.equals(that.type) : that.type != null) return false;
+        if (referenceType != null ? !referenceType.equals(that.referenceType) : that.referenceType != null) return false;
         if (propertyName != null ? !propertyName.equals(that.propertyName) : that.propertyName != null) return false;
 
         return true;
@@ -66,7 +62,7 @@ public class EntityReference {
     @Override
     public int hashCode() {
         int result = (propertyName != null ? propertyName.hashCode() : 0);
-        result = 31 * result + (type != null ? type.hashCode() : 0);
+        result = 31 * result + (referenceType != null ? referenceType.hashCode() : 0);
         result = 31 * result + (id != null ? id.hashCode() : 0);
         return result;
     }
