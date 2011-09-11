@@ -61,7 +61,7 @@ public class ORMUnitTest {
 
     }
 
-    @Test(expected = FileSyntaxException.class)
+    @Test(expected = FileReadException.class)
     public void testStatementWith2Children() throws FileReadException, IOException {
 
         byte[] value = "<ormunit> <statement code=\"this code shouldnt be added\"><![CDATA[code1]]><somesubelem /></statement></ormunit>".getBytes();
@@ -87,7 +87,7 @@ public class ORMUnitTest {
 
     }
 
-    @Test(expected = ConfigurationException.class)
+    @Test(expected = FileReadException.class)
     public void testInvalidClassNames2() throws FileReadException, IOException {
         byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"1com.example.SomeClass\" alias=\"sc1\"/></ormunit>".getBytes();
 
@@ -98,7 +98,7 @@ public class ORMUnitTest {
 
     @Test
     public void testRegisterNodeProcessor() throws FileReadException, IOException {
-        byte[] value = "<ormunit><import class=\"$com._example.SomeClass1\" alias=\"sc1\"/><import class=\"com.example.SomeClass\" alias=\"sc2\"/></ormunit>".getBytes();
+        byte[] value = "<ormunit><import class=\"org.ormunit.entity.BaseSimplePojo\" alias=\"sc1\"/><import class=\"org.ormunit.entity.BaseSimplePojo\" alias=\"sc2\"/></ormunit>".getBytes();
 
 
         ormUnit.read(new ByteArrayInputStream(value), testSet);

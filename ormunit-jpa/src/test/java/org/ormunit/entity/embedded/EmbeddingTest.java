@@ -8,7 +8,7 @@ import org.ormunit.JPAORMProvider;
 import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
-import org.ormunit.entity.FieldAccessor;
+import org.ormunit.node.entity.accessor.FieldAccessor;
 import org.ormunit.exception.FileReadException;
 
 import javax.persistence.EntityManager;

@@ -1,4 +1,4 @@
-package org.ormunit.entity;
+package org.ormunit.node.entity.accessor;
 
 import org.ormunit.exception.EntityInstantiationException;
 
@@ -169,7 +169,7 @@ public abstract class AEntityAccessor implements EntityAccessor {
                 throw new EntityInstantiationException(e);
             }
         } else {
-            throw new EntityInstantiationException(String.format("cannot create simple types, property: %s in class %s", propertyName + getEntityClass().getCanonicalName()));
+            throw new EntityInstantiationException(String.format("cannot create simple types, property: %s in class %s", propertyName, getEntityClass().getCanonicalName()));
         }
         throw new EntityInstantiationException(String.format("cannon instantiate object of type: %s , property: %s in class %s", type.getCanonicalName(), propertyName, getEntityClass().getCanonicalName()));
     }

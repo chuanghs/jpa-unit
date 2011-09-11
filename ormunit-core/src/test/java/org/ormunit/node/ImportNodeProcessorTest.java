@@ -9,7 +9,7 @@ import org.ormunit.ORMUnitPropertiesReader;
 import org.ormunit.TestSet;
 import org.ormunit.exception.ConfigurationException;
 import org.ormunit.exception.FileReadException;
-import org.ormunit.exception.FileSyntaxException;
+import org.ormunit.node.entity.EntityNodeProcessor;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -41,7 +41,7 @@ public class ImportNodeProcessorTest {
         reader.read(new ByteArrayInputStream(value), testSet);
     }
 
-    @Test(expected = FileSyntaxException.class)
+    @Test(expected = FileReadException.class)
     public void testImportInvalidImportSyntax() throws FileReadException {
         byte[] value = ("<ormunit> " +
                 "<import alias=\"some alias\" />" +
@@ -53,17 +53,17 @@ public class ImportNodeProcessorTest {
     @Test
     public void testImports() throws FileReadException, IOException {
         byte[] value = ("<ormunit> " +
-                "<import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
-                "<import class=\"com.example.SomeClass\"/></ormunit>").getBytes();
+                "<import class=\"org.ormunit.entity.SimplePOJO\" alias=\"sc1\"/>" +
+                "<import class=\"org.ormunit.entity.SimplePOJO2\"/></ormunit>").getBytes();
 
 
         ORMUnitPropertiesReader reader = spy(new ORMUnitPropertiesReader(getClass()));
         reader.read(new ByteArrayInputStream(value), testSet);
 
-        verify(testSet, times(2)).getNodeProcessor(eq("import"));
-
+        verify(testSet, times(1)).registerNodeProcessor(eq("import"), any(ImportNodeProcessor.class));
         verify(testSet, times(1)).registerNodeProcessor(eq("sc1"), any(EntityNodeProcessor.class));
-        verify(testSet, times(1)).registerNodeProcessor(eq("SomeClass"), any(EntityNodeProcessor.class));
+        verify(testSet, times(1)).registerNodeProcessor(eq("SimplePOJO2"), any(EntityNodeProcessor.class));
+        verify(testSet, times(2)).getNodeProcessor(eq("import"));
 
         //verifyNoMoreInteractions(testSet);
     }
@@ -71,8 +71,8 @@ public class ImportNodeProcessorTest {
     @Test(expected = ConfigurationException.class)
     public void testAmbiguousAlias() throws FileReadException, IOException {
         byte[] value = ("<ormunit>" +
-                "       <import class=\"com.example.SomeClass1\" alias=\"sc1\"/>" +
-                "       <import class=\"com.example.SomeClass\" alias=\"sc1\"/>" +
+                "       <import class=\"org.ormunit.entity.SimplePOJO\" alias=\"sc1\"/>" +
+                "       <import class=\"org.ormunit.entity.SimplePOJO2\" alias=\"sc1\"/>" +
                 "</ormunit>").getBytes();
         new ORMUnitPropertiesReader(getClass())
                 .read(new ByteArrayInputStream(value), testSet);

@@ -11,9 +11,9 @@ import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.FieldAccessEntity;
-import org.ormunit.entity.FieldAccessor;
 import org.ormunit.entity.PropertyAccessEntity;
 import org.ormunit.exception.FileReadException;
+import org.ormunit.node.entity.accessor.FieldAccessor;
 
 import javax.persistence.EntityManager;
 import java.beans.IntrospectionException;
@@ -39,8 +39,8 @@ public class JPAEntityNodeProcessorTest {
 
     @Test
     public void testExtractIdType() {
-        junit.framework.Assert.assertEquals(int.class, new JPAORMProvider(em).getIdType(FieldAccessEntity.class));
-        junit.framework.Assert.assertEquals(Integer.class, new JPAORMProvider(em).getIdType(PropertyAccessEntity.class));
+        Assert.assertEquals(int.class, new JPAORMProvider(em).getIdType(FieldAccessEntity.class));
+        Assert.assertEquals(Integer.class, new JPAORMProvider(em).getIdType(PropertyAccessEntity.class));
     }
 
     @Test
@@ -59,7 +59,7 @@ public class JPAEntityNodeProcessorTest {
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference("complexType", 1));
+        references.add(new EntityReference("complexType", 1, EntityReference.ReferenceType.DB));
         verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, new FieldAccessor(entity.getClass()), references)));
     }
 
@@ -77,7 +77,7 @@ public class JPAEntityNodeProcessorTest {
 
         FieldAccessEntity entity = new FieldAccessEntity();
         Set<EntityReference> references = new HashSet<EntityReference>();
-        references.add(new EntityReference("complexType", 1));
+        references.add(new EntityReference("complexType", 1, EntityReference.ReferenceType.DB));
         verify(result, times(1)).addCommand(eq(new EntityCommand(null, entity, new FieldAccessor(entity.getClass()), references)));
     }
 

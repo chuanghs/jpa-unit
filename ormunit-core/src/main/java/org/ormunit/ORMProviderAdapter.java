@@ -1,12 +1,12 @@
 package org.ormunit;
 
-import org.ormunit.entity.AEntityAccessor;
-import org.ormunit.entity.EntityAccessor;
-import org.ormunit.entity.FieldAccessor;
-import org.ormunit.entity.PropertyAccessor;
+import org.ormunit.node.entity.accessor.AEntityAccessor;
+import org.ormunit.node.entity.accessor.EntityAccessor;
 import org.ormunit.exception.AccessorException;
 import org.ormunit.exception.EntityAccessException;
 import org.ormunit.exception.UnknownAccessTypeException;
+import org.ormunit.node.entity.accessor.FieldAccessor;
+import org.ormunit.node.entity.accessor.PropertyAccessor;
 
 import java.lang.ref.WeakReference;
 import java.util.WeakHashMap;

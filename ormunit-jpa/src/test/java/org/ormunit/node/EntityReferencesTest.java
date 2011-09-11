@@ -10,7 +10,7 @@ import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
 import org.ormunit.entity.FieldAccessEntity;
-import org.ormunit.entity.FieldAccessor;
+import org.ormunit.node.entity.accessor.FieldAccessor;
 import org.ormunit.entity.PropertyAccessEntity;
 import org.ormunit.exception.FileReadException;
 

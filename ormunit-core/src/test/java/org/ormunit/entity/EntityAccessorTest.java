@@ -4,8 +4,11 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.ormunit.exception.AccessorException;
 import org.ormunit.exception.EntityAccessException;
 import org.ormunit.exception.EntityInstantiationException;
+import org.ormunit.node.entity.accessor.FieldAccessor;
+import org.ormunit.node.entity.accessor.PropertyAccessor;
 
 import java.util.Collection;
 import java.util.Map;
@@ -175,9 +178,10 @@ public class EntityAccessorTest {
         }
 
         try {
-            pa.newInstance("nonexistingproperty");
-            fail();
-        } catch (EntityInstantiationException e) {
+            String nonExistingPropertyName = "nonexistingproperty";
+            pa.newInstance(nonExistingPropertyName);
+            fail(String.format("AccessorException should be throws because there is no property %s", nonExistingPropertyName));
+        } catch (AccessorException e) {
         }
 
     }

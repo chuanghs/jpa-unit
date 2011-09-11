@@ -1,8 +1,8 @@
 package org.ormunit;
 
 import org.ormunit.command.ORMUnitCommand;
+import org.ormunit.node.entity.EntityNodeProcessor;
 import org.ormunit.node.NodeProcessor;
-import org.ormunit.node.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,7 +35,7 @@ public class TestSet {
         Set<Class<?>> managedTypes = provider.getManagedTypes();
         if (managedTypes != null)
             for (Class<?> c : managedTypes) {
-                registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
+                registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c));
             }
     }
 
@@ -67,7 +67,7 @@ public class TestSet {
     }
 
     public TestSet getRootTestSet() {
-        if (this.parent==null)
+        if (this.parent == null)
             return this;
         else
             return this.parent.getRootTestSet();

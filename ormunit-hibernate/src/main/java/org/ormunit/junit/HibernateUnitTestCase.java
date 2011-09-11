@@ -10,7 +10,7 @@ import org.ormunit.ORMUnitHelper;
 import org.ormunit.TestSet;
 import org.ormunit.exception.ConfigurationException;
 import org.ormunit.exception.FileReadException;
-import org.ormunit.node.EntityNodeProcessor;
+import org.ormunit.node.entity.EntityNodeProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

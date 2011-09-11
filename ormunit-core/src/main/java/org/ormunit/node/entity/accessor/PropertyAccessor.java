@@ -1,5 +1,6 @@
-package org.ormunit.entity;
+package org.ormunit.node.entity.accessor;
 
+import org.ormunit.exception.AccessorException;
 import org.ormunit.exception.EntityAccessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,8 +51,8 @@ public class PropertyAccessor extends AEntityAccessor {
         if (propertyDescriptor != null)
             return propertyDescriptor.getPropertyType();
         else {
-            log.warn(String.format("no property: %s in class: %s",propertyName, clazz.getCanonicalName()));
-            return null;
+            throw new AccessorException(String.format("No property: %s in class: %s",propertyName, clazz.getCanonicalName()));
+
         }
     }
 
@@ -76,11 +77,11 @@ public class PropertyAccessor extends AEntityAccessor {
         try {
             PropertyDescriptor pd = getPD(propertyName);
             if (pd == null) {
-                new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", pd.getName(), clazz.getCanonicalName()));
+                throw new EntityAccessException(String.format("attribute: %s  does not have corresponding property in class: %s", propertyName, clazz.getCanonicalName()));
             }
             Method getter = pd.getReadMethod();
             if (getter == null) {
-                new EntityAccessException(String.format("there is no getter for property: %s of class: %s", pd.getName(), clazz.getCanonicalName()));
+                throw new EntityAccessException(String.format("there is no getter for property: %s of class: %s", pd.getName(), clazz.getCanonicalName()));
             }
 
             return getter.invoke(entity);

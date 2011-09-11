@@ -69,7 +69,7 @@ public class HibernateORMProvider extends ORMProviderAdapter {
         return false;
     }
 
-    public Class<?> getIdType(Class<?> entityType) {
+    public Class<?> getIdType(Class<?> entityType) throws EntityDefinitionException {
         return session.getSessionFactory().getClassMetadata(entityType).getIdentifierType().getReturnedClass();
     }
 

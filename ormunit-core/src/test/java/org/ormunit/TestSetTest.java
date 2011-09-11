@@ -7,7 +7,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.StatementCommand;
 import org.ormunit.command.TestSetCommand;
-import org.ormunit.entity.PropertyAccessor;
+import org.ormunit.node.entity.accessor.PropertyAccessor;
 import org.ormunit.entity.SimplePOJO;
 
 import static org.mockito.Mockito.*;

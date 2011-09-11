@@ -5,10 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ormunit.entity.EntityAccessor;
+import org.ormunit.node.entity.accessor.EntityAccessor;
 import org.ormunit.entity.FieldAccessEntity;
 import org.ormunit.entity.PrimaryKey;
 import org.ormunit.entity.PropertyAccessEntity;
+import org.ormunit.exception.EntityDefinitionException;
 
 import javax.persistence.EmbeddedId;
 import javax.persistence.EntityManager;
@@ -16,7 +17,6 @@ import javax.persistence.Id;
 import javax.persistence.IdClass;
 
 import static junit.framework.Assert.assertEquals;
-import static org.mockito.Matchers.isNull;
 
 /**
  * Created by IntelliJ IDEA.
@@ -55,8 +55,16 @@ public class JPAORMProviderTest {
     public void testGetIdType() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
 
-        assertEquals(Integer.class, provider.getIdType(PropertyAccessEntity.class));
-        assertEquals(int.class, provider.getIdType(FieldAccessEntity.class));
+        try {
+            assertEquals(Integer.class, provider.getIdType(PropertyAccessEntity.class));
+        } catch (EntityDefinitionException entityDefinitionException) {
+            entityDefinitionException.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        try {
+            assertEquals(int.class, provider.getIdType(FieldAccessEntity.class));
+        } catch (EntityDefinitionException entityDefinitionException) {
+            entityDefinitionException.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
 
@@ -67,7 +75,11 @@ public class JPAORMProviderTest {
     public void testGetIdTypeOfSubClass() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
         EntityAccessor fieldAccessor = provider.getAccessor(SubPropertyAccessEntity.class, null);
-        assertEquals(Integer.class, provider.getIdType(SubPropertyAccessEntity.class));
+        try {
+            assertEquals(Integer.class, provider.getIdType(SubPropertyAccessEntity.class));
+        } catch (EntityDefinitionException entityDefinitionException) {
+            entityDefinitionException.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
 
         SubPropertyAccessEntity entity = new SubPropertyAccessEntity();
         entity.setId(2);
@@ -93,13 +105,21 @@ public class JPAORMProviderTest {
     @Test
     public void testGetIdTypeEmbeddedId() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
-        assertEquals(PrimaryKey.class, provider.getIdType(EmbeddedIdEntity.class));
+        try {
+            assertEquals(PrimaryKey.class, provider.getIdType(EmbeddedIdEntity.class));
+        } catch (EntityDefinitionException entityDefinitionException) {
+            entityDefinitionException.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Test
     public void testGetIdTypeIdClass() throws Exception {
         JPAORMProvider provider = new JPAORMProvider(em);
-        assertEquals(PrimaryKey.class, provider.getIdType(IdClassEntity.class));
+        try {
+            assertEquals(PrimaryKey.class, provider.getIdType(IdClassEntity.class));
+        } catch (EntityDefinitionException entityDefinitionException) {
+            entityDefinitionException.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Test
