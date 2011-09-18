@@ -367,7 +367,7 @@ public class Persistence {
          * <p/>
          * For example, to add a new item, do as follows:
          * <pre>
-         *    getClazz().add(newItem);
+         *    getCallerClass().add(newItem);
          * </pre>
          * <p/>
          * <p/>

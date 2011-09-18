@@ -3,11 +3,11 @@ package org.ormunit.live;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ormunit.jpa.unit.XmlPersistenceUnit;
+import org.ormunit.jpa.junit.JPAUnitTestCase;
+import org.ormunit.jpa.persistenceunit.XmlPersistenceUnit;
 import org.ormunit.entity.Employee;
 import org.ormunit.entity.EmployeeId;
 import org.ormunit.entity.PhoneNumber;
-import org.ormunit.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;
 

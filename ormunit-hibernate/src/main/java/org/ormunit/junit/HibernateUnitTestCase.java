@@ -52,7 +52,7 @@ public class HibernateUnitTestCase extends TestCase {
         this.testSet = new TestSet(provider);
 
         if (isWithDB()) {
-            // adding entityNodeProcessor for every entity class defined in persistence unit
+            // adding entityNodeProcessor for every entity class defined in persistence persistenceunit
             for (Class<?> c : getManagedTypes()) {
                 testSet.registerNodeProcessor(c.getSimpleName(), new EntityNodeProcessor(c.getCanonicalName()));
             }

@@ -1,4 +1,4 @@
-package org.ormunit.jpa.unit;
+package org.ormunit.jpa.persistenceunit;
 
 import com.sun.java.xml.ns.persistence.Persistence;
 import com.sun.java.xml.ns.persistence.orm.Entity;
@@ -44,18 +44,16 @@ public class XmlPersistenceUnit implements PersistenceUnit {
     public static final String DEFAULT_ORM_XML_FILENAME = "/META-INF/orm.xml";
 
     private Class<?> caller;
-    private String unitName;
     private Persistence.PersistenceUnit persistenceUnit;
     private List<EntityMappings> ormMappings = new LinkedList<EntityMappings>();
 
     /**
      * @param caller   class whose classloader will be used to load persistence.xml
-     * @param unitName persistence unit name of which managed types will be used
+     * @param unitName persistence persistenceunit name of which managed types will be used
      */
     public XmlPersistenceUnit(Class<?> caller, String unitName) {
         this.caller = caller;
-        this.unitName = unitName;
-        this.persistenceUnit = getPersistenceUnitFromPersistenceXml();
+        this.persistenceUnit = getPersistenceUnitFromPersistenceXml(unitName);
         List<String> ormFiles = this.persistenceUnit.getMappingFile();
         boolean defaultIncluded = false;
         if (ormFiles != null) {
@@ -79,10 +77,6 @@ public class XmlPersistenceUnit implements PersistenceUnit {
         }
     }
 
-    public String getUnitName() {
-        return unitName;
-    }
-
     public String getPersistenceProvider() {
         String persistenceProvider = null;
         if (persistenceUnit != null) {
@@ -98,7 +92,7 @@ public class XmlPersistenceUnit implements PersistenceUnit {
     }
 
     /**
-     * @return set of Class objects representing all managed classes in given persistence unit
+     * @return set of Class objects representing all managed classes in given persistence persistenceunit
      */
     public Set<Class<?>> getManagedTypes() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
@@ -161,7 +155,7 @@ public class XmlPersistenceUnit implements PersistenceUnit {
     }
 
 
-    private Persistence.PersistenceUnit getPersistenceUnitFromPersistenceXml() {
+    private Persistence.PersistenceUnit getPersistenceUnitFromPersistenceXml(String unitName) {
         Persistence persistenceFileRoot = null;
         try {
             persistenceFileRoot = readPersistenceFile();
