@@ -2,14 +2,18 @@ package org.ormunit.live;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.runners.MockitoJUnitRunner;
-import org.ormunit.jpa.junit.JPAUnitTestCase;
-import org.ormunit.jpa.persistenceunit.XmlPersistenceUnit;
 import org.ormunit.entity.FieldAccessEntity;
 import org.ormunit.entity.PropertyAccessEntity;
+import org.ormunit.jpa.annotations.Em;
+import org.ormunit.jpa.annotations.JPAUnitTestCase;
+import org.ormunit.jpa.junit.JPAUnitRunner;
+import org.ormunit.jpa.persistenceunit.XmlPersistenceUnit;
 
+import javax.persistence.EntityManager;
 import javax.xml.bind.JAXBException;
 import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -17,11 +21,19 @@ import java.util.List;
  * Date: 28.12.10
  * Time: 21:37
  */
-@RunWith(MockitoJUnitRunner.class)
-public class JPAUnitRealEntitiesTest extends JPAUnitTestCase {
+@RunWith(JPAUnitRunner.class)
+@JPAUnitTestCase(unitName = "ormunit-jpa", ormUnitFileName = "JPAUnitRealEntitiesTest.xml")
+public class JPAUnitRealEntitiesWithRunnerTest {
 
-    public JPAUnitRealEntitiesTest() {
-        super("ormunit-jpa");
+    @Em
+    private EntityManager em;
+
+    public EntityManager getEm() {
+        return em;
+    }
+
+    public JPAUnitRealEntitiesWithRunnerTest() {
+        super();
     }
 
     @Test

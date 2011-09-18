@@ -1,4 +1,4 @@
-package org.ormunit.jpa.unit;
+package org.ormunit.jpa.persistenceunit;
 
 import org.ormunit.jpa.entityinspector.EntityInspector;
 import org.ormunit.jpa.providerproperties.ProviderProperties;
@@ -19,8 +19,6 @@ public interface PersistenceUnit {
     Set<Class<?>> getManagedTypes();
 
     Properties getProperties(Properties defaults);
-
-    String getUnitName();
 
     ProviderProperties createProviderProperties(Properties defaultDataSourceProperties);
 

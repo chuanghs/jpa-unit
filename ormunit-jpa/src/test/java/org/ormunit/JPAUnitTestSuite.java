@@ -6,6 +6,7 @@ import org.ormunit.entity.embedded.EmbeddingTest;
 import org.ormunit.live.JPAUnitEntitiesWithComposedIdsTest;
 import org.ormunit.live.JPAUnitOrmXmlReadTest;
 import org.ormunit.live.JPAUnitRealEntitiesTest;
+import org.ormunit.live.JPAUnitRealEntitiesWithRunnerTest;
 import org.ormunit.node.EntityReferencesTest;
 import org.ormunit.node.JPAEntityNodeProcessorTest;
 
@@ -24,8 +25,9 @@ import org.ormunit.node.JPAEntityNodeProcessorTest;
         AnnotationsEntityInspectorTest.class,
         EntityMappingsEntityInspectorTest.class,
         JPAUnitRealEntitiesTest.class,
+        JPAUnitRealEntitiesWithRunnerTest.class,
         EmbeddingTest.class,
         JPAUnitEntitiesWithComposedIdsTest.class
 })
-public class JPAORMUnitTestSuite {
+public class JPAUnitTestSuite {
 }

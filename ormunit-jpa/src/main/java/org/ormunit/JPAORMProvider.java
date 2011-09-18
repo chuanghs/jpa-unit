@@ -4,10 +4,10 @@ import org.ormunit.dialect.Dialect;
 import org.ormunit.exception.EntityDefinitionException;
 import org.ormunit.exception.UnknownAccessTypeException;
 import org.ormunit.jpa.entityinspector.EntityInspector;
+import org.ormunit.jpa.persistenceunit.FakePersistenceUnit;
+import org.ormunit.jpa.persistenceunit.PersistenceUnit;
+import org.ormunit.jpa.persistenceunit.XmlPersistenceUnit;
 import org.ormunit.jpa.providerproperties.ProviderProperties;
-import org.ormunit.jpa.unit.FakePersistenceUnit;
-import org.ormunit.jpa.unit.PersistenceUnit;
-import org.ormunit.jpa.unit.XmlPersistenceUnit;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,6 +37,7 @@ public class JPAORMProvider extends ORMProviderAdapter {
     private EntityInspector entityClassInspector;
     private PersistenceUnit persistenceUnit;
     private Properties defaultDataSourceProperties;
+    private String unitName;
 
 
     public JPAORMProvider(EntityManager entityManager) {
@@ -48,6 +49,7 @@ public class JPAORMProvider extends ORMProviderAdapter {
 
 
     public JPAORMProvider(ORMUnitPropertiesReader ormUnit, String unitName) {
+        this.unitName = unitName;
         this.persistenceUnit = new XmlPersistenceUnit(ormUnit.getWorkClass(), unitName);
         this.defaultDataSourceProperties = ormUnit.getDefaultDataSourceProperties(new Properties());
         this.entityClassInspector = persistenceUnit.createClassInspector();
@@ -156,7 +158,7 @@ public class JPAORMProvider extends ORMProviderAdapter {
             createSchemas(providerProperties);
 
             entityManagerFactory = Persistence.createEntityManagerFactory(
-                    persistenceUnit.getUnitName(),
+                    unitName,
                     providerProperties.getEntityManagerFactoryProperties());
             entityManager = entityManagerFactory.createEntityManager();
         }

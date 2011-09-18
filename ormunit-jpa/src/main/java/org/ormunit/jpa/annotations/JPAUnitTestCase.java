@@ -1,4 +1,6 @@
-package org.ormunit.annotations;
+package org.ormunit.jpa.annotations;
+
+import java.lang.annotation.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,16 +10,19 @@ package org.ormunit.annotations;
  * <p/>
  * Annotation used to specify test environment: ORM configuration and Entities
  */
-public @interface ORMUnitTestCase {
+@Target({ElementType.TYPE, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Inherited
+public @interface JPAUnitTestCase {
 
     /**
-     * persitence unit name for JPA,
+     * persitence persistenceunit name for JPA,
      * session factory hbm.xml file for hibernate
      * and whatever configuration element for other orm providers
      *
      * @return
      */
-    String ormConfiguration();
+    String unitName();
 
     /**
      * file name of ormunit.xml file which contains entities definitions.

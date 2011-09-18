@@ -5,7 +5,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ormunit.entity.Auction;
-import org.ormunit.junit.JPAUnitTestCase;
+import org.ormunit.jpa.junit.JPAUnitTestCase;
 
 import javax.xml.bind.JAXBException;
 import java.util.List;

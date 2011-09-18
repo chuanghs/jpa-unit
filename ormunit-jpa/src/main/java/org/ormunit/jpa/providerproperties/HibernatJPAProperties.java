@@ -1,7 +1,7 @@
 package org.ormunit.jpa.providerproperties;
 
 import org.ormunit.ORMUnitHelper;
-import org.ormunit.jpa.unit.PersistenceUnit;
+import org.ormunit.jpa.persistenceunit.PersistenceUnit;
 
 import java.util.Properties;
 

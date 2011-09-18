@@ -4,7 +4,7 @@ import junit.framework.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
-import org.ormunit.jpa.unit.XmlPersistenceUnit;
+import org.ormunit.jpa.persistenceunit.XmlPersistenceUnit;
 
 import java.util.Set;
 

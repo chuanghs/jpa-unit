@@ -4,6 +4,8 @@ import org.hibernate.EntityMode;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
+import org.ormunit.exception.EntityDefinitionException;
+import org.ormunit.exception.UnknownAccessTypeException;
 import org.ormunit.junit.HibernateHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -90,6 +92,10 @@ public class HibernateORMProvider extends ORMProviderAdapter {
         session.createSQLQuery(statement).executeUpdate();
     }
 
+    public boolean isEmbeddable(Class propertyType) {
+        return false;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     public <T> T getEntity(Class<T> entityClass, Object id) {
         return (T) session.get(entityClass, (Serializable) id);
     }
@@ -117,9 +123,14 @@ public class HibernateORMProvider extends ORMProviderAdapter {
 
 
     public Session getHibernateSession() {
-        if (this.session == null){
+        if (this.session == null) {
             this.session = this.sessionFactory.openSession();
         }
         return this.session;
+    }
+
+    @Override
+    public AccessType getAccessType(Class<?> clazz) throws UnknownAccessTypeException {
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 }

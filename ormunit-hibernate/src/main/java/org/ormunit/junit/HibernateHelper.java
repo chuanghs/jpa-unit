@@ -23,9 +23,9 @@ public class HibernateHelper {
 
 
 
-    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-inspector;drop=true";
-    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-inspector;shutdown=true";
-    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-inspector";
+    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:persistenceunit-testing-inspector;drop=true";
+    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:persistenceunit-testing-inspector;shutdown=true";
+    public static final String JDBC_URL_H2 = "jdbc:h2:mem:persistenceunit-testing-inspector";
 
     private static String driverClassName = null;
     private static String hibernateDialect = null;

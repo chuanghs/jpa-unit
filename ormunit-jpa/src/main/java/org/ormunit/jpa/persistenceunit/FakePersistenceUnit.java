@@ -1,4 +1,4 @@
-package org.ormunit.jpa.unit;
+package org.ormunit.jpa.persistenceunit;
 
 import org.ormunit.jpa.entityinspector.AnnotationsEntityInspector;
 import org.ormunit.jpa.entityinspector.EntityInspector;
@@ -36,10 +36,6 @@ public class FakePersistenceUnit implements PersistenceUnit {
 
     public Properties getProperties(Properties defaults) {
         return new Properties(defaults);
-    }
-
-    public String getUnitName() {
-        throw new IllegalStateException("FakePersistenceUnit is created when em is provided, so there no knowledge of persistence unit.");
     }
 
     public ProviderProperties createProviderProperties(Properties defaultDataSourceProperties) {
