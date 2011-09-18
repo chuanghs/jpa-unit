@@ -31,7 +31,7 @@ public class TestSet {
     public TestSet(ORMProvider provider) {
         this.provider = provider;
 
-        // adding entityNodeProcessor for every entity class defined in persistence persistenceunit
+        // adding entityNodeProcessor for every entity class defined in persistence unit
         Set<Class<?>> managedTypes = provider.getManagedTypes();
         if (managedTypes != null)
             for (Class<?> c : managedTypes) {

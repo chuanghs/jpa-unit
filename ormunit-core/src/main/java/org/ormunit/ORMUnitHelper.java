@@ -22,9 +22,9 @@ import static java.lang.Enum.valueOf;
  */
 public class ORMUnitHelper {
 
-    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:persistenceunit-testing-jpa;drop=true";
-    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:persistenceunit-testing-jpa;shutdown=true";
-    public static final String JDBC_URL_H2 = "jdbc:h2:mem:persistenceunit-testing-jpa";
+    public static final String JDBC_URL_DERBY = "jdbc:derby:memory:unit-testing-jpa;drop=true";
+    public static final String JDBC_URL_HSQL = "jdbc:hsqldb:mem:unit-testing-jpa;shutdown=true";
+    public static final String JDBC_URL_H2 = "jdbc:h2:mem:unit-testing-jpa";
 
     public static final String DerbyDriverClassName = "org.apache.derby.jdbc.EmbeddedDriver";
     public static final String H2DriverClassName = "org.h2.Driver";
