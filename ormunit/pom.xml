@@ -13,6 +13,32 @@
         <module>../ormunit-jpa</module>
         <!--<module>../ormunit-hibernate</module>-->
     </modules>
+
+    <developers>
+        <developer>
+            <id>tomasz.krzyzak</id>
+            <name>Tomasz Krzyżak</name>
+            <email>tomasz.krzyzak@gmail.com</email>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/jpa-unit/issues/list</url>
+    </issueManagement>
+    <scm>
+        <connection>scm:svn:http://jpa-unit.googlecode.com/svn/trunk/</connection>
+        <developerConnection>scm:svn:https://jpa-unit.googlecode.com/svn/trunk/</developerConnection>
+        <url>http://jpa-unit.googlecode.com/svn/trunk/</url>
+    </scm>
+
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
