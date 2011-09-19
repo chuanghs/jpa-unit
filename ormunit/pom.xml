@@ -3,14 +3,14 @@
     <groupId>org.ormunit</groupId>
     <artifactId>ormunit</artifactId>
     <packaging>pom</packaging>
-    <version>0.9.4</version>
+    <version>0.9.5-SNAPSHOT</version>
     <name>orm-unit</name>
 
 
     <modules>
         <module>../ormunit-core</module>
         <module>../ormunit-jpa</module>
-        <!--<module>../ormunit-hibernate</module>-->
+        <module>../ormunit-hibernate</module>
     </modules>
 
     <developers>
