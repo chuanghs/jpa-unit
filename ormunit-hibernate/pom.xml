@@ -5,7 +5,7 @@
     <parent>
         <artifactId>ormunit</artifactId>
         <groupId>org.ormunit</groupId>
-        <version>0.9.4-SNAPSHOT</version>
+        <version>0.9.5-SNAPSHOT</version>
         <relativePath>../ormunit/pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
