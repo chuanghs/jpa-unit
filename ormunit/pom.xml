@@ -34,9 +34,8 @@
         <url>http://code.google.com/p/jpa-unit/issues/list</url>
     </issueManagement>
     <scm>
-        <connection>scm:svn:http://jpa-unit.googlecode.com/svn/trunk/</connection>
-        <developerConnection>scm:svn:https://jpa-unit.googlecode.com/svn/trunk/</developerConnection>
-        <url>http://jpa-unit.googlecode.com/svn/trunk/</url>
+        <connection>scm:hg:${basedir}</connection>
+        <developerConnection>scm:hg:${basedir}</developerConnection>
     </scm>
 
     <dependencies>
@@ -48,6 +47,14 @@
     </dependencies>
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
