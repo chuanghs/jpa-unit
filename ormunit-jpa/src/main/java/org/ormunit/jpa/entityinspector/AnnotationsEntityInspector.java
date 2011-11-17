@@ -1,13 +1,16 @@
 package org.ormunit.jpa.entityinspector;
 
 
+import org.h2.schema.Sequence;
 import org.ormunit.BeanUtils;
 import org.ormunit.ORMProviderAdapter;
 
 import javax.persistence.*;
+import javax.xml.validation.Schema;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -21,11 +24,49 @@ public class AnnotationsEntityInspector implements EntityInspector {
     private BeanUtils utils = new BeanUtils();
 
 
-    public String getSchemaName(Class<?> entityClass) {
+    public Set<String> getSchemaNames(Class<?> entityClass) {
+        Set<String> set = new HashSet<String>();
+
+        while (entityClass != null) {
+            String schemaName = getTableSchemaName(entityClass);
+            if (schemaName != null)
+                set.add(schemaName);
+
+            schemaName = getSequenceGeneratorSchemaName(entityClass);
+            if (schemaName != null)
+                set.add(schemaName);
+
+            entityClass = entityClass.getSuperclass();
+        }
+        return set;
+    }
+
+    private String getSequenceGeneratorSchemaName(Class<?> entityClass) {
+        SequenceGenerator sg = entityClass.getAnnotation(SequenceGenerator.class);
+        if (sg != null) {
+
+            String schemaName = extractSchemaName(sg.sequenceName());
+            if (schemaName != null) {
+                return schemaName;
+            }
+        }
+        return null;  //To change body of created methods use File | Settings | File Templates.
+    }
+
+    private String getTableSchemaName(Class<?> entityClass) {
         Table annotation = entityClass.getAnnotation(Table.class);
-        if (annotation != null && !"".equals(annotation.schema()))
-            return annotation.schema();
+        if (annotation != null) {
+            if (!"".equals(annotation.schema()))
+                return annotation.schema();
+            return extractSchemaName(annotation.name());
+        }
         return null;
+    }
+
+    private String extractSchemaName(String ddlElementName) {
+        if (ddlElementName.contains("."))
+            return ddlElementName.substring(0, ddlElementName.indexOf("."));
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass) {

@@ -6,9 +6,12 @@ import org.ormunit.ORMProviderAdapter;
 import org.ormunit.exception.ConfigurationException;
 import org.ormunit.exception.EntityInstantiationException;
 
+import javax.xml.validation.Schema;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,12 +30,15 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         this.entityMappings = entityMappings;
     }
 
-    public String getSchemaName(Class<?> entityClass) {
+    public Set<String> getSchemaNames(Class<?> entityClass) {
+        Set<String> schemas = new HashSet<String>();
         Entity entityEntry = getEntityEntry(entityClass);
         if (entityEntry != null && entityEntry.getTable() != null) {
-            return entityEntry.getTable().getSchema();
+            schemas.add(entityEntry.getTable().getSchema());
+        } else {
+            schemas.addAll(super.getSchemaNames(entityClass));
         }
-        return super.getSchemaName(entityClass);
+        return schemas;
     }
 
     public ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass) {

@@ -10,6 +10,7 @@
         <class>org.ormunit.entity.PropertyAccessEntity</class>
         <class>org.ormunit.entity.FieldAccessEntity</class>
         <class>org.ormunit.entity.PoliciesEntity</class>
+        <class>org.ormunit.entity.EntityWithSequenceBasedId</class>
 
         <properties>
             <!-- EclipseLink should create the database schema automatically -->

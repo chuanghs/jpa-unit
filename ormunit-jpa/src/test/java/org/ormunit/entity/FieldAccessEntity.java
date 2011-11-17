@@ -9,7 +9,7 @@ import javax.persistence.*;
  * Time: 22:05
  */
 @Entity
-@Table(name = "fieldaccessentity")
+@Table(name = "FieldAccessEntity_schema.fieldaccessentity")
 public class FieldAccessEntity {
 
     @Id
