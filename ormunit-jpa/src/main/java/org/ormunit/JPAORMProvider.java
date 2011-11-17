@@ -16,6 +16,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Iterator;
 import java.util.Properties;
 import java.util.Set;
 
@@ -175,9 +176,13 @@ public class JPAORMProvider extends ORMProviderAdapter {
             if (con != null) {
                 for (Class<?> c : getManagedTypes()) {
                     try {
-                        String x = entityClassInspector.getSchemaName(c);
-                        if (x != null) {
-                            con.prepareStatement(dialect.getCreateSchemaStatement(x)).executeUpdate();
+                        Iterator<String> x = entityClassInspector.getSchemaNames(c).iterator();
+
+                        while (x.hasNext()) {
+                            String schemaName = x.next();
+                            log.debug(String.format("Creating schema: %s...", schemaName));
+                            con.prepareStatement(dialect.getCreateSchemaStatement(schemaName)).executeUpdate();
+                            log.debug(String.format("Creating schema: %s... Done.", schemaName));
                         }
                     } catch (Throwable e) {
                         log.error(e.getMessage());

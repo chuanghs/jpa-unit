@@ -4,6 +4,7 @@ import org.ormunit.ORMProviderAdapter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +15,7 @@ import java.lang.reflect.Field;
  */
 public interface EntityInspector {
 
-    String getSchemaName(Class<?> entityClass);
+    Set<String> getSchemaNames(Class<?> entityClass);
 
     ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass);
 
