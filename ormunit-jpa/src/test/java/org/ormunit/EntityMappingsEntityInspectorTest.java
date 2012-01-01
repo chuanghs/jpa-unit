@@ -12,6 +12,7 @@ import org.ormunit.jpa.entityinspector.EntityMappingsEntityInspector;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Mockito.*;
@@ -48,14 +49,16 @@ public class EntityMappingsEntityInspectorTest {
         entity.setTable(table);
         entityMappings.getEntity().add(entity);
 
-        assertEquals(table.getSchema(), ormFileEntityInspector.getSchemaName(Employee.class));
+        Set<String> schemaNames = ormFileEntityInspector.getSchemaNames(Employee.class);
+        assertEquals(1, schemaNames.size());
+        assertTrue(schemaNames.contains(table.getSchema()));
     }
 
 
     @Test
     public void testGetSchemaDelegated() {
-        ormFileEntityInspector.getSchemaName(Employee.class);
-        verify(backupEntityInspector).getSchemaName(eq(Employee.class));
+        ormFileEntityInspector.getSchemaNames(Employee.class);
+        verify(backupEntityInspector).getSchemaNames(eq(Employee.class));
     }
 
 

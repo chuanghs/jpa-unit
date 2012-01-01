@@ -4,6 +4,7 @@ import javax.persistence.*;
 import java.util.Map;
 
 @Entity
+@Access(AccessType.FIELD)
 public class Auction {
 
     @Id
