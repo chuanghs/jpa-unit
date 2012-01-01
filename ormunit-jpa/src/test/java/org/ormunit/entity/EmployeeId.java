@@ -1,6 +1,8 @@
 package org.ormunit.entity;
 
-public class EmployeeId {
+import java.io.Serializable;
+
+public class EmployeeId implements Serializable {
 
     private Integer eId;
     private String country;

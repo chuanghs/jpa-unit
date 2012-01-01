@@ -28,7 +28,7 @@ public class JPAUnitEntitiesWithComposedIdsTest extends JPAUnitTestCase {
     public void testTransaction() throws JAXBException {
         assertTrue(getEm().getTransaction().isActive());
 
-        assertEquals(4, new XmlPersistenceUnit(getClass(), "ormunit-jpa").getManagedTypes().size());
+        assertEquals(5, new XmlPersistenceUnit(getClass(), "ormunit-jpa").getManagedTypes().size());
     }
 
     @Test

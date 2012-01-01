@@ -25,7 +25,7 @@ public class JPAUnitRunner extends BaseORMUnitRunner {
      * Creates a BlockJUnit4ClassRunner to run {@code klass}
      *
      * @throws org.junit.runners.model.InitializationError
-     *          if the test class is malformed.
+     *         if the test class is malformed.
      */
     public JPAUnitRunner(Class<?> klass) throws InitializationError {
         super(klass);
@@ -106,11 +106,15 @@ public class JPAUnitRunner extends BaseORMUnitRunner {
 
         @Override
         public void evaluate() throws Throwable {
-            this.statement.evaluate();
-            if (JPAUnitRunner.this.dbController != null) {
-                JPAUnitRunner.this.dbController.tearDown();
-                JPAUnitRunner.this.dbController = null;
+            try {
+                this.statement.evaluate();
+            } finally {
+                if (JPAUnitRunner.this.dbController != null) {
+                    JPAUnitRunner.this.dbController.tearDown();
+                    JPAUnitRunner.this.dbController = null;
+                }
             }
+
         }
     }
 }
