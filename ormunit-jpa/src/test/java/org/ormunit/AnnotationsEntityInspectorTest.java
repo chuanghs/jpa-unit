@@ -11,9 +11,7 @@ import org.ormunit.jpa.entityinspector.AnnotationsEntityInspector;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -67,8 +65,13 @@ public class AnnotationsEntityInspectorTest {
 
     @Test
     public void testGetSchema(){
-        assertNull(entityInspector.getSchemaName(Auction.class));
-        assertNotNull(entityInspector.getSchemaName(PropertyAccessEntity.class));
+        assertTrue(entityInspector.getSchemaNames(Auction.class).isEmpty());
+        assertTrue(entityInspector.getSchemaNames(PropertyAccessEntity.class).contains("testschema"));
+
+        assertTrue(entityInspector.getSchemaNames(FieldAccessEntity.class).contains("FieldAccessEntity_schema"));
+
+        assertTrue(entityInspector.getSchemaNames(EntityWithSequenceBasedId.class).contains("table_schema"));
+        assertTrue(entityInspector.getSchemaNames(EntityWithSequenceBasedId.class).contains("sequence_schema"));
     }
 
 }

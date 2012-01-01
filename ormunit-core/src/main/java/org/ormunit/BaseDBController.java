@@ -45,7 +45,7 @@ public abstract class BaseDBController {
             testSet = new TestSet(getProvider());
 
             InputStream inputStream = null;
-            if (ormUnitFileName != null) {
+            if (ormUnitFileName != null && !"".equals(ormUnitFileName)) {
                 inputStream = getCallerClass().getResourceAsStream(ormUnitFileName);
             } else {
                 inputStream = getCallerClass().getResourceAsStream("./" + getCallerClass().getSimpleName() + ".xml");

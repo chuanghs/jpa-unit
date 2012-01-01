@@ -1,0 +1,12 @@
+<ormunit>
+
+    <Employee eId="1" country="PL"/>
+
+    <PhoneNumber id="1">
+        <contact>
+            <reference eId="1" country="PL"/>
+        </contact>
+    </PhoneNumber>
+
+
+</ormunit>

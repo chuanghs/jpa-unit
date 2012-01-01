@@ -8,7 +8,9 @@ import org.ormunit.exception.EntityInstantiationException;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,12 +29,47 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         this.entityMappings = entityMappings;
     }
 
-    public String getSchemaName(Class<?> entityClass) {
-        Entity entityEntry = getEntityEntry(entityClass);
-        if (entityEntry != null && entityEntry.getTable() != null) {
-            return entityEntry.getTable().getSchema();
+    public Set<String> getSchemaNames(final Class<?> entityClass) {
+        Set<String> schemas = new HashSet<String>();
+        Class<?> clazz = entityClass;
+        while (clazz != null) {
+            Entity entityEntry = getEntityEntry(clazz);
+            if (entityEntry != null) {
+                String tableSchemaName = getTableSchemaName(entityEntry);
+                if (tableSchemaName != null)
+                    schemas.add(tableSchemaName);
+            }
+            clazz = clazz.getSuperclass();
         }
-        return super.getSchemaName(entityClass);
+        for (SequenceGenerator sg : entityMappings.getSequenceGenerator()) {
+            if (!"".equals(sg.getSchema())) {
+                schemas.add(sg.getSchema());
+            } else {
+                String schemaName = extractSchemaName(sg.getName());
+                if (schemaName != null)
+                    schemas.add(schemaName);
+            }
+        }
+        schemas.addAll(super.getSchemaNames(entityClass));
+        return schemas;
+    }
+
+    private String getTableSchemaName(Entity entityEntry) {
+        String schemaName = null;
+        if (entityEntry.getTable() != null) {
+            if (entityEntry.getTable().getSchema() != null && !"".equals(entityEntry.getTable().getSchema()))
+                schemaName = entityEntry.getTable().getSchema();
+            else {
+                schemaName = extractSchemaName(entityEntry.getTable().getName());
+            }
+        }
+        return schemaName;
+    }
+
+    private String extractSchemaName(String ddlElementName) {
+        if (ddlElementName.contains("."))
+            return ddlElementName.substring(0, ddlElementName.indexOf("."));
+        return null;  //To change body of created methods use File | Settings | File Templates.
     }
 
     public ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass) {

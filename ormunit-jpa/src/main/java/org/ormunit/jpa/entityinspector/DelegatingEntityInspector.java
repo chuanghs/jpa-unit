@@ -4,6 +4,7 @@ import org.ormunit.ORMProviderAdapter;
 
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
+import java.util.Set;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,8 +21,8 @@ public class DelegatingEntityInspector implements EntityInspector {
     }
 
 
-    public String getSchemaName(Class<?> entityClass) {
-        return delegateTo.getSchemaName(entityClass);
+    public Set<String> getSchemaNames(Class<?> entityClass) {
+        return delegateTo.getSchemaNames(entityClass);
     }
 
     public ORMProviderAdapter.AccessType getAccessTypeOfClass(Class entityClass) {

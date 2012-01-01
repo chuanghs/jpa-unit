@@ -15,7 +15,9 @@ import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.HashSet;
 import java.util.Properties;
 import java.util.Set;
 
@@ -173,15 +175,22 @@ public class JPAORMProvider extends ORMProviderAdapter {
             Dialect dialect = providerProperties.getDialect();
             con = providerProperties.openConnection();
             if (con != null) {
+                Set<String> schemaNames = new HashSet<String>();
                 for (Class<?> c : getManagedTypes()) {
-                    try {
-                        String x = entityClassInspector.getSchemaName(c);
-                        if (x != null) {
-                            con.prepareStatement(dialect.getCreateSchemaStatement(x)).executeUpdate();
-                        }
-                    } catch (Throwable e) {
-                        log.error(e.getMessage());
+                    schemaNames.addAll(entityClassInspector.getSchemaNames(c));
+                }
+                try {
+                    for (String schemaName : schemaNames) {
+                        log.debug(String.format("Creating schema: %s...", schemaName));
+                        PreparedStatement preparedStatement = con.prepareStatement(dialect.getCreateSchemaStatement(schemaName));
+                        if (preparedStatement.getWarnings()!=null)
+                            log.debug(preparedStatement.getWarnings().getMessage());
+                        preparedStatement.executeUpdate();
+                        
+                        log.debug(String.format("Creating schema: %s... Done.", schemaName));
                     }
+                } catch (Throwable e) {
+                    log.error(e.getMessage(), e);
                 }
                 con.commit();
             }
