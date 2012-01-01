@@ -15,6 +15,7 @@ import javax.persistence.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.HashSet;
 import java.util.Properties;
@@ -181,11 +182,15 @@ public class JPAORMProvider extends ORMProviderAdapter {
                 try {
                     for (String schemaName : schemaNames) {
                         log.debug(String.format("Creating schema: %s...", schemaName));
-                        con.prepareStatement(dialect.getCreateSchemaStatement(schemaName)).executeUpdate();
+                        PreparedStatement preparedStatement = con.prepareStatement(dialect.getCreateSchemaStatement(schemaName));
+                        if (preparedStatement.getWarnings()!=null)
+                            log.debug(preparedStatement.getWarnings().getMessage());
+                        preparedStatement.executeUpdate();
+                        
                         log.debug(String.format("Creating schema: %s... Done.", schemaName));
                     }
                 } catch (Throwable e) {
-                    log.error(e.getMessage());
+                    log.error(e.getMessage(), e);
                 }
                 con.commit();
             }

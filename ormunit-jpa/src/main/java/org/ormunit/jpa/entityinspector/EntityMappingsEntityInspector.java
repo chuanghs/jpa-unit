@@ -35,7 +35,9 @@ public class EntityMappingsEntityInspector extends DelegatingEntityInspector {
         while (clazz != null) {
             Entity entityEntry = getEntityEntry(clazz);
             if (entityEntry != null) {
-                getTableSchemaName(entityEntry);
+                String tableSchemaName = getTableSchemaName(entityEntry);
+                if (tableSchemaName != null)
+                    schemas.add(tableSchemaName);
             }
             clazz = clazz.getSuperclass();
         }
