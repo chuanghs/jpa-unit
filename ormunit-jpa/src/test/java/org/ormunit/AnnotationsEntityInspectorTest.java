@@ -1,6 +1,5 @@
 package org.ormunit;
 
-import com.sun.java.xml.ns.persistence.orm.AccessType;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
