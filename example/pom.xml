@@ -8,7 +8,12 @@
     <artifactId>example</artifactId>
 	<groupId>org.ormunit</groupId>
 	<version>0.9.5-SNAPSHOT</version>
-	
+    <parent>
+        <groupId>org.ormunit</groupId>
+        <artifactId>ormunit</artifactId>
+        <version>0.9.5-SNAPSHOT</version>
+        <relativePath>../ormunit/pom.xml</relativePath>
+    </parent>
     <profiles>
         <profile>
             <id>h_3.6</id>
