@@ -5,7 +5,7 @@ import org.ormunit.ORMUnitHelper;
 import org.ormunit.TestSet;
 import org.ormunit.command.EntityCommand;
 import org.ormunit.command.EntityReference;
-import org.ormunit.exception.ConvertionException;
+import org.ormunit.exception.ConversionException;
 import org.ormunit.exception.FileReadException;
 import org.ormunit.exception.FileSyntaxException;
 import org.ormunit.exception.NodeProcessingException;
@@ -186,7 +186,7 @@ public class    EntityNodeProcessor extends NodeProcessor {
             if (validTypeChildNodes.size() == 1 && allChildNodes.getLength() == 1) {
                 try {
                     return ORMUnitHelper.convert(idType, validTypeChildNodes.iterator().next().getNodeValue());
-                } catch (ConvertionException e) {
+                } catch (ConversionException e) {
                     throw new NodeProcessingException(e);
                 }
             } else {
@@ -250,7 +250,7 @@ public class    EntityNodeProcessor extends NodeProcessor {
 
                     try {
                         map.put(ORMUnitHelper.convert(mapParameterTypes[0], key), tryAddCommand(referencedEntityType, valueNode, testSet, references));
-                    } catch (ConvertionException e) {
+                    } catch (ConversionException e) {
                         throw new FileReadException("cannot convert: " + key + " to desired type: " + mapParameterTypes[0].getCanonicalName(), e);
                     }
                 }
@@ -289,7 +289,7 @@ public class    EntityNodeProcessor extends NodeProcessor {
         return value != null && (value.matches(ReferencePattern) || value.matches(ORMReferencePattern));  //To change body of created methods use File | Settings | File Templates.
     }
 
-    private void setReference(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) throws ConvertionException {
+    private void setReference(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) throws ConversionException {
         String idValue = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")")).trim();
         EntityReference reference = null;
         if (value.matches(ReferencePattern)) {
@@ -300,7 +300,7 @@ public class    EntityNodeProcessor extends NodeProcessor {
         references.add(reference);
     }
 
-    private void setSimpleType(ORMProvider provider, Object entity, String propertyName, String value) throws ConvertionException {
+    private void setSimpleType(ORMProvider provider, Object entity, String propertyName, String value) throws ConversionException {
         EntityAccessor accessor = getAccessor(entity.getClass(), provider);
         accessor.set(entity, propertyName, ORMUnitHelper.convert(accessor.getType(propertyName), value));
     }

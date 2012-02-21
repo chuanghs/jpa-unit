@@ -6,13 +6,13 @@ package org.ormunit.exception;
  * Date: 23.12.10
  * Time: 14:01
  */
-public class ConvertionException extends RuntimeException {
+public class ConversionException extends RuntimeException {
 
-    public ConvertionException(Throwable pe) {
+    public ConversionException(Throwable pe) {
         super(pe);
     }
 
-    public ConvertionException(String pe) {
+    public ConversionException(String pe) {
         super(pe);
     }
 
