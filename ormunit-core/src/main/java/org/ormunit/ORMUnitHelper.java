@@ -1,10 +1,12 @@
 package org.ormunit;
 
 import org.ormunit.exception.ConfigurationException;
-import org.ormunit.exception.ConvertionException;
+import org.ormunit.exception.ConversionException;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -34,10 +36,14 @@ public class ORMUnitHelper {
     private static final DateFormat tf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
 
-    public static Object convert(Class<?> targetType, String value) throws ConvertionException {
+    public static Object convert(Class<?> targetType, String value) throws ConversionException {
         try {
             if (targetType.equals(Object.class)) {
                 return value;
+            } else if (targetType.equals(BigInteger.class)) {
+                return new BigInteger(value);
+            }  else if (targetType.equals(BigDecimal.class)) {
+                return new BigDecimal(value);
             } else if (targetType.equals(Integer.class) || targetType.equals(int.class)) {
                 return Integer.parseInt(value);
             } else if (targetType.equals(Double.class) || targetType.equals(double.class)) {
@@ -50,6 +56,8 @@ public class ORMUnitHelper {
                 throw new IllegalArgumentException(value + " is neither true nor false");
             } else if (targetType.equals(Long.class) || targetType.equals(long.class)) {
                 return Long.parseLong(value);
+            } else if (targetType.equals(Short.class) || targetType.equals(short.class)) {
+                return Short.parseShort(value);
             } else if (targetType.equals(Float.class) || targetType.equals(float.class)) {
                 return Float.parseFloat(value);
             } else if (targetType.equals(Character.class) || targetType.equals(char.class)) {
@@ -66,9 +74,9 @@ public class ORMUnitHelper {
                 return valueOf((Class<? extends Enum>) targetType, value);
             }
         } catch (Exception pe) {
-            throw new ConvertionException(pe);
+            throw new ConversionException(pe);
         }
-        throw new ConvertionException("unsupported targetType: " + targetType.getCanonicalName());
+        throw new ConversionException("unsupported targetType: " + targetType.getCanonicalName());
 
     }
 
