@@ -1,0 +1,10 @@
+<ormunit>
+    <Foo fooId="foo.1"/>
+    <Foo fooId="foo.2"/>
+
+    <Bar barId="1"/>
+    <Bar barId="2"/>
+
+    <FooBarAssociation fooBarAssociationId="1" foo="ref(foo.1)" bar="ref(1)"/>
+    <FooBarAssociation fooBarAssociationId="2" foo="ref(foo.2)" bar="ref(1)"/>
+</ormunit>
