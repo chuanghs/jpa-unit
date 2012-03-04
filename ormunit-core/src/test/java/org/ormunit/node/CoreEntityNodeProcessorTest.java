@@ -167,7 +167,7 @@ public class CoreEntityNodeProcessorTest {
 
         TestSet result = spy(new TestSet(ormProvider));
 
-        doReturn(int.class).when(ormProvider).getIdType(SimplePOJO.class);
+        doReturn(int.class).when(ormProvider).getIdType(SimplePOJO2.class);
 
         ormUnit.read(bais, result);
 
