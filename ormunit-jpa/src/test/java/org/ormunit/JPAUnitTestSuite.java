@@ -7,6 +7,7 @@ import org.ormunit.live.JPAUnitEntitiesWithComposedIdsTest;
 import org.ormunit.live.JPAUnitOrmXmlReadTest;
 import org.ormunit.live.JPAUnitRealEntitiesTest;
 import org.ormunit.live.JPAUnitRealEntitiesWithRunnerTest;
+import org.ormunit.live.dinoo333.t1.SetReferenceTest;
 import org.ormunit.node.EntityReferencesTest;
 import org.ormunit.node.JPAEntityNodeProcessorTest;
 
@@ -27,7 +28,8 @@ import org.ormunit.node.JPAEntityNodeProcessorTest;
         JPAUnitRealEntitiesTest.class,
         JPAUnitRealEntitiesWithRunnerTest.class,
         EmbeddingTest.class,
-        JPAUnitEntitiesWithComposedIdsTest.class
+        JPAUnitEntitiesWithComposedIdsTest.class,
+        SetReferenceTest.class
 })
 public class JPAUnitTestSuite {
 }

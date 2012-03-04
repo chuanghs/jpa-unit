@@ -27,7 +27,7 @@ import java.util.*;
  * Date: 23.12.10
  * Time: 16:27
  */
-public class    EntityNodeProcessor extends NodeProcessor {
+public class EntityNodeProcessor extends NodeProcessor {
 
     public static final String ReferencePattern = "ref\\(.+\\)";
     public static final String ORMReferencePattern = "ormref\\(.+\\)";
@@ -73,15 +73,22 @@ public class    EntityNodeProcessor extends NodeProcessor {
 
     private Object instantiate(Class<?> entityClass) {
         try {
-            Constructor<?> constructor = entityClass.getConstructor();
-            constructor.setAccessible(true);
-            return constructor.newInstance();
+            Constructor<?>[] constructors = entityClass.getConstructors();
+            for (Constructor<?> constructor : constructors) {
+                if (constructor.getParameterTypes().length == 0) {
+                    constructor.setAccessible(true);
+                    return constructor.newInstance();
+                }
+            }
+            if (constructors.length == 0) {
+                return entityClass.newInstance();
+            } else {
+                throw new NodeProcessingException(String.format("Cannot instantiate class %s. There is no default constructor on that class.", entityClass.getCanonicalName()));
+            }
         } catch (InstantiationException e) {
             throw new NodeProcessingException(String.format("Cannot instantiate abstract class %s.", entityClass.getCanonicalName()), e);
-        } catch (NoSuchMethodException e) {
-            throw new NodeProcessingException(String.format("Cannot instantiate class %s. There default constructor on that class.", entityClass.getCanonicalName()), e);
         } catch (IllegalAccessException e) {
-            throw new RuntimeException("This should never happen because setAccessible(true) is invoked on default constructor.");
+            throw new RuntimeException("This should never happen because setAccessible(true) is invoked on default constructor.", e);
         } catch (InvocationTargetException e) {
             throw new NodeProcessingException(String.format("Constructor %s.<init>() threw an exception.", entityClass.getCanonicalName()), e);
         }
@@ -290,10 +297,11 @@ public class    EntityNodeProcessor extends NodeProcessor {
     }
 
     private void setReference(ORMProvider provider, Object entity, String propertyName, String value, Set<EntityReference> references) throws ConversionException {
+        EntityAccessor accessor = getAccessor(entity.getClass(), provider);
         String idValue = value.substring(value.indexOf("(") + 1, value.lastIndexOf(")")).trim();
         EntityReference reference = null;
         if (value.matches(ReferencePattern)) {
-            reference = new EntityReference(propertyName, ORMUnitHelper.convert(provider.getIdType(entity.getClass()), idValue), EntityReference.ReferenceType.DB);
+            reference = new EntityReference(propertyName, ORMUnitHelper.convert(provider.getIdType(accessor.getType(propertyName)), idValue), EntityReference.ReferenceType.DB);
         } else if (value.matches(ORMReferencePattern)) {
             reference = new EntityReference(propertyName, idValue, EntityReference.ReferenceType.ORMUNIT);
         }
