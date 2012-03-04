@@ -37,6 +37,8 @@ public class ORMUnitHelper {
 
 
     public static Object convert(Class<?> targetType, String value) throws ConversionException {
+        if (targetType==null)
+            throw new IllegalArgumentException("targetType argument cannot be null.");
         try {
             if (targetType.equals(Object.class)) {
                 return value;
