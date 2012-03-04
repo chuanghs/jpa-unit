@@ -1,0 +1,100 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>org.ormunit</groupId>
+    <artifactId>ormunit</artifactId>
+    <packaging>pom</packaging>
+    <version>0.9.5-SNAPSHOT</version>
+    <name>orm-unit</name>
+
+
+    <modules>
+        <module>../ormunit-core</module>
+        <module>../ormunit-jpa</module>
+        <!--module>../ormunit-hibernate</module-->
+        <module>../example</module>
+    </modules>
+
+    <developers>
+        <developer>
+            <id>tomasz.krzyzak</id>
+            <name>Tomasz Krzyżak</name>
+            <email>tomasz.krzyzak@gmail.com</email>
+        </developer>
+    </developers>
+    <licenses>
+        <license>
+            <name>Apache 2</name>
+            <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+            <distribution>repo</distribution>
+            <comments>A business-friendly OSS license</comments>
+        </license>
+    </licenses>
+    <issueManagement>
+        <system>Google Code</system>
+        <url>http://code.google.com/p/jpa-unit/issues/list</url>
+    </issueManagement>
+    <scm>
+        <connection>scm:hg:${basedir}</connection>
+        <developerConnection>scm:hg:${basedir}</developerConnection>
+    </scm>
+
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.7</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.2.1</version>
+                <configuration>
+                    <tagBase>https://svn.apache.org/repos/asf/maven/components/releases</tagBase>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.5</source>
+                    <target>1.5</target>
+                    <encoding>UTF-8</encoding>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-source-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>attach-javadocs</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <distributionManagement>
+        <repository>
+            <id>ormunit-maven</id>
+            <name>ORM-Unit Maven Repository</name>
+            <url>${url}</url>
+        </repository>
+    </distributionManagement>
+</project>
