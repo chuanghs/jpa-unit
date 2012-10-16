@@ -162,12 +162,16 @@ public class XmlPersistenceUnit implements PersistenceUnit {
         } catch (FileNotFoundException e) {
             throw new ConfigurationException(e);
         }
+        StringBuilder sb = new StringBuilder();
         for (Persistence.PersistenceUnit pu : persistenceFileRoot.getPersistenceUnit()) {
+            if (sb.length()>0)
+                sb.append(",");
+            sb.append(pu.getName());
             if (pu.getName().equals(unitName)) {
                 return pu;
             }
         }
-        return null;
+        throw new ConfigurationException(String.format("Persistence unit %s could not be found. These persistence units are found: %s", unitName, sb.toString()));
     }
 
 
