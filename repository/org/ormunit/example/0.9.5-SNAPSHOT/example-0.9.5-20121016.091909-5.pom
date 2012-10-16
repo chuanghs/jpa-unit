@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <modelVersion>4.0.0</modelVersion>
+
+    <artifactId>example</artifactId>
+	<groupId>org.ormunit</groupId>
+	<version>0.9.5-SNAPSHOT</version>
+    <parent>
+        <groupId>org.ormunit</groupId>
+        <artifactId>ormunit</artifactId>
+        <version>0.9.5-SNAPSHOT</version>
+        <relativePath>../ormunit/pom.xml</relativePath>
+    </parent>
+    <profiles>
+        <profile>
+            <id>h_3.6</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.hibernate</groupId>
+                    <artifactId>hibernate-entitymanager</artifactId>
+                    <version>(3.3.1.GA, 3.9)</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.hibernate.javax.persistence</groupId>
+                    <artifactId>hibernate-jpa-2.0-api</artifactId>
+                    <version>1.0.1.Final</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>el_2.2</id>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>eclipselink</artifactId>
+                    <version>2.2.0</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.eclipse.persistence</groupId>
+                    <artifactId>javax.persistence</artifactId>
+                    <version>2.0.0</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+    <dependencies>
+
+
+        <dependency>
+            <groupId>org.ormunit</groupId>
+            <artifactId>ormunit-jpa</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-all</artifactId>
+            <version>1.8.4</version>
+        </dependency>
+        <dependency>
+            <groupId>org.hsqldb</groupId>
+            <artifactId>hsqldb</artifactId>
+            <version>1.8.0.10</version>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <repositories>
+        <repository>
+            <id>jpa-unit-repo</id>
+            <url>http://jpa-unit.googlecode.com/hg/repository</url>
+        </repository>
+        <repository>
+            <id>EclipseLink Repo</id>
+            <url>http://www.eclipse.org/downloads/download.php?r=1&amp;nf=1&amp;file=/rt/eclipselink/maven.repo</url>
+        </repository>
+    </repositories>
+
+</project>
